@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Ralph Analytics">
+  <meta name="theme-color" content="#E8521A">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="apple-touch-icon" href="/icons/icon-192.png">
+<title>Ralph Analytics — M&E Advisory · Compliance · Impact Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#0f1117;--bg2:#141720;--bg3:#1a1f2e;--bg4:#212639;--bg5:#272d3f;
+  --border:rgba(255,255,255,0.06);--border-o:rgba(232,82,26,0.3);
+  --text:#eef0f6;--muted:#8892aa;--dim:#4a5268;
+  --o:#E8521A;--o2:#FF6B35;--o3:#c44315;
+  --r:8px;--font:'Inter',system-ui,sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--font);background:var(--bg);color:var(--text);overflow-x:hidden;}
+
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:14px 52px;background:rgba(15,17,23,0.94);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
+.nav-brand,.brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--text);}
+.nav-box{width:36px;height:36px;border-radius:7px;background:var(--o);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.85rem;color:#fff;letter-spacing:-.5px;flex-shrink:0;}
+.nav-text .n1{font-weight:800;font-size:.93rem;line-height:1.1;letter-spacing:.02em;}
+.nav-text .n2{font-size:.62rem;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;}
+.nav-links{display:flex;align-items:center;gap:4px;}
+.nl{padding:8px 15px;border-radius:var(--r);color:var(--muted);font-size:.83rem;font-weight:500;cursor:pointer;border:none;background:none;transition:color .2s;text-decoration:none;}
+.nl:hover{color:var(--text);}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:10px 22px;border-radius:var(--r);font-size:.83rem;font-weight:700;cursor:pointer;transition:all .22s;text-decoration:none;border:none;font-family:var(--font);}
+.btn-o{background:var(--o);color:#fff;box-shadow:0 4px 18px rgba(232,82,26,.3);}
+.btn-o:hover{background:var(--o2);transform:translateY(-1px);box-shadow:0 6px 22px rgba(232,82,26,.42);}
+.btn-ghost{background:transparent;color:var(--text);border:1px solid var(--border);}
+.btn-ghost:hover{border-color:var(--border-o);color:var(--o);}
+
+/* ── HERO ── */
+.hero-wrap{position:relative;overflow:hidden;background:var(--bg);border-bottom:1px solid var(--border);}
+.hero-grid-bg{position:absolute;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:72px 72px;opacity:.35;pointer-events:none;}
+.hero-glow{position:absolute;top:-200px;right:-100px;width:700px;height:700px;background:radial-gradient(circle,rgba(232,82,26,.07) 0%,transparent 65%);pointer-events:none;}
+.hero{max-width:1240px;margin:0 auto;padding:140px 52px 96px;display:grid;grid-template-columns:1.1fr 0.9fr;align-items:center;gap:80px;position:relative;}
+.hero-eyebrow{display:flex;align-items:center;gap:10px;margin-bottom:22px;}
+.eyebrow-line{width:28px;height:2px;background:var(--o);}
+.eyebrow-text{font-size:.68rem;font-weight:800;letter-spacing:.26em;text-transform:uppercase;color:var(--o);}
+.hero h1{font-size:clamp(2.4rem,4.2vw,3.6rem);font-weight:900;line-height:1.07;margin-bottom:24px;letter-spacing:-.02em;}
+.hero h1 em{font-style:normal;color:var(--o);}
+.hero-lead{font-size:1rem;color:var(--muted);line-height:1.9;margin-bottom:32px;max-width:540px;}
+.hero-ctas{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:44px;}
+.hero-proof{display:flex;align-items:center;gap:20px;padding-top:24px;border-top:1px solid var(--border);}
+.proof-item{display:flex;align-items:center;gap:8px;font-size:.78rem;color:var(--muted);}
+.proof-dot{width:6px;height:6px;border-radius:50%;background:var(--o);}
+
+/* Dashboard card */
+.dash-card{background:var(--bg3);border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:0 24px 64px rgba(0,0,0,.5);}
+.dash-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.dash-title{font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);}
+.dash-live{display:flex;align-items:center;gap:6px;font-size:.7rem;color:#4ade80;}
+.live-dot{width:7px;height:7px;border-radius:50%;background:#4ade80;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
+.dash-body{padding:20px;}
+.dash-kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px;}
+.dkpi{background:var(--bg4);border-radius:10px;padding:14px 16px;}
+.dkpi-n{font-size:1.6rem;font-weight:900;line-height:1;}
+.dkpi-l{font-size:.67rem;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:.06em;}
+.dkpi-d{font-size:.72rem;font-weight:700;margin-top:6px;}
+.dkpi-d.up{color:#4ade80;}
+.dkpi-d.warn{color:#f59e0b;}
+.bars-label{font-size:.67rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
+.bars{display:flex;align-items:flex-end;gap:5px;height:72px;}
+.b{flex:1;border-radius:3px 3px 0 0;background:var(--bg5);}
+.b.hi{background:var(--o);}
+.b.mid{background:rgba(232,82,26,.45);}
+.bar-months{display:flex;gap:5px;margin-top:5px;}
+.bm{flex:1;font-size:.55rem;text-align:center;color:var(--dim);}
+.dash-footer{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px;}
+.df{background:var(--bg4);border-radius:8px;padding:10px 12px;}
+.df-n{font-size:.95rem;font-weight:800;}
+.df-l{font-size:.6rem;color:var(--muted);margin-top:2px;}
+
+
+
+/* ── SECTIONS ── */
+.section{padding:100px 52px;}
+.section.alt{background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.container{max-width:1240px;margin:0 auto;}
+.sec-eyebrow{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.sec-tag{font-size:.68rem;font-weight:800;letter-spacing:.22em;text-transform:uppercase;color:var(--o);}
+.sec-h{font-size:clamp(1.8rem,2.8vw,2.5rem);font-weight:900;line-height:1.12;margin-bottom:16px;letter-spacing:-.01em;}
+.sec-sub{font-size:.96rem;color:var(--muted);max-width:560px;line-height:1.9;}
+
+/* Capabilities grid */
+.cap-layout{display:grid;grid-template-columns:1fr 1.8fr;gap:72px;align-items:start;margin-top:60px;}
+.cap-sticky{position:sticky;top:100px;}
+.cap-cards{display:flex;flex-direction:column;gap:16px;}
+.cap-card{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:26px 28px;transition:border-color .25s,transform .2s;}
+.cap-card:hover{border-color:var(--border-o);transform:translateX(4px);}
+.cap-card-top{display:flex;align-items:flex-start;gap:16px;margin-bottom:12px;}
+.cap-icon{width:40px;height:40px;border-radius:9px;background:rgba(232,82,26,.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.cap-icon svg{width:20px;height:20px;stroke:var(--o);fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;}
+.cap-card h3{font-size:.96rem;font-weight:700;margin-bottom:5px;}
+.cap-card p{font-size:.82rem;color:var(--muted);line-height:1.78;}
+.cap-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;}
+.ctag{padding:3px 10px;border-radius:20px;font-size:.63rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;background:var(--bg4);color:var(--muted);border:1px solid var(--border);}
+
+/* Sectors */
+.sector-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:52px;}
+.sector-card{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:28px;border-left:3px solid transparent;transition:border-color .25s,transform .2s,box-shadow .25s;}
+.sector-card:hover{border-left-color:var(--o);transform:translateY(-3px);box-shadow:0 12px 36px rgba(0,0,0,.3);}
+.stag{font-size:.63rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--o);margin-bottom:10px;}
+.sc-h{font-size:1rem;font-weight:700;margin-bottom:9px;}
+.sc-p{font-size:.81rem;color:var(--muted);line-height:1.78;}
+.sc-pills{display:flex;flex-wrap:wrap;gap:5px;margin-top:14px;}
+.sp{padding:2px 9px;border-radius:20px;font-size:.61rem;font-weight:600;background:var(--bg4);color:var(--dim);border:1px solid var(--border);}
+
+/* How it works */
+.how-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-top:56px;}
+.how-step{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:28px 24px;position:relative;}
+.step-num{font-size:2.6rem;font-weight:900;color:rgba(232,82,26,.15);line-height:1;margin-bottom:14px;}
+.how-step h3{font-size:.92rem;font-weight:700;margin-bottom:8px;}
+.how-step p{font-size:.8rem;color:var(--muted);line-height:1.77;}
+.step-arrow{position:absolute;right:-12px;top:32px;width:24px;height:24px;background:var(--bg3);border:1px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;z-index:1;font-size:.65rem;color:var(--muted);}
+.how-step:last-child .step-arrow{display:none;}
+
+/* Portals */
+.portal-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:52px;}
+.portal-card{background:var(--bg3);border:1px solid var(--border);border-radius:14px;padding:36px 32px;display:flex;flex-direction:column;gap:14px;}
+.portal-card.feat{border-color:var(--border-o);background:linear-gradient(135deg,var(--bg3),rgba(232,82,26,.04));}
+.ptag{display:inline-block;padding:3px 12px;border-radius:20px;font-size:.67rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;}
+.ptag-c{background:rgba(232,82,26,.1);color:var(--o);}
+.ptag-a{background:rgba(100,180,255,.08);color:#60b4ff;}
+.portal-card h3{font-size:1.25rem;font-weight:800;}
+.portal-card p{font-size:.86rem;color:var(--muted);line-height:1.82;flex:1;}
+.portal-features{list-style:none;display:flex;flex-direction:column;gap:7px;}
+.portal-features li{display:flex;align-items:center;gap:9px;font-size:.81rem;color:var(--muted);}
+.pf-dot{width:5px;height:5px;border-radius:50%;background:var(--o);flex-shrink:0;}
+
+/* CTA */
+.cta-wrap{text-align:center;}
+.cta-box{background:linear-gradient(135deg,rgba(232,82,26,.07),rgba(232,82,26,.02));border:1px solid rgba(232,82,26,.2);border-radius:18px;padding:80px 48px;max-width:820px;margin:0 auto;position:relative;overflow:hidden;}
+.cta-box::before{content:'';position:absolute;top:-100px;left:50%;transform:translateX(-50%);width:500px;height:300px;background:radial-gradient(ellipse,rgba(232,82,26,.06),transparent 70%);pointer-events:none;}
+.cta-box h2{font-size:clamp(1.9rem,3vw,2.7rem);font-weight:900;margin-bottom:16px;letter-spacing:-.01em;}
+.cta-box p{font-size:.96rem;color:var(--muted);margin-bottom:38px;line-height:1.85;max-width:560px;margin-left:auto;margin-right:auto;}
+.cta-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+
+footer{border-top:1px solid var(--border);padding:32px 52px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;}
+.foot-brand{display:flex;align-items:center;gap:10px;}
+.foot-box{width:28px;height:28px;border-radius:6px;background:var(--o);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.7rem;color:#fff;}
+.foot-copy{font-size:.78rem;color:var(--dim);}
+.foot-links{display:flex;gap:20px;}
+.foot-links a{font-size:.78rem;color:var(--muted);text-decoration:none;transition:color .2s;}
+.foot-links a:hover{color:var(--o);}
+
+/* ── MODAL ── */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(10px);z-index:500;display:none;align-items:center;justify-content:center;padding:16px;}
+.modal-bg.open{display:flex;}
+.modal{background:var(--bg3);border:1px solid rgba(232,82,26,.25);border-radius:16px;width:560px;max-width:100%;max-height:92vh;overflow-y:auto;animation:mIn .26s ease;}
+@keyframes mIn{from{opacity:0;transform:translateY(20px) scale(.97)}to{opacity:1;transform:none}}
+.modal-top{padding:28px 30px 0;display:flex;justify-content:space-between;align-items:flex-start;}
+.modal-top h3{font-size:1.18rem;font-weight:800;margin-bottom:5px;}
+.modal-top p{font-size:.81rem;color:var(--muted);}
+.mclose{background:none;border:none;color:var(--muted);cursor:pointer;font-size:1.4rem;line-height:1;padding:2px 6px;transition:color .2s;}
+.mclose:hover{color:var(--text);}
+.modal-body{padding:22px 30px 30px;}
+.fg{margin-bottom:16px;}
+.fg label{display:block;font-size:.7rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin-bottom:7px;}
+.fg input,.fg select,.fg textarea{width:100%;padding:10px 14px;background:var(--bg);border:1px solid var(--border);border-radius:var(--r);color:var(--text);font-family:var(--font);font-size:.875rem;outline:none;transition:border-color .2s;}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--border-o);}
+.fg select option{background:var(--bg3);}
+.fg textarea{resize:vertical;min-height:90px;}
+.fg-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.modal-note{font-size:.74rem;color:var(--dim);margin-bottom:20px;line-height:1.6;padding:10px 14px;background:var(--bg4);border-radius:8px;}
+.toast{position:fixed;bottom:32px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--bg3);border:1px solid rgba(74,222,128,.3);color:#4ade80;padding:12px 26px;border-radius:40px;font-size:.85rem;font-weight:600;z-index:999;opacity:0;transition:all .3s;pointer-events:none;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+@media(max-width:900px){
+  nav{padding:14px 20px;}
+  .hero{grid-template-columns:1fr;padding:110px 24px 64px;gap:48px;}
+  .cap-layout{grid-template-columns:1fr;}
+  .sectors-grid{grid-template-columns:1fr 1fr;}
+}
+/* ── PLATFORM SHOWCASE ── */
+.platform-showcase{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center;}
+.showcase-features{display:flex;flex-direction:column;gap:11px;}
+.sf-item{display:flex;gap:12px;font-size:.84rem;color:var(--muted);line-height:1.6;}
+.sf-dot{width:6px;height:6px;border-radius:50%;background:var(--o);flex-shrink:0;margin-top:7px;}
+.sf-item strong{color:var(--text);}
+.dash-preview-card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:0 24px 64px rgba(0,0,0,.5);}
+.dpc-header{background:var(--bg3);border-bottom:1px solid var(--border);padding:12px 16px;display:flex;align-items:center;gap:10px;}
+.dpc-dots{display:flex;gap:5px;}
+.dpc-dots span{width:10px;height:10px;border-radius:50%;background:var(--border);}
+.dpc-title{font-size:.72rem;font-weight:700;color:var(--muted);flex:1;text-align:center;}
+.dpc-live{display:flex;align-items:center;gap:5px;font-size:.7rem;font-weight:700;color:#4ade80;}
+.dpc-body{padding:16px;}
+.dpc-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:14px;}
+.dpc-kpi{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 6px;text-align:center;}
+.dpc-kv{font-size:1.15rem;font-weight:900;color:var(--text);}
+.dpc-kl{font-size:.6rem;color:var(--muted);margin-top:2px;line-height:1.3;}
+.dpc-kd{font-size:.6rem;margin-top:3px;}
+.dpc-chart-label,.dpc-table-label{font-size:.64rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--dim);margin-bottom:6px;}
+.dpc-table-label{margin-top:12px;}
+.dpc-chart{display:flex;align-items:flex-end;gap:3px;height:44px;margin-bottom:12px;}
+.dpc-chart .cb{flex:1;border-radius:3px 3px 0 0;background:rgba(232,82,26,.2);}
+.dpc-chart .cb.hi{background:var(--o);}
+.dpc-chart .cb.mid{background:rgba(232,82,26,.5);}
+.dpc-rows{display:flex;flex-direction:column;gap:3px;margin-bottom:12px;}
+.dpc-row{display:flex;align-items:center;gap:8px;background:var(--bg3);border-radius:6px;padding:6px 10px;font-size:.73rem;}
+.dpc-site{flex:1;color:var(--text);font-weight:500;}
+.dpc-std{color:var(--muted);font-size:.66rem;width:68px;text-align:right;}
+.dpc-score{font-weight:800;font-size:.73rem;width:36px;text-align:right;}
+.dpc-score.pass{color:#4ade80;}
+.dpc-score.warn{color:#f59e0b;}
+.dpc-score.fail{color:#ef4444;}
+.dpc-modules{display:flex;gap:5px;flex-wrap:wrap;}
+.dpc-mod{font-size:.65rem;font-weight:700;padding:3px 9px;border-radius:20px;border:1px solid var(--border);color:var(--muted);}
+.dpc-mod.active{background:rgba(232,82,26,.12);border-color:rgba(232,82,26,.3);color:var(--o);}
+@media(max-width:900px){.platform-showcase{grid-template-columns:1fr;}.dpc-kpis{grid-template-columns:repeat(2,1fr);}}
+
+
+/* ── INTELLIGENCE DASHBOARD ── */
+.intel-dash{background:#0d1117;border:1px solid #2a2d3e;border-radius:16px;overflow:hidden;box-shadow:0 32px 80px rgba(0,0,0,.6);margin-top:8px;}
+.id-topbar{background:#161b22;border-bottom:1px solid #2a2d3e;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;}
+.id-tabs-row{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid #2a2d3e;background:#0d1117;}
+.id-tabs{display:flex;gap:4px;}
+.id-tab{background:none;border:none;padding:7px 16px;border-radius:20px;font-size:.8rem;font-weight:600;color:#8b8fa8;cursor:pointer;font-family:inherit;transition:all .2s;}
+.id-tab:hover{color:#e8eaf0;}
+.id-tab.active{background:#E8521A;color:#fff;}
+.id-health{display:flex;align-items:center;gap:14px;background:#161b22;border:1px solid #2a2d3e;border-radius:12px;padding:10px 16px;}
+.id-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:#2a2d3e;}
+.id-kpi-card{background:#0d1117;padding:18px 18px 14px;transition:background .2s;}
+.id-kpi-card:hover{background:#111720;}
+.id-kpi-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.id-kpi-dot{width:8px;height:8px;border-radius:50%;}
+.id-kpi-val{font-size:2rem;font-weight:900;line-height:1;margin-bottom:4px;}
+.id-kpi-label{font-size:.82rem;font-weight:700;color:#e8eaf0;margin-bottom:2px;}
+.id-kpi-sub{font-size:.72rem;color:#8b8fa8;margin-bottom:8px;}
+.id-kpi-delta{font-size:.72rem;font-weight:700;}
+.id-kpi-delta.pos{color:#ef4444;}
+.id-kpi-delta.neg{color:#4ade80;}
+.id-bottom{display:flex;gap:1px;background:#2a2d3e;}
+.id-panel{background:#0d1117;padding:18px;min-width:0;}
+.id-panel-title{font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:#8b8fa8;margin-bottom:14px;}
+.id-chart-wrap{display:flex;flex-direction:column;gap:6px;}
+.id-chart-bars{display:flex;align-items:flex-end;gap:4px;height:80px;}
+.id-chart-bars .ib{flex:1;border-radius:3px 3px 0 0;background:rgba(232,82,26,.2);transition:height .4s;}
+.id-chart-bars .ib.hi{background:#E8521A;}
+.id-chart-bars .ib.mid{background:rgba(232,82,26,.5);}
+.id-chart-months{display:flex;gap:4px;}
+.id-chart-months span{flex:1;font-size:.58rem;color:#8b8fa8;text-align:center;}
+.id-table{display:flex;flex-direction:column;gap:3px;}
+.id-tr{display:grid;grid-template-columns:1.6fr .9fr .5fr .6fr;gap:8px;padding:6px 8px;border-radius:6px;font-size:.75rem;align-items:center;}
+.id-tr.hdr{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#8b8fa8;padding-bottom:4px;}
+.id-tr:not(.hdr){background:#111720;}
+.id-badge{display:inline-flex;align-items:center;justify-content:center;font-size:.62rem;font-weight:800;padding:2px 7px;border-radius:20px;}
+.id-badge.pass{background:rgba(74,222,128,.12);color:#4ade80;}
+.id-badge.warn{background:rgba(245,158,11,.12);color:#f59e0b;}
+.id-badge.fail{background:rgba(239,68,68,.12);color:#ef4444;}
+.id-standards{display:flex;flex-direction:column;gap:9px;}
+.id-std-row{display:grid;grid-template-columns:68px 1fr 32px;gap:8px;align-items:center;font-size:.72rem;}
+.id-std-row>span:first-child{color:#8b8fa8;}
+.id-std-row>span:last-child{color:#e8eaf0;font-weight:700;text-align:right;}
+.id-std-bar{height:5px;background:#1c2333;border-radius:3px;overflow:hidden;}
+.id-std-bar div{height:100%;border-radius:3px;transition:width .5s;}
+.id-footer-strip{display:flex;align-items:center;gap:24px;padding:10px 20px;border-top:1px solid #2a2d3e;background:#0a0d14;flex-wrap:wrap;}
+.id-footer-strip span{font-size:.7rem;color:#8b8fa8;}
+@media(max-width:900px){
+  .id-kpis{grid-template-columns:repeat(2,1fr);}
+  .id-bottom{flex-direction:column;}
+  .id-tabs{flex-wrap:wrap;}
+}
+
+
+  /* ── Landing page mobile responsive ─────────────────────────────── */
+  @media (max-width: 768px) {
+    nav { flex-wrap: wrap; padding: 12px 16px; gap: 10px; }
+    .nav-links { display: none; }
+    nav > div:last-child { gap: 6px; }
+    nav > div:last-child .btn { font-size: .72rem !important; padding: 6px 10px !important; }
+    .hero { flex-direction: column !important; gap: 32px; padding: 40px 20px 32px; }
+    .hero-left { max-width: 100%; }
+    h1 { font-size: 2rem !important; }
+    .hero-proof { flex-wrap: wrap; gap: 8px; }
+    .dash-container { padding: 16px 12px; }
+    .kpi-grid { grid-template-columns: 1fr 1fr !important; gap: 8px; }
+    .bottom-row { flex-direction: column !important; }
+    .feature-grid, .caps-grid { grid-template-columns: 1fr !important; }
+    footer .footer-cols { flex-direction: column !important; gap: 24px; }
+    body { padding-top: env(safe-area-inset-top); }
+  }
+  @media (max-width: 480px) {
+    h1 { font-size: 1.6rem !important; }
+    .kpi-grid { grid-template-columns: 1fr !important; }
+    nav > div:last-child .btn-o { display: none; }
+  }
+
+</style>
+  <script>
+    if ("serviceWorker" in navigator) { window.addEventListener("load", () => { navigator.serviceWorker.register("/sw.js").catch(()=>{}); }); }
+    let deferredPrompt; window.addEventListener("beforeinstallprompt", e => { deferredPrompt = e; e.preventDefault(); document.getElementById("install-btn")?.removeAttribute("hidden"); }); function installApp() { if(deferredPrompt) { deferredPrompt.prompt(); deferredPrompt.userChoice.then(()=>{deferredPrompt=null;}); } }
+  </script>
+</head>
+<body>
+<!-- NAV -->
+<nav>
+  <a class="brand" href="/" style="display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--text);">
+    <div style="width:36px;height:36px;background:var(--o);border-radius:9px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.95rem;color:#fff;flex-shrink:0;">R</div>
+    <div style="font-weight:800;font-size:1rem;color:var(--text);">Ralph Analytics</div>
+  </a>
+  <div class="nav-links">
+    <a class="nl" href="#capabilities">Capabilities</a>
+    <a class="nl" href="#services">Services</a>
+    <a class="nl" href="#how">Methodology</a>
+    <a class="nl" href="#compliance">Compliance</a>
+    <a class="nl" href="#portals">Platform</a>
+  </div>
+  <div style="display:flex;gap:10px;">
+    <a href="/client" class="btn btn-ghost btn-sm" style="font-size:.8rem;padding:8px 16px;">Client Login</a><a href="/admin" class="btn btn-ghost btn-sm" style="font-size:.8rem;padding:8px 16px;opacity:.6;">Admin</a>
+    <button onclick="openModal()" class="btn btn-o btn-sm" style="font-size:.8rem;padding:8px 18px;">Get in Touch</button>
+  </div>
+</nav>
+
+
+<!-- HERO -->
+<div class="hero-wrap">
+  <div class="hero-grid-bg"></div>
+  <div class="hero-glow"></div>
+  <div class="hero">
+    <div class="hero-left">
+      <div class="hero-eyebrow"><div class="eyebrow-line"></div><div class="eyebrow-text">Data-Driven M&E Advisory</div></div>
+      <h1>Turning Compliance Data into <em>Measurable Impact</em></h1>
+      <p class="hero-lead">Ralph Analytics delivers advanced Monitoring & Evaluation services across risk management, supply chain integrity, regulatory compliance, and impact assessment — giving organisations the intelligence to act with confidence.</p>
+      <div class="hero-ctas">
+        <button onclick="openModal()" class="btn btn-o">Request a Consultation <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+        <a href="#capabilities" class="btn btn-ghost">Explore Capabilities</a>
+      </div>
+      <div class="hero-proof">
+        <div class="proof-item"><div class="proof-dot"></div>RBA-aligned audit frameworks</div>
+        <div class="proof-item"><div class="proof-dot"></div>Multi-tier supply chain monitoring</div>
+        <div class="proof-item"><div class="proof-dot"></div>Regulatory reporting ready</div>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="dash-card">
+        <div class="dash-header">
+          <div class="dash-title">Compliance Intelligence Dashboard</div>
+          <div class="dash-live"><div class="live-dot"></div>Live</div>
+        </div>
+        <div class="dash-body">
+          <div class="dash-kpis">
+            <div class="dkpi">
+              <div class="dkpi-n">94<span style="font-size:1rem;color:var(--muted)">%</span></div>
+              <div class="dkpi-l">Audit Compliance Rate</div>
+              <div class="dkpi-d up">↑ 6.2% vs prior period</div>
+            </div>
+            <div class="dkpi">
+              <div class="dkpi-n">147</div>
+              <div class="dkpi-l">Suppliers Vetted</div>
+              <div class="dkpi-d up">↑ 23 this quarter</div>
+            </div>
+            <div class="dkpi">
+              <div class="dkpi-n">12</div>
+              <div class="dkpi-l">Active Risk Flags</div>
+              <div class="dkpi-d warn">↓ from 31 last cycle</div>
+            </div>
+            <div class="dkpi">
+              <div class="dkpi-n">3.8<span style="font-size:1rem;color:var(--muted)">x</span></div>
+              <div class="dkpi-l">Impact Multiplier</div>
+              <div class="dkpi-d up">Verified outcomes</div>
+            </div>
+          </div>
+          <div class="bars-label">Compliance Score Trend — 8 Months</div>
+          <div class="bars" id="hero-bars"></div>
+          <div class="bar-months" id="hero-months"></div>
+          <div class="dash-footer">
+            <div class="df"><div class="df-n">RBA</div><div class="df-l">Primary Standard</div></div>
+            <div class="df"><div class="df-n">ISO 37001</div><div class="df-l">Anti-Bribery</div></div>
+            <div class="df"><div class="df-n">SDG+</div><div class="df-l">Impact Aligned</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  </div>
+</div>
+
+<!-- CAPABILITIES -->
+<div class="section" id="capabilities">
+  <div class="container">
+    <div class="sec-eyebrow"><div class="eyebrow-line"></div><div class="sec-tag">Core Capabilities</div></div>
+    <h2 class="sec-h">End-to-End M&E Intelligence<br>Across Your Organisation</h2>
+    <p class="sec-sub">We integrate data collection, analysis, and reporting into a continuous intelligence loop — from field-level audit to executive dashboard.</p>
+
+    <div class="cap-layout">
+      <div class="cap-sticky">
+        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:14px;padding:32px 28px;">
+          <div style="font-size:.67rem;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--o);margin-bottom:14px;">Why Ralph Analytics</div>
+          <div style="font-size:1.05rem;font-weight:700;margin-bottom:14px;line-height:1.45;">Advisory rigour backed by real-time data infrastructure</div>
+          <p style="font-size:.83rem;color:var(--muted);line-height:1.82;margin-bottom:22px;">We don't just produce reports — we build the measurement systems that make accountability continuous, scalable, and verifiable.</p>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <div style="display:flex;gap:12px;align-items:flex-start;">
+              <div style="width:20px;height:20px;border-radius:50%;background:rgba(232,82,26,.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="var(--o)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+              <span style="font-size:.82rem;color:var(--muted);line-height:1.6;">Structured M&E frameworks tailored to funder & regulatory requirements</span>
+            </div>
+            <div style="display:flex;gap:12px;align-items:flex-start;">
+              <div style="width:20px;height:20px;border-radius:50%;background:rgba(232,82,26,.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="var(--o)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+              <span style="font-size:.82rem;color:var(--muted);line-height:1.6;">Independent third-party verification and audit readiness</span>
+            </div>
+            <div style="display:flex;gap:12px;align-items:flex-start;">
+              <div style="width:20px;height:20px;border-radius:50%;background:rgba(232,82,26,.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="var(--o)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+              <span style="font-size:.82rem;color:var(--muted);line-height:1.6;">Longitudinal performance tracking and trend intelligence</span>
+            </div>
+            <div style="display:flex;gap:12px;align-items:flex-start;">
+              <div style="width:20px;height:20px;border-radius:50%;background:rgba(232,82,26,.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="var(--o)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+              <span style="font-size:.82rem;color:var(--muted);line-height:1.6;">Actionable corrective action plans with progress monitoring</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cap-cards">
+        <div class="cap-card">
+          <div class="cap-card-top">
+            <div class="cap-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+            <div>
+              <h3>Risk Management & Assessment</h3>
+              <p>Systematic identification, scoring, and monitoring of operational, reputational, and compliance risks. We build live risk registers with escalation protocols and trend tracking across your entire value chain.</p>
+            </div>
+          </div>
+          <div class="cap-tags"><span class="ctag">Risk Registers</span><span class="ctag">Heat Mapping</span><span class="ctag">Escalation Protocols</span><span class="ctag">Trend Analysis</span></div>
+        </div>
+
+        <div class="cap-card">
+          <div class="cap-card-top">
+            <div class="cap-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+            <div>
+              <h3>Impact Assessment & Performance Tracking</h3>
+              <p>Quantify programme outcomes against SDG, donor, and organisational KPIs. We design results frameworks, conduct baseline and endline evaluations, and provide verified impact narratives for stakeholder reporting.</p>
+            </div>
+          </div>
+          <div class="cap-tags"><span class="ctag">Results Frameworks</span><span class="ctag">Baseline Studies</span><span class="ctag">SDG Alignment</span><span class="ctag">Outcome Verification</span></div>
+        </div>
+
+        <div class="cap-card">
+          <div class="cap-card-top">
+            <div class="cap-icon"><svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div>
+            <div>
+              <h3>Supply Chain Monitoring & Supplier Vetting</h3>
+              <p>Multi-tier supplier assessments against RBA, ISO 20400, and custom standards. Continuous monitoring flags emerging risks — from labour practices to environmental compliance — before they become liabilities.</p>
+            </div>
+          </div>
+          <div class="cap-tags"><span class="ctag">RBA Framework</span><span class="ctag">Supplier Scoring</span><span class="ctag">Labour Standards</span><span class="ctag">ESG Monitoring</span></div>
+        </div>
+
+        <div class="cap-card">
+          <div class="cap-card-top">
+            <div class="cap-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+            <div>
+              <h3>Regulatory Compliance & Audit Readiness</h3>
+              <p>Structured pre-audit assessments, gap analysis, and corrective action planning mapped to applicable standards. We prepare your organisation for third-party audits and regulatory submissions with documented evidence trails.</p>
+            </div>
+          </div>
+          <div class="cap-tags"><span class="ctag">Gap Analysis</span><span class="ctag">CAP Tracking</span><span class="ctag">Evidence Management</span><span class="ctag">Audit Preparation</span></div>
+        </div>
+
+        <div class="cap-card">
+          <div class="cap-card-top">
+            <div class="cap-icon"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
+            <div>
+              <h3>Data Analytics & Governance Reporting</h3>
+              <p>Transform raw field data into structured analytical outputs. Custom dashboards, performance scorecards, and executive reporting packages that satisfy governance, board, and donor requirements — in real time.</p>
+            </div>
+          </div>
+          <div class="cap-tags"><span class="ctag">Dashboards</span><span class="ctag">Scorecards</span><span class="ctag">Board Reporting</span><span class="ctag">Donor Compliance</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HOW WE WORK -->
+<div class="section" id="how">
+  <div class="container">
+    <div class="sec-eyebrow"><div class="eyebrow-line"></div><div class="sec-tag">Our Methodology</div></div>
+    <h2 class="sec-h">A Rigorous Four-Stage<br>M&E Process</h2>
+    <p class="sec-sub">Every engagement follows a structured methodology that ensures findings are credible, comparable, and actionable — from initial scoping to continuous monitoring.</p>
+    <div class="how-grid">
+      <div class="how-step">
+        <div class="step-num">01</div>
+        <h3>Scoping & Framework Design</h3>
+        <p>Define measurement objectives, identify key indicators, and build a customised M&E framework aligned to your standards, stakeholders, and reporting requirements.</p>
+        <div class="step-arrow">→</div>
+      </div>
+      <div class="how-step">
+        <div class="step-num">02</div>
+        <h3>Data Collection & Field Audit</h3>
+        <p>Deploy structured assessment tools — site audits, worker interviews, document reviews, and supplier questionnaires — using digital capture for full traceability.</p>
+        <div class="step-arrow">→</div>
+      </div>
+      <div class="how-step">
+        <div class="step-num">03</div>
+        <h3>Analysis & Risk Scoring</h3>
+        <p>Apply quantitative scoring models and qualitative analysis to surface compliance gaps, risk concentrations, and performance trends across all data dimensions.</p>
+        <div class="step-arrow">→</div>
+      </div>
+      <div class="how-step">
+        <div class="step-num">04</div>
+        <h3>Reporting & Continuous Monitoring</h3>
+        <p>Deliver structured reports with corrective action plans, executive dashboards, and a live monitoring system that tracks remediation progress over time.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SERVICES SECTION -->
+<div class="section" id="services">
+  <div class="container">
+
+    <!-- top: eyebrow + headline + description -->
+    <div style="max-width:720px;margin-bottom:48px;">
+      <div class="sec-eyebrow" style="margin-bottom:16px;"><div class="eyebrow-line"></div><div class="sec-tag">Platform Services</div></div>
+      <h2 class="sec-h" style="font-size:2rem;line-height:1.2;margin-bottom:16px;">One Platform. Every Compliance Workflow You Need.</h2>
+      <p style="font-size:.92rem;color:var(--muted);line-height:1.8;">Ralph Analytics brings together AI-powered auditing, risk management, supply chain monitoring, impact reporting and regulatory compliance in a single connected platform — accessible from your client dashboard the moment your account is activated.</p>
+    </div>
+
+    <!-- full-width Intelligence Dashboard -->
+    <div class="intel-dash">
+
+      <!-- dash top bar -->
+      <div class="id-topbar">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:30px;height:30px;background:#E8521A;border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.8rem;color:#fff;">R</div>
+          <span style="font-weight:700;font-size:.88rem;">Ralph Analytics</span>
+          <span style="color:#3a3f52;margin:0 4px;">/</span>
+          <span style="font-size:.82rem;color:#8b8fa8;">Intelligence Dashboard</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:18px;">
+          <div style="display:flex;align-items:center;gap:6px;"><div class="live-dot"></div><span style="font-size:.75rem;font-weight:700;color:#4ade80;">Live</span></div>
+          <span style="font-size:.72rem;color:#8b8fa8;" id="id-time">Updated 19:12:08</span>
+          <div style="width:30px;height:30px;border-radius:50%;background:#E8521A;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.75rem;color:#fff;">AV</div>
+        </div>
+      </div>
+
+      <!-- tabs + health score row -->
+      <div class="id-tabs-row">
+        <div class="id-tabs">
+          <button class="id-tab" onclick="idTab(this,'exec')">Executive</button>
+          <button class="id-tab" onclick="idTab(this,'risk')">Risk Manager</button>
+          <button class="id-tab" onclick="idTab(this,'comp')">Compliance</button>
+          <button class="id-tab active" onclick="idTab(this,'sc')">Supply Chain</button>
+        </div>
+        <div class="id-health">
+          <div>
+            <div style="font-size:.6rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:#8b8fa8;margin-bottom:2px;">Overall Health</div>
+            <div style="font-size:1.8rem;font-weight:900;color:#f59e0b;line-height:1;">69<span style="font-size:1rem;color:#8b8fa8;">/100</span></div>
+          </div>
+          <div class="id-ring" id="id-ring-wrap">
+            <svg width="54" height="54" viewBox="0 0 54 54">
+              <circle cx="27" cy="27" r="22" fill="none" stroke="#2a2d3e" stroke-width="5"/>
+              <circle cx="27" cy="27" r="22" fill="none" stroke="#f59e0b" stroke-width="5"
+                stroke-dasharray="138.2" stroke-dashoffset="42.5" stroke-linecap="round"
+                transform="rotate(-90 27 27)"/>
+              <text x="27" y="32" text-anchor="middle" font-size="11" font-weight="800" fill="#f59e0b">69</text>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- KPI cards -->
+      <div class="id-kpis" id="id-kpis-wrap">
+        <!-- populated by JS based on active tab -->
+      </div>
+
+      <!-- bottom row: chart + audit table + standards -->
+      <div class="id-bottom" id="id-bottom-wrap">
+        <!-- populated by JS based on active tab -->
+      </div>
+
+      <!-- dash footer strip -->
+      <div class="id-footer-strip">
+        <span>&#128274; Secure access</span>
+        <span>&#128200; AI-powered analysis</span>
+        <span>&#128203; Audit-ready exports</span>
+        <span>&#127758; Multi-region monitoring</span>
+      </div>
+
+    </div><!-- /intel-dash -->
+
+  </div>
+</div>
+
+
+<!-- ── AI COMPLIANCE SECTION ──────────────────────────────────────────── -->
+<div class="section" id="compliance" style="background:linear-gradient(180deg,#0d1117 0%,#0a0d14 100%);padding:88px 0;">
+  <div class="container" style="max-width:1100px;margin:0 auto;padding:0 24px;">
+
+    <!-- Header -->
+    <div style="text-align:center;margin-bottom:56px;">
+      <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(232,82,26,.1);border:1px solid rgba(232,82,26,.2);border-radius:20px;padding:6px 16px;margin-bottom:18px;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#E8521A" stroke-width="2.5"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        <span style="font-size:.72rem;font-weight:800;color:#E8521A;letter-spacing:.08em;">AI GOVERNANCE & COMPLIANCE</span>
+      </div>
+      <h2 style="font-size:clamp(1.7rem,3.5vw,2.4rem);font-weight:800;color:#fff;margin:0 0 16px;line-height:1.2;">
+        Built to the World's Leading AI Standards
+      </h2>
+      <p style="font-size:1rem;color:rgba(255,255,255,.55);max-width:620px;margin:0 auto;line-height:1.7;">
+        Ralph Analytics is built, operated, and audited against every major AI regulatory framework. 
+        Our compliance posture is transparent, documented, and continuously maintained.
+      </p>
+    </div>
+
+    <!-- Compliance Summary Statement -->
+    <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:22px 32px;margin-bottom:36px;">
+      <p style="margin:0;font-size:.95rem;color:rgba(255,255,255,.75);line-height:1.7;">
+        Ralph Analytics maintains active alignment with <strong style="color:#fff;">EU AI Act</strong>, <strong style="color:#fff;">SA AI Policy (DSIT 2024)</strong>, <strong style="color:#fff;">ISO 42001</strong>, and <strong style="color:#fff;">ISO 9001</strong> — with ongoing implementation underway for <strong style="color:#fff;">POPIA</strong>, <strong style="color:#fff;">GDPR</strong>, and <strong style="color:#fff;">ISO 27001</strong>. All AI outputs are advisory-only, human-reviewed, and disclosed in every client deliverable.
+      </p>
+    </div>
+
+    <!-- Compliance Table -->
+    <div style="overflow-x:auto;border-radius:14px;border:1px solid rgba(255,255,255,.07);">
+      <table style="width:100%;border-collapse:collapse;font-size:.84rem;">
+        <thead>
+          <tr style="background:rgba(255,255,255,.04);border-bottom:1px solid rgba(255,255,255,.08);">
+            <th style="text-align:left;padding:14px 20px;font-size:.7rem;font-weight:700;color:rgba(255,255,255,.4);letter-spacing:.06em;">FRAMEWORK</th>
+            <th style="text-align:left;padding:14px 20px;font-size:.7rem;font-weight:700;color:rgba(255,255,255,.4);letter-spacing:.06em;">SCOPE</th>
+            <th style="text-align:center;padding:14px 20px;font-size:.7rem;font-weight:700;color:rgba(255,255,255,.4);letter-spacing:.06em;">STATUS</th>
+            <th style="text-align:left;padding:14px 20px;font-size:.7rem;font-weight:700;color:rgba(255,255,255,.4);letter-spacing:.06em;">KEY CONTROLS IN PLACE</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- EU AI Act -->
+          <tr style="border-bottom:1px solid rgba(255,255,255,.05);">
+            <td style="padding:16px 20px;">
+              <div style="font-weight:700;color:#fff;">EU AI Act</div>
+              <div style="font-size:.72rem;color:rgba(255,255,255,.35);margin-top:2px;">Reg. 2024/1689</div>
+            </td>
+            <td style="padding:16px 20px;color:rgba(255,255,255,.55);line-height:1.5;">Transparency · Human oversight · GPAI deployer obligations</td>
+            <td style="padding:16px 20px;text-align:center;">
+              <span style="display:inline-flex;align-items:center;gap:5px;background:rgba(26,122,74,.15);border:1px solid rgba(74,222,128,.2);color:#4ade80;font-size:.7rem;font-weight:700;padding:4px 12px;border-radius:20px;">
+                ✓ COMPLIANT
+              </span>
+            </td>
+            <td style="padding:16px 20px;color:rgba(255,255,255,.5);line-height:1.6;font-size:.78rem;">Art.13 transparency banner · Art.14 human review queue · Art.9 AI risk management · Advisory-only outputs</td>
+          </tr>
+          <!-- POPIA -->
+          <tr style="border-bottom:1px solid rgba(255,255,255,.05);">
+            <td style="padding:16px 20px;">
+              <div style="font-weight:700;color:#fff;">POPIA</div>
+              <div style="font-size:.72rem;color:rgba(255,255,255,.35);margin-top:2px;">Act 4 of 2013 (SA)</div>
+            </td>
+            <td style="padding:16px 20px;color:rgba(255,255,255,.55);line-height:1.5;">Data protection · Information Officer · DPIA · Data subject rights</td>
+            <td style="padding:16px 20px;text-align:center;">
+              <span style="display:inline-flex;align-items:center;gap:5px;background:rgba(217,119,6,.12);border:1px solid rgba(251,191,36,.2);color:#fbbf24;font-size:.7rem;font-weight:700;padding:4px 12px;border-radius:20px;">
+                ⏳ IN PROGRESS
+              </span>
+            </td>
+            <td style="padding:16px 20px;color:rgba(255,255,255,.5);line-height:1.6;font-size:.78rem;">IO registered · PAIA Manual published · Privacy Policy live · DPIA signed · PII stripping active · 1 gap: breach drill pending</td>
+          </tr>
+          <!-- SA AI Policy -->
+          <tr style="border-bottom:1px solid rgba(255,255,255,.05);">
+            <td style="padding:16px 20px;">
+              <div style="font-weight:700;color:#fff;">SA AI Policy</div>
+              <div style="font-size:.72rem;color:rgba(255,255,255,.35);margin-top:2px;">DSIT 2024</div>
+            </td>
+            <td style="padding:16px 20px;color:rgba(255,255,255,.55);line-height:1.5;">Responsible AI · Transparency · Human dignity · Innovation</td>
+            <td style="padding:16px 20px;text-align:center;">
+              <span style="display:inline-flex;align-items:center;gap:5px;background:rgba(26,122,74,.15);border:1px solid rgba(74,222,128,.2);color:#4ade80;font-size:.7rem;font-weight:700;padding:4px 12px;border-radius:20px;">
+                ✓ ALIGNED
+              </span>
+            </td>
+            <td style="padding:16px 20px;color:rgba(255,255,255,.5);line-height:1.6;font-size:.78rem;">AI Governance Policy v1.1 · Responsible use principles · AI disclosure in all deliverables · Human-in-the-loop enforced</td>
+          </tr>
+          <!-- GDPR -->
+          <tr style="border-bottom:1px solid rgba(255,255,255,.05);">
+            <td style="padding:16px 20px;">
+              <div style="font-weight:700;color:#fff;">GDPR</div>
+              <div style="font-size:.72rem;color:rgba(255,255,255,.35);margin-top:2px;">EU Reg. 2016/679</div>
+            </td>
+            <td style="padding:16px 20px;color:rgba(255,255,255,.55);line-height:1.5;">Data processing · Consent · Rights · Cross-border transfers</td>
+            <td style="padding:16px 20px;text-align:center;">
+              <span style="display:inline-flex;align-items:center;gap:5px;background:rgba(99,102,241,.12);border:1px solid rgba(129,140,248,.2);color:#818cf8;font-size:.7rem;font-weight:700;padding:4px 12px;border-radius:20px;">
+                ◎ MONITORED
+              </span>
+            </td>
+            <td style="padding:16px 20px;color:rgba(255,255,255,.5);line-height:1.6;font-size:.78rem;">Low EU data exposure · Privacy Policy compliant · DPA with OpenAI · Audit trail active · Low-risk B2B SaaS profile</td>
+          </tr>
+          <!-- ISO 42001 -->
+          <tr style="border-bottom:1px solid rgba(255,255,255,.05);">
+            <td style="padding:16px 20px;">
+              <div style="font-weight:700;color:#fff;">ISO/IEC 42001</div>
+              <div style="font-size:.72rem;color:rgba(255,255,255,.35);margin-top:2px;">AI Mgmt System 2023</div>
+            </td>
+            <td style="padding:16px 20px;color:rgba(255,255,255,.55);line-height:1.5;">AI management system · Risk management · Logging · Governance</td>
+            <td style="padding:16px 20px;text-align:center;">
+              <span style="display:inline-flex;align-items:center;gap:5px;background:rgba(26,122,74,.15);border:1px solid rgba(74,222,128,.2);color:#4ade80;font-size:.7rem;font-weight:700;padding:4px 12px;border-radius:20px;">
+                ✓ COMPLIANT
+              </span>
+            </td>
+            <td style="padding:16px 20px;color:rgba(255,255,255,.5);line-height:1.6;font-size:.78rem;">5/6 controls implemented · AI interaction logging · PII sanitisation · Incident management · Formal audit Q4 2026</td>
+          </tr>
+          <!-- NIST RMF -->
+          <tr style="border-bottom:1px solid rgba(255,255,255,.05);">
+            <td style="padding:16px 20px;">
+              <div style="font-weight:700;color:#fff;">NIST AI RMF 1.0</div>
+              <div style="font-size:.72rem;color:rgba(255,255,255,.35);margin-top:2px;">US Framework</div>
+            </td>
+            <td style="padding:16px 20px;color:rgba(255,255,255,.55);line-height:1.5;">GOVERN · MAP · MEASURE · MANAGE · Risk lifecycle</td>
+            <td style="padding:16px 20px;text-align:center;">
+              <span style="display:inline-flex;align-items:center;gap:5px;background:rgba(217,119,6,.12);border:1px solid rgba(251,191,36,.2);color:#fbbf24;font-size:.7rem;font-weight:700;padding:4px 12px;border-radius:20px;">
+                ⏳ IN PROGRESS
+              </span>
+            </td>
+            <td style="padding:16px 20px;color:rgba(255,255,255,.5);line-height:1.6;font-size:.78rem;">GOVERN + MAP + MEASURE + MANAGE implemented · Board-level AI reporting pending Q3 2026</td>
+          </tr>
+          <!-- UK AI -->
+          <tr>
+            <td style="padding:16px 20px;">
+              <div style="font-weight:700;color:#fff;">UK AI Framework</div>
+              <div style="font-size:.72rem;color:rgba(255,255,255,.35);margin-top:2px;">DSIT 2023</div>
+            </td>
+            <td style="padding:16px 20px;color:rgba(255,255,255,.55);line-height:1.5;">Principles-based · Safety · Transparency · Accountability</td>
+            <td style="padding:16px 20px;text-align:center;">
+              <span style="display:inline-flex;align-items:center;gap:5px;background:rgba(26,122,74,.15);border:1px solid rgba(74,222,128,.2);color:#4ade80;font-size:.7rem;font-weight:700;padding:4px 12px;border-radius:20px;">
+                ✓ COMPLIANT
+              </span>
+            </td>
+            <td style="padding:16px 20px;color:rgba(255,255,255,.5);line-height:1.6;font-size:.78rem;">Sector-led approach aligned · Transparency + accountability principles met · No regulatory gaps identified</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Footer note -->
+    <div style="display:flex;align-items:flex-start;gap:12px;margin-top:24px;padding:16px 20px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.05);border-radius:10px;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.3)" stroke-width="2" style="flex-shrink:0;margin-top:1px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <p style="font-size:.76rem;color:rgba(255,255,255,.3);line-height:1.6;margin:0;">
+        <strong style="color:rgba(255,255,255,.5);">AI Disclosure:</strong> Ralph Analytics uses OpenAI GPT-4o as a General-Purpose AI model for document analysis and report generation only. All AI outputs are advisory and require human expert review before use. Ralph does not make automated decisions about natural persons. Full AI Governance Policy available at <a href="/privacy#ai-governance" style="color:#E8521A;text-decoration:none;">ralph-analytics.com/privacy</a> · Updated June 2026.
+      </p>
+    </div>
+
+  </div>
+</div>
+<!-- ── END COMPLIANCE SECTION ──────────────────────────────────────────── -->
+
+
+<footer class="site-footer" style="background:#0a0d14;border-top:1px solid var(--border);padding:44px 0 24px;">
+  <div style="max-width:1060px;margin:0 auto;padding:0 32px 32px;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:32px;border-bottom:1px solid var(--border);margin-bottom:20px;">
+    <div style="max-width:300px;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+        <div style="width:30px;height:30px;background:var(--o);border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.75rem;color:#fff;">R</div>
+        <span style="font-weight:800;font-size:.95rem;">Ralph Analytics</span>
+      </div>
+      <p style="font-size:.8rem;color:var(--muted);line-height:1.65;">Advanced M&amp;E advisory, compliance intelligence and impact assessment powered by AI.</p>
+      <p style="font-size:.75rem;color:var(--dim);margin-top:10px;">admin@ralph-analytics.com</p>
+    </div>
+    <div style="display:flex;gap:48px;flex-wrap:wrap;">
+      <div>
+        <div style="font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--dim);margin-bottom:12px;">Platform</div>
+        <a href="/client" style="display:block;font-size:.82rem;color:var(--muted);text-decoration:none;margin-bottom:8px;transition:color .2s;" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'">Client Portal</a>
+        <a href="#services" style="display:block;font-size:.82rem;color:var(--muted);text-decoration:none;margin-bottom:8px;transition:color .2s;" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'">Services</a>
+        <a href="#capabilities" style="display:block;font-size:.82rem;color:var(--muted);text-decoration:none;margin-bottom:8px;transition:color .2s;" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'">Capabilities</a>
+      </div>
+      <div>
+        <div style="font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--dim);margin-bottom:12px;">Company</div>
+        <a href="#compliance" style="display:block;font-size:.82rem;color:var(--muted);text-decoration:none;margin-bottom:8px;transition:color .2s;" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'">Compliance</a>
+        <a href="#how" style="display:block;font-size:.82rem;color:var(--muted);text-decoration:none;margin-bottom:8px;transition:color .2s;" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'">Methodology</a>
+        <a href="javascript:openModal()" style="display:block;font-size:.82rem;color:var(--muted);text-decoration:none;margin-bottom:8px;">Contact Us</a>
+        <a href="/admin" style="display:block;font-size:.75rem;color:var(--dim);text-decoration:none;">Admin</a>
+        <a href="/privacy" style="display:block;font-size:.82rem;color:var(--muted);text-decoration:none;margin-bottom:8px;transition:color .2s;" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'">Privacy Policy</a>
+        <a href="/paia" style="display:block;font-size:.82rem;color:var(--muted);text-decoration:none;margin-bottom:8px;transition:color .2s;" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'">PAIA Manual</a>
+      </div>
+    </div>
+  </div>
+  <div style="max-width:1060px;margin:0 auto;padding:0 32px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+    <p style="font-size:.75rem;color:var(--dim);">&#169; 2026 Ralph Analytics. All rights reserved.</p>
+    <p style="font-size:.75rem;color:var(--dim);">M&amp;E Advisory &#183; Compliance Intelligence &#183; Impact Assessment</p>
+  </div>
+</footer>
+
+
+<!-- CONTACT MODAL -->
+<div class="modal-bg" id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-top">
+      <div>
+        <h3>Request a Consultation</h3>
+        <p>Tell us about your compliance or M&E requirements — we'll respond within one business day.</p>
+      </div>
+      <button class="mclose" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-note">Your enquiry is sent directly to our advisory team at <strong style="color:var(--text)">admin@ralph-analytics.com</strong></div>
+      <div id="mform">
+        <div class="fg-row">
+          <div class="fg"><label>First Name *</label><input type="text" id="f-fname" placeholder="Jane"/></div>
+          <div class="fg"><label>Last Name *</label><input type="text" id="f-lname" placeholder="Smith"/></div>
+        </div>
+        <div class="fg"><label>Organisation *</label><input type="text" id="f-org" placeholder="Your company or organisation"/></div>
+        <div class="fg"><label>Email Address *</label><input type="email" id="f-email" placeholder="jane@organisation.com"/></div>
+        <div class="fg"><label>Phone (optional)</label><input type="tel" id="f-phone" placeholder="+27 00 000 0000"/></div>
+        <div class="fg">
+          <label>Service Area *</label>
+          <select id="f-service">
+            <option value="">— Select a service area —</option>
+            <option>Risk Management & Assessment</option>
+            <option>Impact Assessment & Performance Tracking</option>
+            <option>Supply Chain Monitoring & Supplier Vetting</option>
+            <option>Regulatory Compliance & Audit Readiness</option>
+            <option>Data Analytics & Governance Reporting</option>
+            <option>M&E System Design & Training</option>
+            <option>Other / General Enquiry</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>Applicable Standard or Framework (if known)</label>
+          <select id="f-standard">
+            <option value="">— Optional —</option>
+            <option>RBA (Responsible Business Alliance)</option>
+            <option>SMETA / Sedex</option>
+            <option>ISO 37001 (Anti-Bribery)</option>
+            <option>SA8000 (Social Accountability)</option>
+            <option>USAID / DFID / EU Donor Framework</option>
+            <option>GRI Standards</option>
+            <option>ESRS / CSRD</option>
+            <option>Bespoke / Internal Standard</option>
+          </select>
+        </div>
+        <div class="fg"><label>Brief Description of Your Requirements *</label><textarea id="f-msg" placeholder="Describe your organisation's compliance context, current challenges, or what you're looking to achieve..."></textarea></div>
+        <button class="btn btn-o" style="width:100%;justify-content:center;" onclick="submitForm()">Send Enquiry <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+      </div>
+      <div id="mconfirm" style="display:none;text-align:center;padding:24px 0 16px;">
+        <div style="width:56px;height:56px;border-radius:50%;background:rgba(74,222,128,.1);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+        <div style="font-size:1.1rem;font-weight:800;margin-bottom:8px;">Enquiry Sent</div>
+        <div style="font-size:.85rem;color:var(--muted);line-height:1.7;">Thank you — our advisory team will be in touch within one business day.<br>A copy has been sent to <span id="m-email-confirm" style="color:var(--text);"></span></div>
+        <button class="btn btn-ghost" style="margin-top:22px;" onclick="closeModal()">Close</button>
+      </div>
+    </div>
+    <div style="height:20px;"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const barData=[62,71,68,79,83,88,91,94];
+const months=['Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr'];
+const wrap=document.getElementById('hero-bars');
+const mwrap=document.getElementById('hero-months');
+if(wrap){
+  const maxV=Math.max(...barData);
+  barData.forEach((v,i)=>{
+    const b=document.createElement('div');
+    b.className='b'+(i===barData.length-1?' hi':i>=barData.length-3?' mid':'');
+    b.style.height=(v/maxV*100)+'%'; wrap.appendChild(b);
+    const m=document.createElement('div');
+    m.className='bm'; m.textContent=months[i]; mwrap.appendChild(m);
+  });
+}
+function openModal(){ document.getElementById('modal').classList.add('open'); document.body.style.overflow='hidden'; }
+function closeModal(){
+  document.getElementById('modal').classList.remove('open'); document.body.style.overflow='';
+  const mf=document.getElementById('mform'); const mc=document.getElementById('mconfirm');
+  if(mf) mf.style.display=''; if(mc) mc.style.display='none';
+}
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal(); });
+async function submitForm(){
+  const fname=document.getElementById('f-fname').value.trim();
+  const lname=document.getElementById('f-lname').value.trim();
+  const org=document.getElementById('f-org').value.trim();
+  const email=document.getElementById('f-email').value.trim();
+  const phone=document.getElementById('f-phone').value.trim();
+  const service=document.getElementById('f-service').value;
+  const standard=document.getElementById('f-standard').value;
+  const msg=document.getElementById('f-msg').value.trim();
+  if(!fname||!lname||!org||!email||!service||!msg){ showToast('Please complete all required fields.','warn'); return; }
+  if(!/^[\S@]+@[\S@]+\.[\S@]+$/.test(email)){ showToast('Please enter a valid email address.','warn'); return; }
+  const btn=event.target.closest('button');
+  btn.textContent='Sending...'; btn.disabled=true;
+  try{
+    const res=await fetch('/api/contact',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:fname+' '+lname,organisation:org,email,phone,service,standard,message:msg})});
+    const data=await res.json();
+    if(res.ok&&data.success){
+      const mc=document.getElementById('m-email-confirm'); if(mc) mc.textContent=email;
+      document.getElementById('mform').style.display='none';
+      document.getElementById('mconfirm').style.display='block';
+    } else { throw new Error(data.error||'Send failed'); }
+  }catch(err){
+    showToast('Unable to send - please email admin@ralph-analytics.com directly','warn');
+    btn.innerHTML='Send Enquiry'; btn.disabled=false;
+  }
+}
+function showToast(msg,type='ok'){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.style.borderColor=type==='warn'?'rgba(251,191,36,.3)':'rgba(74,222,128,.3)';
+  t.style.color=type==='warn'?'#fbbf24':'#4ade80';
+  t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),4000);
+}
+window.addEventListener('scroll',()=>{
+  const nav=document.querySelector('nav');
+  if(nav) nav.style.boxShadow=window.scrollY>30?'0 4px 32px rgba(0,0,0,.4)':'';
+});
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click',e=>{
+    const target=document.querySelector(a.getAttribute('href'));
+    if(target){ e.preventDefault(); target.scrollIntoView({behavior:'smooth',block:'start'}); }
+  });
+});
+
+
+
+// Intelligence Dashboard
+function idTab(el, key) {
+  document.querySelectorAll('.id-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+}
+// Build bar chart
+const idBars = document.getElementById('id-chart-bars');
+const idMonths = document.getElementById('id-chart-months');
+if(idBars){
+  const vals=[58,63,60,68,72,69,74,74];
+  const mons=['Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr'];
+  const maxV=Math.max(...vals);
+  vals.forEach((v,i)=>{
+    const b=document.createElement('div');
+    b.className='ib'+(i===vals.length-1?' hi':i>=vals.length-3?' mid':'');
+    b.style.height=(v/maxV*100)+'%';
+    idBars.appendChild(b);
+    const m=document.createElement('span');
+    m.textContent=mons[i];
+    idMonths.appendChild(m);
+  });
+}
+// Live clock
+function updateIdTime(){
+  const el=document.getElementById('id-time');
+  if(el){ const n=new Date(); el.textContent='Updated '+n.getHours().toString().padStart(2,'0')+':'+n.getMinutes().toString().padStart(2,'0')+':'+n.getSeconds().toString().padStart(2,'0'); }
+}
+updateIdTime();
+setInterval(updateIdTime,1000);
+
+// Intelligence Dashboard — tab data
+const ID_DATA = {
+  exec: {
+    health: { score: 82, color: '#4ade80' },
+    kpis: [
+      { icon: 'chart', dot: '#4ade80', val: '82%', valColor: '#E8521A', label: 'Overall Compliance', sub: 'Across all programmes', delta: '&#8593; +8% vs last quarter', dClass: 'neg' },
+      { icon: 'target', dot: '#4ade80', val: '94%', valColor: '#E8521A', label: 'Audit Readiness', sub: 'Certification ready', delta: '&#8593; +12% this period', dClass: 'neg' },
+      { icon: 'users', dot: '#f59e0b', val: '12', valColor: '#E8521A', label: 'Active Programmes', sub: '3 due for review', delta: '&#8593; +2 this period', dClass: 'neg' },
+      { icon: 'flag', dot: '#4ade80', val: '96%', valColor: '#E8521A', label: 'Report Delivery', sub: 'On-time submissions', delta: '&#8593; +4% this period', dClass: 'neg' },
+    ],
+    chartVals: [68,72,75,78,79,81,82,82],
+    chartLabel: 'Overall Compliance Trend',
+    audits: [
+      ['Q1 Programme Review','Multi-standard','82%','#4ade80','Pass'],
+      ['Executive Audit Pack','ISO 37301','88%','#4ade80','Pass'],
+      ['Donor Compliance Rpt','USAID/DFID','91%','#4ade80','Pass'],
+      ['Board ESG Summary','ESG Framework','74%','#f59e0b','Review'],
+      ['Annual Impact Report','SDG Mapping','83%','#4ade80','Pass'],
+    ],
+    standards: [
+      ['ISO 9001',88,'#4ade80'],['ISO 37301',91,'#4ade80'],['ESG',74,'#f59e0b'],
+      ['SDGs',62,'#f59e0b'],['ISO 31000',79,'#4ade80'],['Labour',55,'#ef4444'],
+    ],
+  },
+  risk: {
+    health: { score: 71, color: '#f59e0b' },
+    kpis: [
+      { icon: 'alert', dot: '#ef4444', val: '18', valColor: '#E8521A', label: 'Active Risks', sub: '3 critical unmitigated', delta: '&#8593; +2 this period', dClass: 'pos' },
+      { icon: 'shield', dot: '#f59e0b', val: '71%', valColor: '#E8521A', label: 'Risk Mitigation Rate', sub: 'Controls in place', delta: '&#8595; -3% this period', dClass: 'neg' },
+      { icon: 'clock', dot: '#ef4444', val: '5', valColor: '#E8521A', label: 'Critical Risks', sub: 'Immediate action needed', delta: '&#8593; +1 this period', dClass: 'pos' },
+      { icon: 'check', dot: '#4ade80', val: '34', valColor: '#E8521A', label: 'Risks Closed', sub: 'This quarter', delta: '&#8593; +8 this period', dClass: 'neg' },
+    ],
+    chartVals: [45,52,48,58,61,65,68,71],
+    chartLabel: 'Risk Mitigation Trend',
+    audits: [
+      ['Operational Risk','ISO 31000','71%','#f59e0b','Review'],
+      ['Supply Chain Risk','COSO ERM','58%','#ef4444','CAP'],
+      ['Regulatory Risk','ISO 37301','82%','#4ade80','Pass'],
+      ['Financial Risk','Basel III','88%','#4ade80','Pass'],
+      ['ESG Risk Register','GRI Standards','66%','#f59e0b','Review'],
+    ],
+    standards: [
+      ['ISO 31000',71,'#f59e0b'],['COSO ERM',58,'#ef4444'],['ISO 37301',82,'#4ade80'],
+      ['Basel III',88,'#4ade80'],['GRI',66,'#f59e0b'],['FATF',44,'#ef4444'],
+    ],
+  },
+  comp: {
+    health: { score: 74, color: '#f59e0b' },
+    kpis: [
+      { icon: 'check2', dot: '#f59e0b', val: '74%', valColor: '#E8521A', label: 'Compliance Score', sub: 'Overall regulatory compliance', delta: '&#8595; 3% vs last period', dClass: 'neg' },
+      { icon: 'alert', dot: '#ef4444', val: '18', valColor: '#E8521A', label: 'Active Risks', sub: '3 critical unmitigated', delta: '&#8593; +2 this period', dClass: 'pos' },
+      { icon: 'truck', dot: '#f59e0b', val: '47', valColor: '#E8521A', label: 'Suppliers Monitored', sub: '6 high-risk suppliers', delta: '&#8593; +5 this period', dClass: 'neg' },
+      { icon: 'tool', dot: '#ef4444', val: '16', valColor: '#E8521A', label: 'Open CAPs', sub: '5 overdue actions', delta: '&#8595; -2 this period', dClass: 'neg' },
+    ],
+    chartVals: [58,63,60,68,72,69,74,74],
+    chartLabel: 'Compliance Score Trend',
+    audits: [
+      ['Shenzhen Facility A','RBA COC','91%','#4ade80','Pass'],
+      ['Jakarta Tier 2','SMETA 4P','74%','#f59e0b','Review'],
+      ['Lagos Hub','ISO 37301','88%','#4ade80','Pass'],
+      ['Dhaka Manufacturing','SA8000','61%','#ef4444','CAP'],
+      ['Nairobi Distribution','ISO 9001','83%','#4ade80','Pass'],
+    ],
+    standards: [
+      ['ISO 9001',88,'#4ade80'],['ISO 31000',74,'#f59e0b'],['RBA COC',91,'#4ade80'],
+      ['ESG',62,'#f59e0b'],['SA8000',55,'#ef4444'],['ISO 37301',79,'#4ade80'],
+    ],
+  },
+  sc: {
+    health: { score: 69, color: '#f59e0b' },
+    kpis: [
+      { icon: 'truck', dot: '#f59e0b', val: '47', valColor: '#E8521A', label: 'Suppliers Monitored', sub: '6 high-risk suppliers', delta: '&#8593; +5 this period', dClass: 'neg' },
+      { icon: 'alert', dot: '#ef4444', val: '6', valColor: '#E8521A', label: 'High-Risk Suppliers', sub: 'Require immediate review', delta: '&#8593; +1 this period', dClass: 'pos' },
+      { icon: 'check2', dot: '#4ade80', val: '89%', valColor: '#E8521A', label: 'Tier 1 Compliance', sub: 'Direct suppliers', delta: '&#8593; +3% this period', dClass: 'neg' },
+      { icon: 'flag', dot: '#f59e0b', val: '63%', valColor: '#E8521A', label: 'Tier 2 Compliance', sub: '14 pending assessments', delta: '&#8595; -4% this period', dClass: 'pos' },
+    ],
+    chartVals: [55,58,62,61,65,67,68,69],
+    chartLabel: 'Supply Chain Health Trend',
+    audits: [
+      ['Shenzhen Facility A','RBA COC','91%','#4ade80','Pass'],
+      ['Jakarta Tier 2','SMETA 4P','74%','#f59e0b','Review'],
+      ['Dhaka Manufacturing','SA8000','61%','#ef4444','CAP'],
+      ['Chennai Components','RBA COC','78%','#f59e0b','Review'],
+      ['Ho Chi Minh Tier 3','Labour Std','52%','#ef4444','CAP'],
+    ],
+    standards: [
+      ['RBA COC',88,'#4ade80'],['SMETA',74,'#f59e0b'],['SA8000',61,'#ef4444'],
+      ['ETI Base',79,'#4ade80'],['ILO Core',66,'#f59e0b'],['ISO 14001',55,'#ef4444'],
+    ],
+  },
+};
+
+let currentIdTab = 'sc';
+
+function idTab(el, key) {
+  document.querySelectorAll('.id-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  currentIdTab = key;
+  renderIdDash(key);
+}
+
+function renderIdDash(key) {
+  const d = ID_DATA[key];
+  if (!d) return;
+
+  // Update health ring
+  const ring = document.querySelector('#id-ring-wrap svg circle:last-child');
+  const txt  = document.querySelector('#id-ring-wrap text');
+  const hVal = document.querySelector('.id-health .id-kpi-val, #id-health-val');
+  const circumference = 2 * Math.PI * 22; // 138.23
+  const offset = circumference * (1 - d.health.score / 100);
+  if (ring)  { ring.setAttribute('stroke', d.health.color); ring.setAttribute('stroke-dashoffset', offset.toFixed(1)); }
+  if (txt)   { txt.textContent = d.health.score; txt.setAttribute('fill', d.health.color); }
+  const bigNum = document.querySelector('.id-health [style*="font-size:1.8rem"]');
+  if (bigNum) { bigNum.innerHTML = d.health.score + '<span style="font-size:1rem;color:#8b8fa8;">/100</span>'; bigNum.style.color = d.health.color; }
+
+  // Render KPI cards
+  const iconSVGs = {
+    check2: '<path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>',
+    alert:  '<path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>',
+    truck:  '<rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>',
+    tool:   '<path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/>',
+    shield: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
+    clock:  '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
+    check:  '<polyline points="20 6 9 17 4 12"/>',
+    chart:  '<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>',
+    target: '<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>',
+    users:  '<path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>',
+    flag:   '<path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/>',
+  };
+  const kpisWrap = document.getElementById('id-kpis-wrap');
+  if (kpisWrap) {
+    kpisWrap.innerHTML = d.kpis.map(k => `
+      <div class="id-kpi-card">
+        <div class="id-kpi-top">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8b8fa8" stroke-width="1.8" stroke-linecap="round">${iconSVGs[k.icon]||''}</svg>
+          <div class="id-kpi-dot" style="background:${k.dot};"></div>
+        </div>
+        <div class="id-kpi-val" style="color:${k.valColor};">${k.val}</div>
+        <div class="id-kpi-label">${k.label}</div>
+        <div class="id-kpi-sub">${k.sub}</div>
+        <div class="id-kpi-delta ${k.dClass}">${k.delta}</div>
+      </div>`).join('');
+  }
+
+  // Render bottom panels
+  const bottomWrap = document.getElementById('id-bottom-wrap');
+  if (bottomWrap) {
+    const maxV = Math.max(...d.chartVals);
+    const months = ['Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr'];
+    const bars = d.chartVals.map((v,i) => {
+      const cls = i===d.chartVals.length-1?' hi':i>=d.chartVals.length-3?' mid':'';
+      return `<div class="ib${cls}" style="height:${(v/maxV*100).toFixed(0)}%;"></div>`;
+    }).join('');
+    const monthSpans = months.map(m=>`<span>${m}</span>`).join('');
+
+    const auditRows = d.audits.map(a => `
+      <div class="id-tr">
+        <span>${a[0]}</span><span>${a[1]}</span>
+        <span style="color:${a[3]};font-weight:700;">${a[2]}</span>
+        <span class="id-badge ${a[4]==='Pass'?'pass':a[4]==='CAP'?'fail':'warn'}">${a[4]}</span>
+      </div>`).join('');
+
+    const stdRows = d.standards.map(s => `
+      <div class="id-std-row">
+        <span>${s[0]}</span>
+        <div class="id-std-bar"><div style="width:${s[1]}%;background:${s[2]};"></div></div>
+        <span>${s[1]}%</span>
+      </div>`).join('');
+
+    bottomWrap.innerHTML = `
+      <div class="id-panel" style="flex:1.2;">
+        <div class="id-panel-title">${d.chartLabel}</div>
+        <div class="id-chart-wrap">
+          <div class="id-chart-bars">${bars}</div>
+          <div class="id-chart-months">${monthSpans}</div>
+        </div>
+      </div>
+      <div class="id-panel" style="flex:1.4;">
+        <div class="id-panel-title">Recent Audits</div>
+        <div class="id-table">
+          <div class="id-tr hdr"><span>Facility</span><span>Standard</span><span>Score</span><span>Status</span></div>
+          ${auditRows}
+        </div>
+      </div>
+      <div class="id-panel" style="flex:0.9;">
+        <div class="id-panel-title">Standards Coverage</div>
+        <div class="id-standards">${stdRows}</div>
+      </div>`;
+  }
+}
+
+// Live clock
+function updateIdTime(){
+  const el=document.getElementById('id-time');
+  if(el){ const n=new Date(); el.textContent='Updated '+n.getHours().toString().padStart(2,'0')+':'+n.getMinutes().toString().padStart(2,'0')+':'+n.getSeconds().toString().padStart(2,'0'); }
+}
+updateIdTime();
+setInterval(updateIdTime,1000);
+
+// Init on load
+document.addEventListener('DOMContentLoaded',()=>{ renderIdDash(currentIdTab); });
+if(document.readyState!=='loading') renderIdDash(currentIdTab);
+
+</script>
+</body>
+</html>

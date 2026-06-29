@@ -1,0 +1,68 @@
+{
+  "vendors": [
+    {
+      "id": "727ea0e8-07ab-44f0-8141-14c629af13ee",
+      "name": "Shenzhen Precision Mfg",
+      "email": "audit@szprecision.com",
+      "country": "China",
+      "tier": 1,
+      "status": "active",
+      "password": "$2a$10$2s4mi81jXIx1agI8tQl3oe26RWz6y3QpsV9QaYhJaIplKkoATm/b2",
+      "created_at": "2026-06-25T19:12:55.512Z"
+    },
+    {
+      "id": "6db22cb3-4fc1-4747-935a-3c352c6d842b",
+      "name": "Jakarta Textile Co.",
+      "email": "compliance@jakartatextile.id",
+      "country": "Indonesia",
+      "tier": 2,
+      "status": "active",
+      "password": "$2a$10$WaN.NkiOLPWhN56ozt7.2OwJXT42Ga1xyfPckwIO7LQTikORsrb0e",
+      "created_at": "2026-06-25T19:12:55.625Z"
+    },
+    {
+      "id": "916a0b8b-1291-45ee-aad4-34bc09b07b39",
+      "name": "Nairobi Distribution Hub",
+      "email": "audit@nairobidist.co.ke",
+      "country": "Kenya",
+      "tier": 1,
+      "status": "active",
+      "password": "$2a$10$DKgu9Ph75ngO50UXGly9U.jbn9WCg5Gt5DD3qyIWPou2WVu0uHYfG",
+      "created_at": "2026-06-25T19:12:55.742Z"
+    }
+  ],
+  "audits": [
+    {
+      "id": "4fd1a6de-001e-4ce8-b68b-261c38efc49b",
+      "vendor_id": "727ea0e8-07ab-44f0-8141-14c629af13ee",
+      "vendor_name": "Shenzhen Precision Mfg",
+      "type": "RBA COC",
+      "status": "in_progress",
+      "due_date": "2026-07-15",
+      "assigned_auditor": "Lead Auditor",
+      "created_at": "2026-06-25T19:12:55.742Z"
+    },
+    {
+      "id": "038b0ad6-6954-48c1-9206-663da4257f1e",
+      "vendor_id": "6db22cb3-4fc1-4747-935a-3c352c6d842b",
+      "vendor_name": "Jakarta Textile Co.",
+      "type": "SMETA 4P",
+      "status": "pending_docs",
+      "due_date": "2026-07-30",
+      "assigned_auditor": "Field Auditor",
+      "created_at": "2026-06-25T19:12:55.742Z"
+    },
+    {
+      "id": "7b37b753-210b-4f40-9958-3f888a48a3b2",
+      "vendor_id": "916a0b8b-1291-45ee-aad4-34bc09b07b39",
+      "vendor_name": "Nairobi Distribution Hub",
+      "type": "ISO 9001",
+      "status": "completed",
+      "due_date": "2026-06-01",
+      "assigned_auditor": "Senior Auditor",
+      "created_at": "2026-06-25T19:12:55.742Z"
+    }
+  ],
+  "submissions": [],
+  "invites": []
+}

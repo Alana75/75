@@ -1,0 +1,230 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Compliance &amp; Audit Readiness — Ralph Analytics</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+:root{--bg:#0d1117;--bg2:#161b22;--bg3:#1c2333;--bdr:#2a2d3e;--text:#e8eaf0;--muted:#8b8fa8;--o:#E8521A;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+.topbar{background:var(--bg2);border-bottom:1px solid var(--bdr);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.logo{width:30px;height:30px;border-radius:7px;background:var(--o);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.75rem;color:#fff;}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;font-size:.8rem;font-weight:700;cursor:pointer;border:none;font-family:inherit;text-decoration:none;}
+.btn-back{background:transparent;color:var(--muted);border:1px solid var(--bdr);}
+.btn-primary{background:var(--o);color:#fff;}
+.live-badge{display:flex;align-items:center;gap:6px;background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.2);border-radius:20px;padding:4px 12px;font-size:.72rem;font-weight:700;color:#4ade80;}
+.live-dot{width:7px;height:7px;border-radius:50%;background:#4ade80;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.main{max-width:1200px;margin:0 auto;padding:28px 24px;}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px;}
+.stat-card{background:var(--bg2);border:1px solid var(--bdr);border-radius:12px;padding:18px;}
+.stat-val{font-size:1.8rem;font-weight:900;line-height:1;margin-bottom:4px;}
+.stat-label{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);}
+.card{background:var(--bg2);border:1px solid var(--bdr);border-radius:12px;padding:22px;margin-bottom:16px;}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.card-title{font-size:.82rem;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);}
+.badge{display:inline-flex;font-size:.7rem;font-weight:700;padding:3px 9px;border-radius:12px;}
+.b-red{background:rgba(239,68,68,.12);color:#ef4444;}
+.b-amber{background:rgba(245,158,11,.12);color:#f59e0b;}
+.b-green{background:rgba(74,222,128,.12);color:#4ade80;}
+.b-blue{background:rgba(96,165,250,.12);color:#60a5fa;}
+.b-gray{background:rgba(139,143,168,.1);color:var(--muted);}
+.tabs{display:flex;gap:2px;background:var(--bg3);border-radius:10px;padding:4px;margin-bottom:20px;}
+.tab{padding:7px 16px;border-radius:7px;font-size:.8rem;font-weight:700;cursor:pointer;color:var(--muted);background:none;border:none;font-family:inherit;}
+.tab.active{background:var(--bg2);color:var(--text);border:1px solid var(--bdr);}
+.gap-item{background:var(--bg3);border:1px solid var(--bdr);border-radius:9px;padding:14px 16px;margin-bottom:8px;display:flex;align-items:flex-start;gap:14px;}
+.gap-check{width:20px;height:20px;border-radius:5px;border:2px solid var(--bdr);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;margin-top:1px;}
+.gap-check.checked{background:var(--o);border-color:var(--o);}
+.framework-card{background:var(--bg3);border:1px solid var(--bdr);border-radius:10px;padding:16px;cursor:pointer;transition:border-color .18s;}
+.framework-card:hover,.framework-card.active{border-color:var(--o);}
+.progress-bar{height:8px;background:var(--bg);border-radius:4px;overflow:hidden;margin-top:8px;}
+.progress-fill{height:100%;border-radius:4px;}
+</style></head><body>
+
+<div class="topbar">
+  <div style="display:flex;align-items:center;gap:12px;">
+    <a href="/client"><div class="logo">R</div></a>
+    <span style="font-weight:800;font-size:.88rem;">Ralph Analytics</span>
+    <span style="color:var(--bdr);margin:0 4px;">/</span>
+    <span style="font-size:.82rem;color:var(--muted);">Regulatory Compliance &amp; Audit Readiness</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <div class="live-badge"><div class="live-dot"></div>Live</div>
+    <a href="/client" class="btn btn-back">← Dashboard</a>
+  </div>
+</div>
+
+<div class="main">
+  <div style="margin-bottom:24px;">
+    <h1 style="font-size:1.5rem;font-weight:900;margin-bottom:6px;">Audit Readiness &amp; Gap Analysis</h1>
+    <p style="font-size:.87rem;color:var(--muted);">ISO 9001 · ISO 14001 · ISO 37301 · ISO 45001 · ESG — Systematic gap identification &amp; corrective action planning</p>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-val" style="color:var(--o);">74%</div><div class="stat-label">Overall Readiness</div></div>
+    <div class="stat-card"><div class="stat-val" style="color:#ef4444;">23</div><div class="stat-label">Open Gaps</div></div>
+    <div class="stat-card"><div class="stat-val" style="color:#4ade80;">68</div><div class="stat-label">Controls Passed</div></div>
+    <div class="stat-card"><div class="stat-val" style="color:#f59e0b;">12</div><div class="stat-label">CAPs In Progress</div></div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab(this,'framework')">Framework Selection</button>
+    <button class="tab" onclick="switchTab(this,'gaps')">Gap Analysis</button>
+    <button class="tab" onclick="switchTab(this,'caps')">Corrective Actions</button>
+  </div>
+
+  <!-- Framework Selection -->
+  <div id="tab-framework">
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px;">
+      <div class="framework-card active" onclick="selectFramework(this,'iso9001')">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <span style="font-weight:800;font-size:.9rem;">ISO 9001</span><span class="badge b-green">88%</span>
+        </div>
+        <div style="font-size:.78rem;color:var(--muted);margin-bottom:10px;">Quality Management System</div>
+        <div class="progress-bar"><div class="progress-fill" style="width:88%;background:#4ade80;"></div></div>
+      </div>
+      <div class="framework-card" onclick="selectFramework(this,'iso31000')">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <span style="font-weight:800;font-size:.9rem;">ISO 31000</span><span class="badge b-amber">74%</span>
+        </div>
+        <div style="font-size:.78rem;color:var(--muted);margin-bottom:10px;">Risk Management</div>
+        <div class="progress-bar"><div class="progress-fill" style="width:74%;background:#f59e0b;"></div></div>
+      </div>
+      <div class="framework-card" onclick="selectFramework(this,'iso37301')">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <span style="font-weight:800;font-size:.9rem;">ISO 37301</span><span class="badge b-green">82%</span>
+        </div>
+        <div style="font-size:.78rem;color:var(--muted);margin-bottom:10px;">Compliance Management</div>
+        <div class="progress-bar"><div class="progress-fill" style="width:82%;background:#4ade80;"></div></div>
+      </div>
+      <div class="framework-card" onclick="selectFramework(this,'iso14001')">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <span style="font-weight:800;font-size:.9rem;">ISO 14001</span><span class="badge b-amber">67%</span>
+        </div>
+        <div style="font-size:.78rem;color:var(--muted);margin-bottom:10px;">Environmental Management</div>
+        <div class="progress-bar"><div class="progress-fill" style="width:67%;background:#f59e0b;"></div></div>
+      </div>
+      <div class="framework-card" onclick="selectFramework(this,'iso45001')">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <span style="font-weight:800;font-size:.9rem;">ISO 45001</span><span class="badge b-red">58%</span>
+        </div>
+        <div style="font-size:.78rem;color:var(--muted);margin-bottom:10px;">Occupational Health &amp; Safety</div>
+        <div class="progress-bar"><div class="progress-fill" style="width:58%;background:#ef4444;"></div></div>
+      </div>
+      <div class="framework-card" onclick="selectFramework(this,'esg')">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <span style="font-weight:800;font-size:.9rem;">ESG Framework</span><span class="badge b-amber">62%</span>
+        </div>
+        <div style="font-size:.78rem;color:var(--muted);margin-bottom:10px;">Environmental, Social &amp; Governance</div>
+        <div class="progress-bar"><div class="progress-fill" style="width:62%;background:#f59e0b;"></div></div>
+      </div>
+    </div>
+    <div class="card" id="framework-detail">
+      <div class="card-header"><span class="card-title" id="fw-detail-title">ISO 9001 — Quality Management System</span></div>
+      <div id="fw-detail-content"></div>
+    </div>
+  </div>
+
+  <!-- Gap Analysis -->
+  <div id="tab-gaps" style="display:none;">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Identified Gaps</span>
+        <select id="gap-filter" onchange="filterGaps()" style="background:var(--bg3);border:1px solid var(--bdr);color:var(--text);padding:6px 10px;border-radius:7px;font-size:.78rem;">
+          <option value="">All Severity</option><option value="critical">Critical</option><option value="high">High</option><option value="medium">Medium</option>
+        </select>
+      </div>
+      <div id="gap-list"></div>
+    </div>
+  </div>
+
+  <!-- CAPs -->
+  <div id="tab-caps" style="display:none;">
+    <div class="card">
+      <div class="card-header"><span class="card-title">Corrective Action Plans</span><button class="btn btn-primary" style="font-size:.75rem;padding:6px 14px;">+ New CAP</button></div>
+      <div id="cap-list"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+var gaps=[
+  {id:'G-001',framework:'ISO 45001',clause:'Clause 6.1.2',desc:'Hazard identification process not documented for all work areas',severity:'critical',status:'Open',cap:'CAP-007'},
+  {id:'G-002',framework:'ESG',clause:'Labour Standards',desc:'Supplier labour hours monitoring lacks automated alerts',severity:'high',status:'In Progress',cap:'CAP-008'},
+  {id:'G-003',framework:'ISO 14001',clause:'Clause 9.1',desc:'Environmental monitoring records incomplete for Q4 2025',severity:'high',status:'Open',cap:null},
+  {id:'G-004',framework:'ISO 31000',clause:'Clause 6.4',desc:'Risk monitoring frequency below quarterly requirement',severity:'high',status:'Open',cap:null},
+  {id:'G-005',framework:'ISO 9001',clause:'Clause 8.4',desc:'Supplier evaluation criteria not uniformly applied',severity:'medium',status:'In Progress',cap:'CAP-009'},
+  {id:'G-006',framework:'ISO 37301',clause:'Clause 5.2',desc:'Compliance policy not communicated to all third parties',severity:'medium',status:'Open',cap:null},
+  {id:'G-007',framework:'ESG',clause:'Governance',desc:'Board-level ESG reporting cadence not established',severity:'medium',status:'Open',cap:null},
+  {id:'G-008',framework:'ISO 9001',clause:'Clause 10.2',desc:'Non-conformance log does not capture root cause consistently',severity:'medium',status:'Closed',cap:'CAP-003'},
+];
+var caps=[
+  {id:'CAP-007',title:'Document hazard identification for all work areas',priority:'critical',owner:'HSE Manager',due:'2026-07-15',status:'Open',progress:20},
+  {id:'CAP-008',title:'Implement automated labour hours alert system',priority:'high',owner:'HR Director',due:'2026-07-30',status:'In Progress',progress:55},
+  {id:'CAP-009',title:'Standardise supplier evaluation criteria across all audits',priority:'medium',owner:'Procurement',due:'2026-08-10',status:'In Progress',progress:40},
+  {id:'CAP-003',title:'Update NC log template to include root cause field',priority:'medium',owner:'Quality Manager',due:'2026-06-01',status:'Closed',progress:100},
+];
+var selectedFw='iso9001';
+var fwDetails={
+  iso9001:{title:'ISO 9001 — Quality Management System',items:['Context of the organisation documented','Leadership commitment evidenced','Risk-based thinking applied','Supplier evaluation process defined','Customer satisfaction monitoring active']},
+  iso31000:{title:'ISO 31000 — Risk Management',items:['Risk appetite defined by board','Risk register maintained quarterly','Treatment plans assigned to owners','Monitoring reports issued','Escalation process documented']},
+  iso37301:{title:'ISO 37301 — Compliance Management',items:['Compliance policy approved','Compliance obligations register current','Training completion tracked','Third-party communication active','Incident reporting channel operational']},
+  iso14001:{title:'ISO 14001 — Environmental Management',items:['Environmental policy published','Significant aspects identified','Objectives and targets set','Monitoring records maintained','Internal audit completed']},
+  iso45001:{title:'ISO 45001 — Occupational Health & Safety',items:['Hazard identification complete','Risk assessment documented','Legal register current','Incident investigation process active','Emergency preparedness tested']},
+  esg:{title:'ESG Framework',items:['GHG emissions baseline established','Supply chain labour standards mapped','Board diversity policy in place','ESG KPIs reported quarterly','Stakeholder engagement plan active']},
+};
+function selectFramework(el,fw){
+  document.querySelectorAll('.framework-card').forEach(function(c){c.classList.remove('active');});
+  el.classList.add('active'); selectedFw=fw;
+  var d=fwDetails[fw];
+  if(!d)return;
+  document.getElementById('fw-detail-title').textContent=d.title;
+  document.getElementById('fw-detail-content').innerHTML='<div style="display:flex;flex-direction:column;gap:8px;">'+
+    d.items.map(function(item,i){return '<div class="gap-item"><div class="gap-check checked" id="chk-'+fw+'-'+i+'">&#10003;</div>'
+      +'<span style="font-size:.85rem;">'+item+'</span></div>';}).join('')+'</div>';
+}
+function filterGaps(){
+  var f=document.getElementById('gap-filter').value;
+  var data=f?gaps.filter(function(g){return g.severity===f;}):gaps;
+  renderGaps(data);
+}
+function renderGaps(data){
+  var sc={critical:'b-red',high:'b-amber',medium:'b-blue'};
+  var ss={Open:'b-red','In Progress':'b-amber',Closed:'b-green'};
+  document.getElementById('gap-list').innerHTML=data.map(function(g){
+    return '<div class="gap-item"><div style="flex:1;">'
+      +'<div style="display:flex;gap:8px;align-items:center;margin-bottom:5px;">'
+      +'<span style="font-weight:700;font-size:.82rem;color:var(--o);">'+g.id+'</span>'
+      +'<span class="badge '+sc[g.severity]+'">'+g.severity+'</span>'
+      +'<span class="badge '+ss[g.status]+'">'+g.status+'</span>'
+      +'<span class="badge b-gray">'+g.framework+'</span>'
+      +(g.cap?'<span class="badge b-blue">'+g.cap+'</span>':'')+'</div>'
+      +'<div style="font-size:.84rem;">'+g.desc+'</div>'
+      +'<div style="font-size:.72rem;color:var(--muted);margin-top:4px;">'+g.clause+'</div></div></div>';
+  }).join('');
+}
+function renderCaps(){
+  var pc={critical:'#ef4444',high:'#f59e0b',medium:'#60a5fa'};
+  var sc={Open:'b-red','In Progress':'b-amber',Closed:'b-green'};
+  document.getElementById('cap-list').innerHTML=caps.map(function(c){
+    return '<div style="background:var(--bg3);border:1px solid var(--bdr);border-left:3px solid '+pc[c.priority]+';border-radius:9px;padding:16px;margin-bottom:8px;">'
+      +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">'
+      +'<div style="display:flex;gap:8px;align-items:center;"><span style="font-weight:700;color:var(--o);font-size:.82rem;">'+c.id+'</span><span class="badge '+sc[c.status]+'">'+c.status+'</span></div>'
+      +'<span style="font-size:.78rem;color:var(--muted);">Due: '+c.due+'</span></div>'
+      +'<div style="font-weight:600;font-size:.88rem;margin-bottom:8px;">'+c.title+'</div>'
+      +'<div style="font-size:.78rem;color:var(--muted);margin-bottom:10px;">Owner: '+c.owner+'</div>'
+      +'<div style="height:6px;background:var(--bg);border-radius:3px;overflow:hidden;">'
+      +'<div style="width:'+c.progress+'%;height:100%;background:'+pc[c.priority]+';border-radius:3px;"></div></div>'
+      +'<div style="font-size:.7rem;color:var(--muted);margin-top:4px;">'+c.progress+'% complete</div></div>';
+  }).join('');
+}
+function switchTab(el,tab){
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
+  el.classList.add('active');
+  ['framework','gaps','caps'].forEach(function(t){
+    document.getElementById('tab-'+t).style.display=t===tab?'block':'none';
+  });
+  if(tab==='gaps')renderGaps(gaps);
+  if(tab==='caps')renderCaps();
+}
+selectFramework(document.querySelector('.framework-card'),'iso9001');
+</script></body></html>

@@ -1,0 +1,164 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Reporting &amp; Exports — Ralph Analytics</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+:root{--bg:#0d1117;--bg2:#161b22;--bg3:#1c2333;--bdr:#2a2d3e;--text:#e8eaf0;--muted:#8b8fa8;--o:#E8521A;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+.topbar{background:var(--bg2);border-bottom:1px solid var(--bdr);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.logo{width:30px;height:30px;border-radius:7px;background:var(--o);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.75rem;color:#fff;}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;font-size:.8rem;font-weight:700;cursor:pointer;border:none;font-family:inherit;text-decoration:none;}
+.btn-back{background:transparent;color:var(--muted);border:1px solid var(--bdr);}
+.btn-primary{background:var(--o);color:#fff;}
+.btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--bdr);}
+.live-badge{display:flex;align-items:center;gap:6px;background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.2);border-radius:20px;padding:4px 12px;font-size:.72rem;font-weight:700;color:#4ade80;}
+.live-dot{width:7px;height:7px;border-radius:50%;background:#4ade80;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.main{max-width:1200px;margin:0 auto;padding:28px 24px;}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px;}
+.stat-card{background:var(--bg2);border:1px solid var(--bdr);border-radius:12px;padding:18px;}
+.stat-val{font-size:1.8rem;font-weight:900;line-height:1;margin-bottom:4px;}
+.stat-label{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);}
+.card{background:var(--bg2);border:1px solid var(--bdr);border-radius:12px;padding:22px;margin-bottom:16px;}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.card-title{font-size:.82rem;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);}
+.badge{display:inline-flex;font-size:.7rem;font-weight:700;padding:3px 9px;border-radius:12px;}
+.b-green{background:rgba(74,222,128,.12);color:#4ade80;}
+.b-amber{background:rgba(245,158,11,.12);color:#f59e0b;}
+.b-blue{background:rgba(96,165,250,.12);color:#60a5fa;}
+.b-gray{background:rgba(139,143,168,.1);color:var(--muted);}
+.report-card{background:var(--bg3);border:1px solid var(--bdr);border-radius:10px;padding:18px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;}
+.template-card{background:var(--bg3);border:1px solid var(--bdr);border-radius:10px;padding:16px;cursor:pointer;transition:border-color .18s;}
+.template-card:hover{border-color:rgba(232,82,26,.5);}
+.template-card.active{border-color:var(--o);}
+</style></head><body>
+
+<div class="topbar">
+  <div style="display:flex;align-items:center;gap:12px;">
+    <a href="/client"><div class="logo">R</div></a>
+    <span style="font-weight:800;font-size:.88rem;">Ralph Analytics</span>
+    <span style="color:var(--bdr);margin:0 4px;">/</span>
+    <span style="font-size:.82rem;color:var(--muted);">Reporting &amp; Data Export</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <div class="live-badge"><div class="live-dot"></div>Live</div>
+    <a href="/client" class="btn btn-back">← Dashboard</a>
+    <button class="btn btn-primary" onclick="generateReport()">Generate Report</button>
+  </div>
+</div>
+
+<div class="main">
+  <div style="margin-bottom:24px;">
+    <h1 style="font-size:1.5rem;font-weight:900;margin-bottom:6px;">Reports &amp; Data Exports</h1>
+    <p style="font-size:.87rem;color:var(--muted);">Board-ready reports · Donor compliance submissions · Regulatory filings · PDF, Excel &amp; API export</p>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-val" style="color:var(--o);">68</div><div class="stat-label">Reports Generated</div></div>
+    <div class="stat-card"><div class="stat-val" style="color:#4ade80;">94%</div><div class="stat-label">On-Time Delivery</div></div>
+    <div class="stat-card"><div class="stat-val" style="color:#60a5fa;">12</div><div class="stat-label">Active Templates</div></div>
+    <div class="stat-card"><div class="stat-val" style="color:#f59e0b;">3</div><div class="stat-label">Scheduled Reports</div></div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:16px;">
+    <div>
+      <div class="card">
+        <div class="card-header"><span class="card-title">Report Templates</span></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;" id="template-grid"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><span class="card-title">Generated Reports</span></div>
+        <div id="report-list"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><span class="card-title">Generate New Report</span></div>
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div><label style="font-size:.72rem;font-weight:700;color:var(--muted);display:block;margin-bottom:6px;text-transform:uppercase;">Report Type</label>
+          <select id="rpt-type" style="width:100%;padding:10px 13px;background:var(--bg);border:1px solid var(--bdr);border-radius:8px;color:var(--text);font-size:.85rem;font-family:inherit;">
+            <option>Executive Compliance Summary</option><option>Supplier ESG Report</option><option>Risk Register Export</option>
+            <option>Board Governance Report</option><option>Donor Compliance Submission</option><option>CAP Status Report</option>
+            <option>Field Audit Summary</option><option>Impact &amp; Results Report</option>
+          </select></div>
+        <div><label style="font-size:.72rem;font-weight:700;color:var(--muted);display:block;margin-bottom:6px;text-transform:uppercase;">Period</label>
+          <select id="rpt-period" style="width:100%;padding:10px 13px;background:var(--bg);border:1px solid var(--bdr);border-radius:8px;color:var(--text);font-size:.85rem;font-family:inherit;">
+            <option>Q2 2026 (Apr–Jun)</option><option>Q1 2026 (Jan–Mar)</option><option>H1 2026</option><option>FY 2025</option><option>Last 30 days</option>
+          </select></div>
+        <div><label style="font-size:.72rem;font-weight:700;color:var(--muted);display:block;margin-bottom:6px;text-transform:uppercase;">Format</label>
+          <div style="display:flex;gap:8px;">
+            <button id="fmt-pdf" class="btn btn-primary" onclick="setFmt('pdf')" style="flex:1;justify-content:center;">PDF</button>
+            <button id="fmt-excel" class="btn btn-ghost" onclick="setFmt('excel')" style="flex:1;justify-content:center;">Excel</button>
+            <button id="fmt-json" class="btn btn-ghost" onclick="setFmt('json')" style="flex:1;justify-content:center;">JSON</button>
+          </div></div>
+        <div><label style="font-size:.72rem;font-weight:700;color:var(--muted);display:block;margin-bottom:6px;text-transform:uppercase;">Include AI Narrative</label>
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:.85rem;">
+            <input type="checkbox" id="rpt-ai" checked style="accent-color:var(--o);width:16px;height:16px;"/>
+            Automatically generate executive summary narrative</label></div>
+        <button class="btn btn-primary" style="width:100%;justify-content:center;padding:12px;" onclick="generateReport()">Generate &amp; Download</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+var selectedFmt='pdf';
+function setFmt(f){
+  selectedFmt=f;
+  ['pdf','excel','json'].forEach(function(x){
+    var b=document.getElementById('fmt-'+x);
+    b.className='btn '+(x===f?'btn-primary':'btn-ghost');
+    b.style.flex='1';b.style.justifyContent='center';
+  });
+}
+var templates=[
+  {name:'Executive Summary',desc:'Board-level overview',icon:'📊',std:'All modules'},
+  {name:'Supplier ESG',desc:'ESG performance by supplier',icon:'🏭',std:'RBA/SMETA/SA8000'},
+  {name:'Risk Register',desc:'Full risk matrix export',icon:'⚠️',std:'ISO 31000'},
+  {name:'Donor Compliance',desc:'USAID/DFID formatted',icon:'📋',std:'Custom'},
+  {name:'Board Governance',desc:'Governance &amp; ESG metrics',icon:'🏛️',std:'GRI/ESG'},
+  {name:'CAP Status',desc:'Open/closed CAP summary',icon:'✅',std:'All CAPs'},
+  {name:'Field Audit',desc:'Audit findings by facility',icon:'🔍',std:'Multi-standard'},
+  {name:'Impact Report',desc:'Results-chain evidence',icon:'📈',std:'SDG/ESG'},
+];
+var tGrid=document.getElementById('template-grid');
+if(tGrid){
+  tGrid.innerHTML=templates.map(function(t){
+    return '<div class="template-card"><div style="font-size:1.2rem;margin-bottom:8px;">'+t.icon+'</div>'
+      +'<div style="font-weight:700;font-size:.85rem;margin-bottom:4px;">'+t.name+'</div>'
+      +'<div style="font-size:.75rem;color:var(--muted);margin-bottom:6px;">'+t.desc+'</div>'
+      +'<span class="badge b-blue" style="font-size:.65rem;">'+t.std+'</span></div>';
+  }).join('');
+}
+var reports=[
+  {name:'Q2 2026 Executive Summary',type:'Executive Compliance Summary',period:'Q2 2026',fmt:'PDF',date:'2026-06-24',status:'Ready'},
+  {name:'H1 2026 Supplier ESG Report',type:'Supplier ESG Report',period:'H1 2026',fmt:'Excel',date:'2026-06-20',status:'Ready'},
+  {name:'CAP Status — June 2026',type:'CAP Status Report',period:'Jun 2026',fmt:'PDF',date:'2026-06-18',status:'Ready'},
+  {name:'USAID Donor Submission Q1',type:'Donor Compliance',period:'Q1 2026',fmt:'PDF',date:'2026-04-05',status:'Submitted'},
+];
+var rList=document.getElementById('report-list');
+if(rList){
+  rList.innerHTML=reports.map(function(r){
+    return '<div class="report-card"><div><div style="font-weight:600;font-size:.88rem;margin-bottom:4px;">'+r.name+'</div>'
+      +'<div style="font-size:.75rem;color:var(--muted);">'+r.period+' · '+r.date+'</div></div>'
+      +'<div style="display:flex;gap:8px;align-items:center;">'
+      +'<span class="badge b-gray">'+r.fmt+'</span>'
+      +'<span class="badge '+(r.status==='Ready'?'b-green':'b-blue')+'">'+r.status+'</span>'
+      +'<button class="btn" style="padding:5px 12px;background:var(--bg);border:1px solid var(--bdr);font-size:.75rem;" onclick="alert(\'Downloading '+r.name+'...\')">↓</button></div></div>';
+  }).join('');
+}
+function generateReport(){
+  var type=document.getElementById('rpt-type').value;
+  var period=document.getElementById('rpt-period').value;
+  var fmt=selectedFmt.toUpperCase();
+  var ai=document.getElementById('rpt-ai').checked;
+  var btn=document.querySelector('.btn-primary[onclick="generateReport()"]');
+  btn.textContent='Generating...';btn.disabled=true;
+  setTimeout(function(){
+    btn.textContent='Generate & Download';btn.disabled=false;
+    alert('Report ready: '+type+' ('+period+') — '+fmt+(ai?' + AI Narrative':''));
+  },1800);
+}
+</script></body></html>

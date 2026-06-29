@@ -1,0 +1,310 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI Risk Assessment · Ralph Analytics</title>
+<link rel="icon" href="/public/icons/favicon.png">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0d1117;--surface:#161b22;--surface2:#1c2230;--border:#21262d;--orange:#e8510a;--orange-dim:#b8400a;--text:#e6edf3;--muted:#8b949e;--green:#2ea043;--red:#da3633;--amber:#d29922;--blue:#388bfd;--sidebar:240px}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;font-size:14px;line-height:1.5;min-height:100vh;display:flex;flex-direction:column}
+a{color:inherit;text-decoration:none}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);height:52px;display:flex;align-items:center;padding:0 20px;gap:12px;position:sticky;top:0;z-index:100;flex-shrink:0}
+.logo-pill{background:var(--orange);color:#fff;font-weight:800;font-size:13px;padding:5px 10px;border-radius:6px;letter-spacing:.5px}
+.site-title{font-weight:700;font-size:15px}
+.sep{color:var(--border);margin:0 2px}
+.bread{color:var(--muted);font-size:13px}
+.topbar .right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.badge-rba{background:rgba(232,81,10,.15);border:1px solid rgba(232,81,10,.35);color:var(--orange);font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;letter-spacing:.5px}
+.btn{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s}
+.btn:hover{border-color:var(--orange);color:var(--orange)}
+.btn-primary{background:var(--orange);border:1px solid var(--orange);color:#fff;padding:8px 18px;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;transition:all .15s}
+.btn-primary:hover{background:var(--orange-dim)}
+.btn-danger{background:rgba(218,54,51,.15);border:1px solid rgba(218,54,51,.3);color:var(--red);padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer}
+.layout{display:flex;flex:1;min-height:0;overflow:hidden}
+.sidebar{width:var(--sidebar);background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto}
+.sidebar-top{padding:14px 16px 10px;border-bottom:1px solid var(--border);margin-bottom:6px}
+.mod-label{font-size:10px;font-weight:700;color:var(--orange);letter-spacing:1px;text-transform:uppercase}
+.mod-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 16px;cursor:pointer;color:var(--muted);font-size:13px;font-weight:500;border-left:3px solid transparent;transition:all .15s}
+.nav-item:hover{background:rgba(255,255,255,.04);color:var(--text)}
+.nav-item.active{background:rgba(232,81,10,.1);color:var(--orange);border-left-color:var(--orange);font-weight:600}
+.nav-item .ico{width:18px;text-align:center;font-size:15px;flex-shrink:0}
+.nav-divider{height:1px;background:var(--border);margin:6px 12px}
+.main{flex:1;overflow-y:auto;padding:28px 32px}
+.page-header{margin-bottom:24px}
+.page-header h1{font-size:21px;font-weight:700;margin-bottom:4px}
+.page-header p{color:var(--muted);font-size:13px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:16px}
+.card-title{font-size:15px;font-weight:700;margin-bottom:4px}
+.card-sub{font-size:12px;color:var(--muted);margin-bottom:14px}
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:20px}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px}
+.stat .lbl{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+.stat .val{font-size:28px;font-weight:800;line-height:1}
+.stat .sub{font-size:11px;color:var(--muted);margin-top:5px}
+.stat.green .val{color:var(--green)}.stat.amber .val{color:var(--amber)}.stat.red .val{color:var(--red)}.stat.blue .val{color:var(--blue)}.stat.orange .val{color:var(--orange)}
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{text-align:left;padding:10px 12px;border-bottom:1px solid var(--border);color:var(--muted);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
+.tbl td{padding:11px 12px;border-bottom:1px solid rgba(33,38,45,.6);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:rgba(255,255,255,.025)}
+.badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:5px;font-size:11px;font-weight:700}
+.badge.green{background:rgba(46,160,67,.12);color:var(--green);border:1px solid rgba(46,160,67,.3)}
+.badge.amber{background:rgba(210,153,34,.12);color:var(--amber);border:1px solid rgba(210,153,34,.25)}
+.badge.red{background:rgba(218,54,51,.12);color:var(--red);border:1px solid rgba(218,54,51,.25)}
+.badge.blue{background:rgba(56,139,253,.12);color:var(--blue);border:1px solid rgba(56,139,253,.25)}
+.badge.orange{background:rgba(232,81,10,.12);color:var(--orange);border:1px solid rgba(232,81,10,.25)}
+.badge.grey{background:rgba(139,148,158,.1);color:var(--muted);border:1px solid rgba(139,148,158,.2)}
+.badge.critical{background:rgba(218,54,51,.15);color:#f87171;border:1px solid rgba(218,54,51,.35)}
+.badge.major{background:rgba(210,153,34,.15);color:var(--amber);border:1px solid rgba(210,153,34,.3)}
+.badge.minor{background:rgba(56,139,253,.12);color:var(--blue);border:1px solid rgba(56,139,253,.25)}
+.clause{font-size:11px;color:var(--orange);font-family:monospace;background:rgba(232,81,10,.08);padding:2px 6px;border-radius:3px}
+.form-group{margin-bottom:16px}
+.form-label{display:block;font-size:11px;font-weight:700;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px}
+.req{color:var(--orange)}
+.fi,.fs,.ft{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:7px;color:var(--text);padding:10px 13px;font-size:13px;font-family:inherit;outline:none;transition:border-color .15s}
+.fi:focus,.fs:focus,.ft:focus{border-color:var(--orange)}
+.ft{resize:vertical;min-height:80px}
+.fs option{background:var(--surface2)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.form-row-4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px}
+.pb{height:6px;background:rgba(255,255,255,.08);border-radius:3px;overflow:hidden;margin-top:6px}
+.pf{height:100%;border-radius:3px}.pf.green{background:var(--green)}.pf.amber{background:var(--amber)}.pf.red{background:var(--red)}.pf.orange{background:var(--orange)}
+#toast{position:fixed;bottom:24px;right:22px;background:var(--surface);border:1px solid var(--border);color:var(--text);padding:12px 20px;border-radius:8px;font-size:13px;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,.5);z-index:9999;opacity:0;transform:translateY(10px);transition:all .25s;pointer-events:none}
+#toast.show{opacity:1;transform:translateY(0)}#toast.success{border-color:var(--green);color:var(--green)}#toast.error{border-color:var(--red);color:var(--red)}
+.tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:20px;gap:0}
+.tab-btn{padding:9px 16px;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;border:none;border-bottom:2px solid transparent;margin-bottom:-1px;background:none;transition:all .15s}
+.tab-btn:hover{color:var(--text)}.tab-btn.active{color:var(--orange);border-bottom-color:var(--orange)}
+.tab-pane{display:none}.tab-pane.active{display:block}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;width:660px;max-width:94vw;max-height:88vh;overflow-y:auto}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.modal-title{font-size:16px;font-weight:700}
+.modal-close{background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;line-height:1}
+.modal-close:hover{color:var(--text)}
+.info-box{background:rgba(232,81,10,.06);border:1px solid rgba(232,81,10,.2);border-radius:8px;padding:14px 16px;font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:16px}
+.info-box strong{color:var(--orange)}
+</style>
+</head><body>
+<div class="topbar"><div class="logo-pill">RA</div><span class="site-title">Ralph Analytics</span><span class="sep">›</span><a href="/rba/air" class="bread">RBA AIR Portal</a><span class="sep">›</span><span class="bread" style="color:var(--text)">AI Risk Assessment</span><div class="right"><span class="badge-rba">PILLAR E</span><button class="btn" onclick="window.location='/client'">← Client Portal</button></div></div>
+<div class="layout">
+<div class="sidebar"><div class="sidebar-top"><div class="mod-label">RBA AIR Module</div><div class="mod-sub">Pillar E · AI Responsibility</div></div><a href="/rba/air" class="nav-item"><span class="ico">⬡</span>Overview</a><a href="/rba/air/field-audit" class="nav-item"><span class="ico">📋</span>Field Audit</a><a href="/rba/air/risk" class="nav-item active"><span class="ico">⚠️</span>AI Risk Assessment</a><a href="/rba/air/inventory" class="nav-item"><span class="ico">📦</span>AI Inventory</a><a href="/rba/air/suppliers" class="nav-item"><span class="ico">🤝</span>Supplier Declarations</a><a href="/rba/air/training" class="nav-item"><span class="ico">🎓</span>Training & Maturity</a><div class="nav-divider"></div><a href="/client" class="nav-item"><span class="ico">←</span>Client Portal</a></div>
+<div class="main">
+<div class="page-header">
+  <h1>AI Risk Assessment</h1>
+  <p>EU AI Act risk tier classification and Impact Assessment — <span class="clause">AIR-2.2</span> · <span class="clause">AIR-2.3</span> · <span class="clause">EU AI Act Art.9</span></p>
+</div>
+
+<div class="info-box">
+  Complete one <strong>Risk Assessment</strong> per AI system. Each assessment classifies the system using the EU AI Act four-tier framework and scores it across five risk dimensions. High Risk systems require a completed <strong>AI Impact Assessment (AIA)</strong> before deployment.
+</div>
+
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+  <div class="stats-row" style="flex:1;margin-bottom:0;margin-right:16px">
+    <div class="stat"><div class="lbl">Total Assessments</div><div class="val" id="ra-total">0</div></div>
+    <div class="stat red"><div class="lbl">Unacceptable Risk</div><div class="val" id="ra-unacceptable">0</div></div>
+    <div class="stat amber"><div class="lbl">High Risk</div><div class="val" id="ra-high">0</div></div>
+    <div class="stat blue"><div class="lbl">Limited Risk</div><div class="val" id="ra-limited">0</div></div>
+    <div class="stat green"><div class="lbl">Minimal Risk</div><div class="val" id="ra-minimal">0</div></div>
+  </div>
+  <button class="btn-primary" onclick="openRiskModal()">+ New Assessment</button>
+</div>
+
+<div class="card" style="padding:0;overflow:hidden">
+  <div style="padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px">
+    <div style="font-weight:700">AI Risk Register</div>
+    <span style="font-size:12px;color:var(--muted)">All systems — sorted by risk tier</span>
+  </div>
+  <table class="tbl">
+    <thead><tr>
+      <th>System Name</th><th>Business Unit</th><th>Risk Tier</th><th>Risk Score</th><th>AIA Required</th><th>Status</th><th>Assessed</th><th></th>
+    </tr></thead>
+    <tbody id="risk-tbody">
+      <tr><td colspan="8" style="text-align:center;color:var(--muted);padding:32px">No risk assessments yet. Click <strong>+ New Assessment</strong> to begin.</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Risk Tier Reference Card -->
+<div class="card" style="margin-top:8px">
+  <div class="card-title">EU AI Act Risk Tier Reference</div>
+  <div class="card-sub"><span class="clause">EU AI Act Title II & III</span> · <span class="clause">AIR-2.2</span></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;margin-top:14px">
+    <div style="background:rgba(218,54,51,.08);border:1px solid rgba(218,54,51,.25);border-radius:8px;padding:14px">
+      <div style="font-weight:800;color:var(--red);font-size:13px;margin-bottom:8px">⛔ Unacceptable Risk</div>
+      <div style="font-size:12px;color:var(--muted);line-height:1.6">PROHIBITED. Halt and notify compliance immediately if identified.<br><br>Examples: social scoring · real-time biometric surveillance in public · subliminal manipulation</div>
+    </div>
+    <div style="background:rgba(210,153,34,.08);border:1px solid rgba(210,153,34,.25);border-radius:8px;padding:14px">
+      <div style="font-weight:800;color:var(--amber);font-size:13px;margin-bottom:8px">⚠️ High Risk</div>
+      <div style="font-size:12px;color:var(--muted);line-height:1.6">Mandatory controls required. AIA required before deployment.<br><br>Examples: biometric ID · employment AI · critical infrastructure · law enforcement · education AI</div>
+    </div>
+    <div style="background:rgba(56,139,253,.08);border:1px solid rgba(56,139,253,.25);border-radius:8px;padding:14px">
+      <div style="font-weight:800;color:var(--blue);font-size:13px;margin-bottom:8px">ℹ️ Limited Risk</div>
+      <div style="font-size:12px;color:var(--muted);line-height:1.6">Transparency obligations only. Disclosure required to users.<br><br>Examples: chatbots · emotion recognition · synthetic content · biometric categorisation</div>
+    </div>
+    <div style="background:rgba(46,160,67,.08);border:1px solid rgba(46,160,67,.25);border-radius:8px;padding:14px">
+      <div style="font-weight:800;color:var(--green);font-size:13px;margin-bottom:8px">✅ Minimal Risk</div>
+      <div style="font-size:12px;color:var(--muted);line-height:1.6">Voluntary guidelines apply. No mandatory controls.<br><br>Examples: spam filters · AI video games · inventory management · recommendation engines</div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="risk-modal">
+<div class="modal">
+  <div class="modal-header">
+    <div class="modal-title">New AI Risk Assessment</div>
+    <button class="modal-close" onclick="closeRiskModal()">×</button>
+  </div>
+
+  <div style="font-size:11px;font-weight:700;color:var(--orange);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">Section 1 · System Identification</div>
+  <div class="form-row"><div class="form-group"><label class="form-label">System Name / ID <span class="req">*</span></label><input class="fi" id="r-name" placeholder="e.g. Candidate Screening AI v2"></div><div class="form-group"><label class="form-label">Business Unit / Owner <span class="req">*</span></label><input class="fi" id="r-unit" placeholder="e.g. HR Operations / Sarah Dlamini"></div></div>
+  <div class="form-group"><label class="form-label">System Purpose <span class="req">*</span></label><textarea class="ft" id="r-purpose" placeholder="Describe what the AI system does and its intended business use case" style="min-height:60px"></textarea></div>
+  <div class="form-row"><div class="form-group"><label class="form-label">Data Inputs</label><input class="fi" id="r-inputs" placeholder="e.g. CVs, work history, psychometric scores"></div><div class="form-group"><label class="form-label">Affected Individuals</label><input class="fi" id="r-affected" placeholder="e.g. Job applicants, current employees"></div></div>
+  <div class="form-row-3">
+    <div class="form-group"><label class="form-label">Lifecycle Stage <span class="req">*</span></label><select class="fs" id="r-lifecycle"><option value="">-- Select --</option><option>Design</option><option>Development</option><option>Testing</option><option>Deployment</option><option>Production / Monitoring</option><option>Decommissioning</option></select></div>
+    <div class="form-group"><label class="form-label">Current Status</label><select class="fs" id="r-status"><option>Active</option><option>In Development</option><option>Under Review</option><option>Suspended</option><option>Decommissioned</option></select></div>
+    <div class="form-group"><label class="form-label">Assessor Name <span class="req">*</span></label><input class="fi" id="r-assessor" placeholder="Full name and role"></div>
+  </div>
+
+  <div style="font-size:11px;font-weight:700;color:var(--orange);text-transform:uppercase;letter-spacing:1px;margin:16px 0 12px">Section 2 · EU AI Act Risk Tier</div>
+  <div class="form-group"><label class="form-label">Risk Tier Classification <span class="req">*</span></label>
+    <select class="fs" id="r-tier" onchange="updateTierInfo()">
+      <option value="">-- Select risk tier --</option>
+      <option value="unacceptable">Unacceptable Risk — PROHIBITED</option>
+      <option value="high">High Risk — Mandatory Controls Required</option>
+      <option value="limited">Limited Risk — Transparency Obligations</option>
+      <option value="minimal">Minimal Risk — Voluntary Guidelines</option>
+    </select>
+  </div>
+  <div id="tier-info" style="display:none;padding:12px;border-radius:6px;font-size:12px;line-height:1.6;margin-bottom:16px"></div>
+
+  <div style="font-size:11px;font-weight:700;color:var(--orange);text-transform:uppercase;letter-spacing:1px;margin:16px 0 12px">Section 3 · Risk Scoring (score 1–5 per criterion)</div>
+  <table class="tbl" style="margin-bottom:16px">
+    <thead><tr><th>Criterion</th><th>Guidance</th><th style="width:80px">Score</th></tr></thead>
+    <tbody>
+      <tr><td style="font-weight:600">1. Autonomy of AI Decision</td><td style="color:var(--muted);font-size:12px">1=Human decides, AI informs &nbsp; 5=Fully autonomous</td><td><input type="number" class="fi" id="rs1" min="1" max="5" placeholder="1-5" oninput="calcScore()"></td></tr>
+      <tr><td style="font-weight:600">2. Impact Severity on Individuals</td><td style="color:var(--muted);font-size:12px">1=No impact &nbsp; 5=Life-altering, irreversible</td><td><input type="number" class="fi" id="rs2" min="1" max="5" placeholder="1-5" oninput="calcScore()"></td></tr>
+      <tr><td style="font-weight:600">3. Scale of Deployment</td><td style="color:var(--muted);font-size:12px">1=Fewer than 10 people &nbsp; 5=More than 1 million</td><td><input type="number" class="fi" id="rs3" min="1" max="5" placeholder="1-5" oninput="calcScore()"></td></tr>
+      <tr><td style="font-weight:600">4. Data Sensitivity</td><td style="color:var(--muted);font-size:12px">1=Non-personal/aggregated &nbsp; 5=Biometric/health</td><td><input type="number" class="fi" id="rs4" min="1" max="5" placeholder="1-5" oninput="calcScore()"></td></tr>
+      <tr><td style="font-weight:600">5. Reversibility of Decisions</td><td style="color:var(--muted);font-size:12px">1=Easily reversed &nbsp; 5=Permanent / no appeal</td><td><input type="number" class="fi" id="rs5" min="1" max="5" placeholder="1-5" oninput="calcScore()"></td></tr>
+    </tbody>
+  </table>
+  <div id="score-display" style="display:none;padding:12px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;margin-bottom:16px;font-weight:700;font-size:14px"></div>
+
+  <div style="font-size:11px;font-weight:700;color:var(--orange);text-transform:uppercase;letter-spacing:1px;margin:16px 0 12px">Section 4 · Impact Assessment</div>
+  <div id="aia-required" style="display:none;background:rgba(210,153,34,.1);border:1px solid rgba(210,153,34,.3);border-radius:8px;padding:12px;font-size:12px;color:var(--amber);margin-bottom:12px">
+    ⚠️ <strong>AI Impact Assessment (AIA) is mandatory</strong> for this High Risk system per EU AI Act Art.9 and GDPR Art.35. Complete below.
+  </div>
+  <div class="form-group"><label class="form-label">Human Rights Impacts</label><textarea class="ft" id="r-aia1" placeholder="Describe any identified impacts on human rights or fundamental freedoms" style="min-height:55px"></textarea></div>
+  <div class="form-row">
+    <div class="form-group"><label class="form-label">Safety Risks Identified</label><textarea class="ft" id="r-aia2" placeholder="Safety or reliability risks" style="min-height:55px"></textarea></div>
+    <div class="form-group"><label class="form-label">Privacy Risks (DPIA Findings)</label><textarea class="ft" id="r-aia3" placeholder="Privacy or data protection risks" style="min-height:55px"></textarea></div>
+  </div>
+  <div class="form-group"><label class="form-label">Remediation Before Deployment</label><textarea class="ft" id="r-aia4" placeholder="List remediation steps required before go-live approval" style="min-height:55px"></textarea></div>
+  <div class="form-group"><label class="form-label">Deployment Approval Signatory</label><input class="fi" id="r-signoff" placeholder="Name and title of go-live approver"></div>
+
+  <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:20px">
+    <button class="btn" onclick="closeRiskModal()">Cancel</button>
+    <button class="btn-primary" onclick="saveRisk()">Save Assessment</button>
+  </div>
+</div>
+</div>
+</div>
+</div>
+<div id="toast"></div>
+<script>
+const AUTH_TOKEN=localStorage.getItem('ralph_client_token');
+if(!AUTH_TOKEN){window.location.href='/client';}
+function apiFetch(url,opts={}){
+  opts.headers=Object.assign({'Content-Type':'application/json','Authorization':'Bearer '+AUTH_TOKEN},opts.headers||{});
+  return fetch(window.location.origin+url,opts);
+}
+function toast(msg,type){const t=document.getElementById('toast');t.textContent=msg;t.className='show '+(type||'success');setTimeout(()=>t.className='',3000)}
+function tabs(container){
+  document.querySelectorAll(container+' .tab-btn').forEach(b=>{
+    b.addEventListener('click',()=>{
+      const id=b.dataset.tab;
+      document.querySelectorAll(container+' .tab-btn').forEach(x=>x.classList.remove('active'));
+      document.querySelectorAll(container+' .tab-pane').forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+      document.getElementById(id).classList.add('active');
+    });
+  });
+}
+
+let risks = JSON.parse(localStorage.getItem('rba_risks')||'[]');
+
+function renderRisks(){
+  const tbody = document.getElementById('risk-tbody');
+  document.getElementById('ra-total').textContent = risks.length;
+  document.getElementById('ra-unacceptable').textContent = risks.filter(r=>r.tier==='unacceptable').length;
+  document.getElementById('ra-high').textContent = risks.filter(r=>r.tier==='high').length;
+  document.getElementById('ra-limited').textContent = risks.filter(r=>r.tier==='limited').length;
+  document.getElementById('ra-minimal').textContent = risks.filter(r=>r.tier==='minimal').length;
+  if(!risks.length){tbody.innerHTML='<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:32px">No risk assessments yet. Click <strong>+ New Assessment</strong> to begin.</td></tr>';return;}
+  const tierLabel={'unacceptable':'<span class="badge critical">Unacceptable</span>','high':'<span class="badge major">High Risk</span>','limited':'<span class="badge blue">Limited Risk</span>','minimal':'<span class="badge green">Minimal Risk</span>'};
+  tbody.innerHTML = risks.map((r,i)=>`<tr>
+    <td style="font-weight:600">${r.name}</td>
+    <td style="color:var(--muted)">${r.unit}</td>
+    <td>${tierLabel[r.tier]||r.tier}</td>
+    <td style="font-weight:700;color:${r.score>=20?'var(--red)':r.score>=12?'var(--amber)':'var(--green)'}">${r.score||'—'}/25</td>
+    <td>${r.tier==='high'||r.tier==='unacceptable'?'<span class="badge amber">Required</span>':'<span class="badge grey">Not Required</span>'}</td>
+    <td><span class="badge grey">${r.status}</span></td>
+    <td style="color:var(--muted);font-size:12px">${r.date}</td>
+    <td><button class="btn" style="padding:4px 10px;font-size:11px" onclick="deleteRisk(${i})">Delete</button></td>
+  </tr>`).join('');
+}
+
+function openRiskModal(){document.getElementById('risk-modal').classList.add('open')}
+function closeRiskModal(){document.getElementById('risk-modal').classList.remove('open')}
+
+function updateTierInfo(){
+  const tier=document.getElementById('r-tier').value;
+  const el=document.getElementById('tier-info');
+  const aia=document.getElementById('aia-required');
+  const msgs={
+    unacceptable:{bg:'rgba(218,54,51,.1)',bc:'rgba(218,54,51,.3)',c:'var(--red)',txt:'⛔ PROHIBITED — Do not deploy. If this system is currently active, halt immediately and notify compliance.'},
+    high:{bg:'rgba(210,153,34,.1)',bc:'rgba(210,153,34,.3)',c:'var(--amber)',txt:'⚠️ MANDATORY CONTROLS required before and during deployment. AI Impact Assessment (AIA) must be completed.'},
+    limited:{bg:'rgba(56,139,253,.1)',bc:'rgba(56,139,253,.3)',c:'var(--blue)',txt:'ℹ️ Transparency obligations apply. Users must be informed they are interacting with or subject to AI.'},
+    minimal:{bg:'rgba(46,160,67,.1)',bc:'rgba(46,160,67,.3)',c:'var(--green)',txt:'✅ Voluntary guidelines apply. No mandatory EU AI Act technical controls, but responsible AI best practices recommended.'}
+  };
+  if(msgs[tier]){el.style.display='block';el.style.background=msgs[tier].bg;el.style.border='1px solid '+msgs[tier].bc;el.style.color=msgs[tier].c;el.textContent=msgs[tier].txt;}else{el.style.display='none';}
+  aia.style.display=(tier==='high')?'block':'none';
+}
+
+function calcScore(){
+  const vals=[1,2,3,4,5].map(i=>parseInt(document.getElementById('rs'+i).value)||0);
+  const total=vals.reduce((a,b)=>a+b,0);
+  const el=document.getElementById('score-display');
+  if(vals.some(v=>v>0)){
+    el.style.display='block';
+    const col=total>=20?'var(--red)':total>=12?'var(--amber)':'var(--green)';
+    el.innerHTML=`Risk Score: <span style="color:${col}">${total}/25</span> — ${total>=20?'HIGH — immediate action required':total>=12?'MODERATE — controls required':'LOW — standard monitoring'}`;
+  }else{el.style.display='none';}
+}
+
+function saveRisk(){
+  const name=document.getElementById('r-name').value.trim();
+  const unit=document.getElementById('r-unit').value.trim();
+  const tier=document.getElementById('r-tier').value;
+  const lifecycle=document.getElementById('r-lifecycle').value;
+  const assessor=document.getElementById('r-assessor').value.trim();
+  if(!name||!unit||!tier||!lifecycle||!assessor){toast('Please fill in all required fields','error');return;}
+  const vals=[1,2,3,4,5].map(i=>parseInt(document.getElementById('rs'+i).value)||0);
+  const score=vals.reduce((a,b)=>a+b,0);
+  risks.unshift({name,unit,tier,lifecycle,assessor,score,status:document.getElementById('r-status').value,date:new Date().toISOString().split('T')[0],purpose:document.getElementById('r-purpose').value,inputs:document.getElementById('r-inputs').value,affected:document.getElementById('r-affected').value,aia1:document.getElementById('r-aia1').value,aia2:document.getElementById('r-aia2').value,aia3:document.getElementById('r-aia3').value,aia4:document.getElementById('r-aia4').value,signoff:document.getElementById('r-signoff').value});
+  localStorage.setItem('rba_risks',JSON.stringify(risks));
+  renderRisks();
+  closeRiskModal();
+  toast('Risk assessment saved','success');
+  ['r-name','r-unit','r-purpose','r-inputs','r-affected','r-assessor','r-aia1','r-aia2','r-aia3','r-aia4','r-signoff','rs1','rs2','rs3','rs4','rs5'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('r-tier').value='';document.getElementById('r-lifecycle').value='';
+  document.getElementById('tier-info').style.display='none';document.getElementById('aia-required').style.display='none';document.getElementById('score-display').style.display='none';
+}
+
+function deleteRisk(i){if(!confirm('Delete this risk assessment?'))return;risks.splice(i,1);localStorage.setItem('rba_risks',JSON.stringify(risks));renderRisks();toast('Assessment deleted');}
+renderRisks();
+</script>
+</body></html>

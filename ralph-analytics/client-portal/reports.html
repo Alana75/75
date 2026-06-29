@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Report Templates Core — Ralph Analytics</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0f1117;--surface:#1a1d26;--surface2:#21253a;--border:#2a2d3e;
+  --orange:#E8521A;--text:#e8eaf0;--muted:#8b8fa8;
+  --green:#22c55e;--amber:#f59e0b;--red:#ef4444;--blue:#3b82f6;
+}
+body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;min-height:100vh}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;height:56px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:100}
+.logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:15px;text-decoration:none;color:var(--text)}
+.logo-icon{width:32px;height:32px;background:var(--orange);border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;color:#fff}
+.breadcrumb{color:var(--muted);font-size:13px}
+.ml-auto{margin-left:auto}
+.btn{padding:8px 16px;border-radius:6px;border:none;cursor:pointer;font-size:13px;font-weight:600;transition:all .15s}
+.btn-primary{background:var(--orange);color:#fff}.btn-primary:hover{background:#c44415}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--muted)}.btn-outline:hover{border-color:var(--orange);color:var(--orange)}
+.btn-sm{padding:6px 12px;font-size:12px}
+.btn-green{background:rgba(34,197,94,.15);color:var(--green);border:1px solid rgba(34,197,94,.3)}.btn-green:hover{background:var(--green);color:#fff}
+.page{padding:32px;max-width:1000px;margin:0 auto}
+.page-title{font-size:22px;font-weight:700;margin-bottom:4px}
+.page-sub{font-size:14px;color:var(--muted);margin-bottom:28px}
+.step-nav{display:flex;gap:0;background:var(--surface2);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:28px;max-width:600px}
+.step{flex:1;padding:10px;text-align:center;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;border-right:1px solid var(--border);transition:all .15s}
+.step:last-child{border-right:none}
+.step.active{background:var(--orange);color:#fff}
+.step.done{background:rgba(34,197,94,.15);color:var(--green)}
+/* Audit selector */
+.audit-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-bottom:24px}
+.audit-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px;cursor:pointer;transition:all .15s}
+.audit-card:hover,.audit-card.sel{border-color:var(--orange);background:rgba(232,82,26,.06)}
+.audit-card .ac-name{font-size:15px;font-weight:700;margin-bottom:4px}
+.audit-card .ac-meta{font-size:12px;color:var(--muted);margin-bottom:8px}
+.ac-stats{display:flex;gap:12px}
+.ac-stat{font-size:12px;color:var(--muted)}
+.ac-stat strong{color:var(--text)}
+/* Standard picker */
+.std-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:24px;max-width:600px}
+.std-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:12px}
+.std-card:hover,.std-card.sel{border-color:var(--orange);background:rgba(232,82,26,.06)}
+.std-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0}
+.std-info .std-n{font-size:13px;font-weight:600}
+.std-info .std-o{font-size:11px;color:var(--muted)}
+/* Report preview */
+.report-doc{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.report-header-bar{background:var(--orange);padding:24px 32px;color:#fff}
+.report-title{font-size:20px;font-weight:800;margin-bottom:4px}
+.report-subtitle{font-size:13px;opacity:.85}
+.report-body{padding:24px 32px}
+.report-section{margin-bottom:28px}
+.rs-title{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:16px}
+.info-item .ii-label{font-size:11px;color:var(--muted);margin-bottom:3px}
+.info-item .ii-val{font-size:14px;font-weight:600}
+.score-display{display:flex;align-items:center;gap:20px;margin-bottom:16px}
+.score-circle{width:80px;height:80px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;border:3px solid}
+.score-num{font-size:22px;font-weight:800;line-height:1}
+.score-lbl{font-size:10px;font-weight:600;margin-top:2px}
+.score-breakdown{flex:1}
+.score-row{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.score-row-label{font-size:13px;width:100px}
+.score-bar-bg{flex:1;background:var(--surface2);border-radius:999px;height:6px}
+.score-bar{height:6px;border-radius:999px;transition:width .6s ease}
+.score-count{font-size:13px;font-weight:600;width:20px;text-align:right}
+.exec-summary{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px;font-size:14px;line-height:1.7;color:var(--text)}
+.findings-table{width:100%;border-collapse:collapse;font-size:13px}
+.findings-table th{text-align:left;padding:10px 12px;background:var(--surface2);color:var(--muted);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--border)}
+.findings-table td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+.findings-table tr:last-child td{border-bottom:none}
+.sev-badge{padding:3px 7px;border-radius:4px;font-size:10px;font-weight:700;text-transform:uppercase}
+.sev-Critical{background:rgba(239,68,68,.15);color:var(--red)}
+.sev-Major{background:rgba(245,158,11,.15);color:var(--amber)}
+.sev-Minor{background:rgba(59,130,246,.15);color:var(--blue)}
+.sev-Observation{background:rgba(139,143,168,.1);color:var(--muted)}
+.qa-badge{padding:3px 7px;border-radius:4px;font-size:10px;font-weight:600}
+.qa-approved{background:rgba(34,197,94,.15);color:var(--green)}
+.qa-pending{background:rgba(245,158,11,.15);color:var(--amber)}
+.cap-table{width:100%;border-collapse:collapse;font-size:13px}
+.cap-table th{text-align:left;padding:8px 12px;background:var(--surface2);color:var(--muted);font-size:11px;font-weight:700;text-transform:uppercase;border-bottom:1px solid var(--border)}
+.cap-table td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+.cap-table tr:last-child td{border-bottom:none}
+.status-pill{padding:3px 8px;border-radius:20px;font-size:11px;font-weight:600}
+.status-open{background:rgba(239,68,68,.1);color:var(--red)}
+.status-in-progress{background:rgba(245,158,11,.1);color:var(--amber)}
+.status-closed{background:rgba(34,197,94,.1);color:var(--green)}
+.download-row{display:flex;gap:12px;margin-top:24px}
+.dl-card{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center;cursor:pointer;transition:all .15s}
+.dl-card:hover{border-color:var(--orange);background:rgba(232,82,26,.06)}
+.dl-icon{font-size:28px;margin-bottom:8px}
+.dl-name{font-size:13px;font-weight:600}
+.dl-desc{font-size:11px;color:var(--muted);margin-top:4px}
+.no-audits{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:48px;text-align:center;color:var(--muted)}
+
+/* ── AI NARRATIVE ── */
+.ai-narrative-panel{background:linear-gradient(135deg,rgba(99,102,241,.08),rgba(168,85,247,.06));border:1px solid rgba(99,102,241,.25);border-radius:12px;padding:20px;margin-top:20px;}
+.ai-badge{background:rgba(99,102,241,.2);color:#818cf8;font-size:.65rem;font-weight:800;padding:2px 8px;border-radius:10px;text-transform:uppercase;letter-spacing:.05em;}
+.ai-btn{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;border-radius:8px;font-size:.82rem;font-weight:700;cursor:pointer;border:none;font-family:inherit;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;transition:all .2s;}
+.ai-btn:hover{opacity:.88;} .ai-btn:disabled{opacity:.5;cursor:not-allowed;}
+.ai-nar-box{margin-top:14px;background:rgba(0,0,0,.25);border:1px solid rgba(99,102,241,.2);border-radius:10px;padding:18px;font-size:.83rem;line-height:1.8;color:#c8cde0;white-space:pre-line;}
+.ai-spinner{width:16px;height:16px;border:2px solid rgba(99,102,241,.3);border-top-color:#818cf8;border-radius:50%;animation:ai-spin .7s linear infinite;}
+@keyframes ai-spin{to{transform:rotate(360deg)}}
+.tone-sel{background:#2d3347;border:1px solid rgba(255,255,255,.1);color:#f0f2f7;border-radius:6px;padding:5px 10px;font-size:.78rem;outline:none;margin-right:8px;}
+
+</style>
+</head>
+<body>
+<div class="topbar">
+  <a href="/client" class="logo">
+    <div class="logo-icon">RA</div>
+    RALPH ANALYTICS
+  </a>
+  <div class="breadcrumb">› Report Templates Core</div>
+  <div class="ml-auto" style="display:flex;gap:8px">
+    <div id="topbar-actions"></div>
+    <button class="btn btn-outline" onclick="window.location='/client'">⬅ Dashboard</button>
+  </div>
+</div>
+
+<div id="app"></div>
+
+<script>
+// Load audits from field-audit-core local storage
+function loadAudits(){
+  try{ return JSON.parse(localStorage.getItem('ra_audits')||'[]'); }
+  catch{ return []; }
+}
+
+// Demo audit data for generating a realistic report when no real audits exist
+const DEMO_AUDIT = {
+  id:'DEMO-2026-001', siteName:'Green Future NGO — Operations Centre', auditorName:'J. van Wouw',
+  auditDate:'2026-06-25', country:'South Africa', standard:'rba',
+  status:'submitted', submittedAt:'2026-06-25T10:30:00Z',
+  answers:{q1:'yes',q2:'yes',q3:'no',q4:'yes',q5:'yes',q6:'no',q7:'yes',q8:'yes',q9:'yes',q10:'yes'},
+  findings:{
+    q3:{severity:'major',description:'Overtime logs show 68 hours worked in week 22 for warehouse staff.',correctiveAction:'Implement mandatory overtime cap system and notify line managers.',dueDate:'2026-08-01'},
+    q6:{severity:'major',description:'PPE hazard assessment not documented for logistics bay. Workers observed without eye protection.',correctiveAction:'Complete written hazard assessment for all areas and procure additional PPE stock.',dueDate:'2026-07-15'},
+  }
+};
+
+const STD_MAP = {
+  rba:  {label:'RBA',  name:'Responsible Business Alliance',       color:'#E8521A', bg:'rgba(232,82,26,.15)'},
+  osha: {label:'OSHA', name:'Occupational Safety and Health',      color:'#3b82f6', bg:'rgba(59,130,246,.15)'},
+  irma: {label:'IRMA', name:'Initiative for Responsible Mining',   color:'#22c55e', bg:'rgba(34,197,94,.15)'},
+};
+
+let VIEW = 'select'; // select | configure | preview
+let selectedAudit = null;
+let selectedStd = null;
+
+function render(){ document.getElementById('app').innerHTML = getHtml(); }
+
+function getHtml(){
+  if(VIEW==='select') return selectView();
+  if(VIEW==='configure') return configureView();
+  if(VIEW==='preview') return previewView();
+  return '';
+}
+
+function selectView(){
+  const audits = [...loadAudits(), DEMO_AUDIT];
+  const submitted = audits.filter(a=>a.status==='submitted');
+  return `<div class="page">
+    <div class="page-title">Report Templates Core</div>
+    <div class="page-sub">Generate compliance reports from completed field audits</div>
+    <div class="step-nav">
+      <div class="step active">1 · Select Audit</div>
+      <div class="step">2 · Configure</div>
+      <div class="step">3 · Preview & Download</div>
+    </div>
+    <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:12px">Submitted Audits (${submitted.length})</div>
+    ${submitted.length === 0
+      ? `<div class="no-audits"><div style="font-size:32px;margin-bottom:12px">📋</div><div style="font-size:16px;font-weight:600;color:var(--text)">No Submitted Audits</div><div style="margin-top:4px">Complete and submit an audit in Field Audit Core first.</div><button class="btn btn-primary" style="margin-top:16px" onclick="window.location='/client/field-audit'">Open Field Audit Core →</button></div>`
+      : `<div class="audit-cards">${submitted.map(a=>{
+          const nos = Object.values(a.answers||{}).filter(v=>v==='no').length;
+          const total = Object.keys(a.answers||{}).length;
+          const yeses = Object.values(a.answers||{}).filter(v=>v==='yes').length;
+          return `<div class="audit-card ${selectedAudit?.id===a.id?'sel':''}" onclick="selectAudit('${a.id}')">
+            <div class="ac-name">${a.siteName}</div>
+            <div class="ac-meta">${a.standard?.toUpperCase()} · ${a.auditDate} · ${a.auditorName}</div>
+            <div class="ac-stats">
+              <div class="ac-stat"><strong>${total}</strong> answers</div>
+              <div class="ac-stat"><strong style="color:var(--green)">${yeses}</strong> compliant</div>
+              <div class="ac-stat"><strong style="color:var(--red)">${nos}</strong> findings</div>
+            </div>
+          </div>`;
+        }).join('')}</div>
+        <div style="display:flex;justify-content:flex-end">
+          <button class="btn btn-primary" onclick="if(selectedAudit)goToConfigure();else alert('Select an audit first')">Next: Configure →</button>
+        </div>`
+    }
+  </div>`;
+}
+
+function selectAudit(id){
+  const audits = [...loadAudits(), DEMO_AUDIT];
+  selectedAudit = audits.find(a=>a.id===id);
+  render();
+}
+
+function configureView(){
+  return `<div class="page">
+    <div class="page-title">Configure Report</div>
+    <div class="page-sub">${selectedAudit.siteName} · ${selectedAudit.auditDate}</div>
+    <div class="step-nav">
+      <div class="step done" onclick="VIEW='select';render()">✓ Select Audit</div>
+      <div class="step active">2 · Configure</div>
+      <div class="step">3 · Preview & Download</div>
+    </div>
+    <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:12px">Compliance Standard</div>
+    <div class="std-cards">
+      ${Object.entries(STD_MAP).map(([k,s])=>`
+        <div class="std-card ${selectedStd===k?'sel':''}" onclick="selectedStd='${k}';render()">
+          <div class="std-icon" style="background:${s.bg};color:${s.color}">${s.label}</div>
+          <div class="std-info">
+            <div class="std-n">${s.label}</div>
+            <div class="std-o">${s.name}</div>
+          </div>
+          ${selectedStd===k?'<span style="margin-left:auto;color:var(--orange)">✓</span>':''}
+        </div>`).join('')}
+    </div>
+    <div style="display:flex;justify-content:space-between;margin-top:8px">
+      <button class="btn btn-outline" onclick="VIEW='select';render()">← Back</button>
+      <button class="btn btn-primary" onclick="if(selectedStd)goToPreview();else alert('Select a standard first')">Generate Report →</button>
+    </div>
+  </div>`;
+}
+
+function goToConfigure(){ VIEW='configure'; selectedStd = selectedAudit.standard || null; render(); }
+
+function goToPreview(){
+  VIEW='preview'; render();
+  // Inject AI narrative panel after render
+  setTimeout(() => {
+    const a = audits.find(x => x.id === selectedAudit);
+    const std = STANDARDS ? STANDARDS[selectedStd] : null;
+    if (a) injectAINarrativePanel(a, std);
+  }, 100);
+}
+
+function previewView(){
+  const a = selectedAudit;
+  const std = STD_MAP[selectedStd] || STD_MAP[a.standard] || STD_MAP.rba;
+  
+  const answers = a.answers || {};
+  const findings = a.findings || {};
+  const total = Object.keys(answers).length;
+  const yeses = Object.values(answers).filter(v=>v==='yes').length;
+  const nos = Object.values(answers).filter(v=>v==='no').length;
+  const nas = Object.values(answers).filter(v=>v==='na').length;
+  const findingList = Object.entries(findings);
+  const critical = findingList.filter(([,f])=>f.severity==='critical').length;
+  const major = findingList.filter(([,f])=>f.severity==='major').length;
+  const minor = findingList.filter(([,f])=>f.severity==='minor').length;
+  
+  const score = total > 0 ? Math.round((yeses / (total - nas || 1)) * 100) : 0;
+  const rating = score >= 85 ? {label:'GREEN',color:'var(--green)'} : score >= 65 ? {label:'AMBER',color:'var(--amber)'} : {label:'RED',color:'var(--red)'};
+  
+  const capEntries = findingList.map(([qid,f],i)=>({
+    code:`F-${String(i+1).padStart(3,'0')}`,
+    desc: f.description || 'Finding requires description',
+    ca: f.correctiveAction || 'Corrective action to be determined',
+    severity: f.severity, due: f.dueDate || 'TBD',
+    status: 'open', responsible: a.auditorName
+  }));
+
+  return `<div class="page">
+    <div class="page-title">Audit Report Preview</div>
+    <div class="page-sub">${a.siteName} · ${std.label} Standard · Generated ${new Date().toLocaleDateString()}</div>
+    <div class="step-nav">
+      <div class="step done" onclick="VIEW='select';render()">✓ Select Audit</div>
+      <div class="step done" onclick="VIEW='configure';render()">✓ Configure</div>
+      <div class="step active">3 · Preview & Download</div>
+    </div>
+
+    <div class="report-doc">
+      <div class="report-header-bar">
+        <div class="report-title">COMPLIANCE AUDIT REPORT</div>
+        <div class="report-subtitle">${std.label} — ${std.name} · Ref: ${a.id}</div>
+      </div>
+      <div class="report-body">
+
+        <!-- Audit Info -->
+        <div class="report-section">
+          <div class="rs-title">Audit Information</div>
+          <div class="info-grid">
+            <div class="info-item"><div class="ii-label">Site / Facility</div><div class="ii-val">${a.siteName}</div></div>
+            <div class="info-item"><div class="ii-label">Country</div><div class="ii-val">${a.country||'—'}</div></div>
+            <div class="info-item"><div class="ii-label">Audit Date</div><div class="ii-val">${a.auditDate}</div></div>
+            <div class="info-item"><div class="ii-label">Auditor</div><div class="ii-val">${a.auditorName}</div></div>
+            <div class="info-item"><div class="ii-label">Report Date</div><div class="ii-val">${new Date().toISOString().split('T')[0]}</div></div>
+            <div class="info-item"><div class="ii-label">Standard Version</div><div class="ii-val">${std.label} v1.0</div></div>
+          </div>
+        </div>
+
+        <!-- Summary Score -->
+        <div class="report-section">
+          <div class="rs-title">Audit Summary</div>
+          <div class="score-display">
+            <div class="score-circle" style="border-color:${rating.color};color:${rating.color}">
+              <div class="score-num">${score}%</div>
+              <div class="score-lbl" style="color:${rating.color}">${rating.label}</div>
+            </div>
+            <div class="score-breakdown">
+              <div class="score-row">
+                <div class="score-row-label" style="color:var(--green)">Compliant</div>
+                <div class="score-bar-bg"><div class="score-bar" style="width:${total?yeses/total*100:0}%;background:var(--green)"></div></div>
+                <div class="score-count" style="color:var(--green)">${yeses}</div>
+              </div>
+              <div class="score-row">
+                <div class="score-row-label" style="color:var(--red)">Findings</div>
+                <div class="score-bar-bg"><div class="score-bar" style="width:${total?nos/total*100:0}%;background:var(--red)"></div></div>
+                <div class="score-count" style="color:var(--red)">${nos}</div>
+              </div>
+              <div class="score-row">
+                <div class="score-row-label" style="color:var(--muted)">Not Applicable</div>
+                <div class="score-bar-bg"><div class="score-bar" style="width:${total?nas/total*100:0}%;background:var(--muted)"></div></div>
+                <div class="score-count" style="color:var(--muted)">${nas}</div>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;gap:16px;font-size:13px">
+            ${critical?`<span style="color:var(--red)">⚠ ${critical} Critical</span>`:''}
+            ${major?`<span style="color:var(--amber)">${major} Major</span>`:''}
+            ${minor?`<span style="color:var(--blue)">${minor} Minor</span>`:''}
+            ${!critical&&!major&&!minor?'<span style="color:var(--green)">✓ No findings — fully compliant</span>':''}
+          </div>
+        </div>
+
+        <!-- Executive Summary -->
+        <div class="report-section">
+          <div class="rs-title">Executive Summary</div>
+          <div class="exec-summary">
+            This audit was conducted at <strong>${a.siteName}</strong> on ${a.auditDate} by ${a.auditorName} against the ${std.label} – ${std.name} standard. A total of ${total} checklist questions were assessed, covering all applicable sections of the standard.<br><br>
+            The facility achieved an overall compliance score of <strong style="color:${rating.color}">${score}% (${rating.label})</strong>. ${nos} finding(s) were identified requiring corrective action, including ${critical} critical and ${major} major non-conformances. ${nas > 0 ? `${nas} question(s) were marked not applicable to this site's scope.` : ''}<br><br>
+            ${critical > 0 ? `<strong style="color:var(--red)">CRITICAL FINDINGS REQUIRE IMMEDIATE ATTENTION.</strong> Corrective actions must be implemented and verified within the agreed timeframes.` : `No critical findings were identified. The facility demonstrates ${score >= 85 ? 'strong' : 'adequate'} compliance with the ${std.label} standard requirements.`}
+          </div>
+        </div>
+
+        <!-- Findings Table -->
+        ${nos > 0 ? `
+        <div class="report-section">
+          <div class="rs-title">Findings (${nos})</div>
+          <table class="findings-table">
+            <thead><tr>
+              <th>Code</th><th>Finding</th><th>Severity</th><th>Status</th>
+            </tr></thead>
+            <tbody>
+              ${capEntries.map(e=>`<tr>
+                <td style="font-family:monospace;color:var(--orange)">${e.code}</td>
+                <td>${e.desc||'—'}</td>
+                <td><span class="sev-badge sev-${e.severity?.charAt(0).toUpperCase()+e.severity?.slice(1)||'Minor'}">${e.severity||'minor'}</span></td>
+                <td><span class="qa-badge qa-pending">Pending</span></td>
+              </tr>`).join('')}
+            </tbody>
+          </table>
+        </div>
+
+        <!-- CAP Table -->
+        <div class="report-section">
+          <div class="rs-title">Corrective Action Plan (CAP)</div>
+          <table class="cap-table">
+            <thead><tr>
+              <th>Code</th><th>Description</th><th>Corrective Action</th><th>Due Date</th><th>Status</th>
+            </tr></thead>
+            <tbody>
+              ${capEntries.map(e=>`<tr>
+                <td style="font-family:monospace;font-size:12px;color:var(--orange);white-space:nowrap">${e.code}</td>
+                <td style="max-width:200px">${e.desc}</td>
+                <td style="max-width:220px">${e.ca}</td>
+                <td style="white-space:nowrap;font-family:monospace;font-size:12px">${e.due}</td>
+                <td><span class="status-pill status-open">Open</span></td>
+              </tr>`).join('')}
+            </tbody>
+          </table>
+        </div>` : `
+        <div class="report-section">
+          <div class="rs-title">Findings</div>
+          <div style="background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);border-radius:8px;padding:16px;color:var(--green);font-size:14px">✓ No findings — the facility is fully compliant with all assessed requirements.</div>
+        </div>`}
+
+        <!-- Declaration -->
+        <div class="report-section" style="margin-bottom:0">
+          <div class="rs-title">Auditor Declaration</div>
+          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px;font-size:13px;color:var(--muted)">
+            I, <strong style="color:var(--text)">${a.auditorName}</strong>, declare that this audit was conducted independently and in accordance with the ${std.label} audit methodology. The findings recorded herein are accurate to the best of my knowledge and have been verified against available documentation and site observation.
+            <div style="margin-top:12px;font-size:12px">Signed digitally · Audit ID: ${a.id} · ${new Date().toISOString()}</div>
+          </div>
+        </div>
+
+      </div><!-- /report-body -->
+    </div><!-- /report-doc -->
+
+    <!-- Download actions -->
+    <div class="download-row">
+      <div class="dl-card" onclick="downloadReport('word')">
+        <div class="dl-icon">📄</div>
+        <div class="dl-name">Word Document (.docx)</div>
+        <div class="dl-desc">Full report with formatting — ready for client delivery</div>
+      </div>
+      <div class="dl-card" onclick="downloadReport('excel')">
+        <div class="dl-icon">📊</div>
+        <div class="dl-name">Excel Workbook (.xlsx)</div>
+        <div class="dl-desc">Findings + CAP table for data analysis and tracking</div>
+      </div>
+      <div class="dl-card" onclick="downloadReport('json')">
+        <div class="dl-icon">🔧</div>
+        <div class="dl-name">JSON Export</div>
+        <div class="dl-desc">Machine-readable format for system integration</div>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:space-between;margin-top:20px">
+      <button class="btn btn-outline" onclick="VIEW='configure';render()">← Reconfigure</button>
+      <button class="btn btn-green" onclick="downloadReport('word')">Download Report →</button>
+    </div>
+  </div>`;
+}
+
+function downloadReport(type){
+  const a = selectedAudit;
+  const filename = `${a.siteName.replace(/[^a-z0-9]/gi,'_')}_${a.auditDate}_${selectedStd?.toUpperCase()||'REPORT'}`;
+  if(type==='json'){
+    const data = JSON.stringify({
+      auditId:a.id, standard:selectedStd, generatedAt:new Date().toISOString(),
+      site:a.siteName, auditor:a.auditorName, auditDate:a.auditDate,
+      answers:a.answers, findings:a.findings,
+      metadata:{engine:'report-templates-core',version:'1.0.0'}
+    }, null, 2);
+    const blob = new Blob([data],{type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const el = document.createElement('a'); el.href=url; el.download=filename+'.json'; el.click();
+    URL.revokeObjectURL(url);
+  } else {
+    // Show modal that Word/Excel generation requires backend
+    showDownloadModal(type, filename);
+  }
+}
+
+// ── AI Narrative Panel (injected into preview view) ─────────────────────────
+function injectAINarrativePanel(auditObj, stdObj) {
+  window._currentAuditForReport = auditObj;
+  window._currentStdForReport   = stdObj;
+
+  const existing = document.getElementById('ai-narrative-section');
+  if (existing) return; // already injected
+
+  const panel = document.createElement('div');
+  panel.id = 'ai-narrative-section';
+  panel.className = 'ai-narrative-panel';
+  panel.innerHTML = `
+    <div style="display:flex;align-items:center;gap:10px;font-size:.88rem;font-weight:700;margin-bottom:8px;">
+      <span>✦</span><span>AI Report Narrative</span>
+      <span class="ai-badge">GPT-4o</span>
+    </div>
+    <p style="font-size:.8rem;color:#9aa0b4;margin-bottom:14px;">Generate a professional narrative for this report — executive summary, key findings, outcomes, and recommendations.</p>
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px;">
+      <select id="ai-tone-sel" class="tone-sel">
+        <option value="professional">Professional</option>
+        <option value="executive">Executive</option>
+        <option value="technical">Technical</option>
+        <option value="plain language">Plain Language</option>
+      </select>
+      <select id="ai-aud-sel" class="tone-sel">
+        <option value="donor">Donor</option>
+        <option value="board">Board</option>
+        <option value="regulator">Regulator</option>
+        <option value="internal management">Management</option>
+      </select>
+      <button class="ai-btn" id="ai-nar-btn" onclick="generateAINarrative()">✦ Generate Narrative</button>
+    </div>
+    <div id="ai-nar-box" class="ai-nar-box" style="display:none;"></div>
+  `;
+
+  // Append after the download buttons row
+  const previewSection = document.querySelector('.report-preview, #preview-container, .card');
+  if (previewSection) previewSection.appendChild(panel);
+  else document.querySelector('main, .main, body').appendChild(panel);
+}
+
+function showDownloadModal(type, filename){
+  const m = document.createElement('div');
+  m.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9999;display:flex;align-items:center;justify-content:center';
+  m.innerHTML=`<div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:28px;max-width:420px;width:90%">
+    <div style="font-size:16px;font-weight:700;margin-bottom:8px">📄 ${type==='word'?'Word Document':'Excel Workbook'} Export</div>
+    <div style="font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:20px">
+      The <strong>${type==='word'?'.docx builder':'Excel builder'}</strong> in <code>report-templates-core</code> generates this file server-side using the <code>${type==='word'?'WordBuilder':'ExcelBuilder'}</code> class.<br><br>
+      To enable live downloads, connect this portal to the backend API endpoint at <code>/api/reports/generate</code>.
+    </div>
+    <div style="font-size:12px;font-family:monospace;background:var(--surface2);padding:10px;border-radius:6px;color:var(--orange);margin-bottom:16px">
+      POST /api/reports/generate<br>{ auditId, standard, format: "${type}" }
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:10px">
+      <button onclick="this.closest('div[style]').remove()" style="padding:8px 16px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer">Close</button>
+      <button onclick="downloadReport('json');this.closest('div[style]').remove()" style="padding:8px 16px;border-radius:6px;border:none;background:var(--orange);color:#fff;cursor:pointer;font-weight:600">Download JSON Instead</button>
+    </div>
+  </div>`;
+  document.body.appendChild(m);
+}
+
+// ── AI Narrative Generation ──────────────────────────────────────────────────
+async function generateAINarrative() {
+  const a = window._currentAuditForReport;
+  const std = window._currentStdForReport;
+  if (!a || !std) return;
+
+  const btn  = document.getElementById('ai-nar-btn');
+  const box  = document.getElementById('ai-nar-box');
+  const tone = document.getElementById('ai-tone-sel')?.value || 'professional';
+  const aud  = document.getElementById('ai-aud-sel')?.value  || 'donor';
+
+  if (!btn || !box) return;
+  btn.disabled = true;
+  btn.innerHTML = '<span class="ai-spinner"></span> Generating narrative…';
+  box.style.display = 'block';
+  box.innerHTML     = '<span style="color:#818cf8;">Sending to GPT-4o…</span>';
+
+  try {
+    const reportData = {
+      site: a.siteName, date: a.auditDate, auditor: a.auditorName,
+      standard: std.label + ' — ' + std.name,
+      totalQuestions: a.totalQ || 0,
+      answers: a.answers || {}, findings: a.findings || [],
+      submittedAt: a.submittedAt || a.createdAt,
+    };
+
+    const _narToken = localStorage.getItem('ralph_auth_token') || '';
+    const resp = await fetch('/api/ai/generate-narrative', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + _narToken },
+      body: JSON.stringify({ reportData, tone, audience: aud }),
+    });
+    const data = await resp.json();
+    if (data.error) throw new Error(data.error);
+    box.textContent = data.narrative || 'No narrative returned.';
+    box.style.color = '#c8cde0';
+
+    // Add copy button
+    const copy = document.createElement('button');
+    copy.style.cssText='margin-top:12px;padding:6px 14px;border-radius:6px;border:1px solid rgba(99,102,241,.3);background:transparent;color:#818cf8;font-size:.75rem;font-weight:700;cursor:pointer;';
+    copy.textContent='Copy Narrative';
+    copy.onclick = () => { navigator.clipboard.writeText(box.textContent).then(()=>{ copy.textContent='Copied!'; setTimeout(()=>copy.textContent='Copy Narrative',2000); }); };
+    box.after(copy);
+  } catch(err) {
+    box.innerHTML = '<span style="color:#f87171;">⚠ ' + err.message + '</span>';
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '✦ Regenerate Narrative';
+  }
+}
+
+render();
+</script>
+</body>
+</html>

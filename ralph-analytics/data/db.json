@@ -1,0 +1,100 @@
+{
+  "users": [
+    {
+      "id": "43df4c61-b6c4-4a2a-b594-fa8314b029b3",
+      "email": "admin@ralph-analytics.com",
+      "password_hash": "$2a$10$mI77afflg6MtFAPqtBNDJ.o7vLiLt7.3rtV.Z6h7fO8MGHb./P2oa",
+      "name": "Admin",
+      "org": "VECTRA International",
+      "role": "admin",
+      "client_slug": "admin",
+      "packages": "[\"*\"]",
+      "status": "active",
+      "created_at": "2026-06-25T18:47:22.030Z",
+      "updated_at": "2026-06-25T18:47:22.030Z"
+    },
+    {
+      "id": "2bd922c6-7224-49ff-8064-a6067a243adf",
+      "email": "client@demo.com",
+      "password_hash": "$2a$10$yoKU0kBvOIKLpDjYGw8zwOMxnIbPiiLH.KUW7FvRbO/z7rsYiPDZe",
+      "name": "Alex Kamau",
+      "org": "Demo Organisation",
+      "role": "client",
+      "client_slug": "demo-org",
+      "packages": "[\"field-audit\",\"standards\",\"translation\",\"reports\"]",
+      "status": "active",
+      "created_at": "2026-06-25T18:47:22.031Z",
+      "updated_at": "2026-06-25T18:47:22.031Z"
+    },
+    {
+      "id": "d49939d4-0503-4100-a922-82b4c8f28631",
+      "email": "alana@ralph-analytics.com",
+      "password_hash": "$2a$10$bFtv.EviRfkGmftdXivZBeTuqnn23iRQ.jEZS0P.6.ukPTWc4ZOwO",
+      "name": "Alana van Wouw",
+      "org": "VECTRA International",
+      "role": "client",
+      "client_slug": "alana",
+      "packages": "[\"irmp\",\"scvms\",\"rcars\",\"capts\",\"iarfs\",\"cid\",\"gres\"]",
+      "status": "active",
+      "created_at": "2026-06-26T08:04:28.212Z",
+      "updated_at": "2026-06-26T08:04:28.212Z"
+    },
+    {
+      "id": "b563cd4f-fbe9-44cb-842a-f34b4b4aa449",
+      "email": "demo@acmecorp.com",
+      "password_hash": "$2a$10$FYhJqMuAHJqP8hV9rendoeL5u6uXGJgAAE5MGDWfW.xQg74Zi.EGi",
+      "name": "Demo Client — Acme Corp",
+      "org": "Acme Corporation",
+      "role": "client",
+      "client_slug": "demo",
+      "packages": "[\"irmp\",\"rcars\",\"scvms\"]",
+      "status": "active",
+      "created_at": "2026-06-26T08:34:43.987Z",
+      "updated_at": "2026-06-26T08:34:43.987Z"
+    },
+    {
+      "id": "553ce117-9975-4c2f-a494-55b69d45cb63",
+      "email": "demo@globalngo.org",
+      "password_hash": "$2a$10$B1f8n/xCka2zR4xm5AWY9e2Lw7cvJTq94.OdZeIpLHSdPgGGHpabK",
+      "name": "Demo Client — Global NGO",
+      "org": "Global NGO Foundation",
+      "role": "client",
+      "client_slug": "demo",
+      "packages": "[\"iarfs\",\"capts\",\"cid\"]",
+      "status": "active",
+      "created_at": "2026-06-26T08:34:44.184Z",
+      "updated_at": "2026-06-26T08:34:44.184Z"
+    }
+  ],
+  "reset_tokens": [
+    {
+      "id": "380150ae-61b3-4cd0-953d-cded9ae004e1",
+      "user_id": "43df4c61-b6c4-4a2a-b594-fa8314b029b3",
+      "token": "7f22a5b0ccbd40158ad56078a448231b67e5d62e2ed5f3163600fecb32892008",
+      "expires_at": "2026-06-25T19:49:49.429Z",
+      "used": false,
+      "created_at": "2026-06-25T18:49:49.429Z"
+    },
+    {
+      "id": "455f212a-1606-41eb-ac97-beee7c80e357",
+      "user_id": "43df4c61-b6c4-4a2a-b594-fa8314b029b3",
+      "token": "6a1ef2c2dfae18ac573c486be31676f57a3b514ecbe23ec261e6ef78d98dab69",
+      "expires_at": "2026-06-26T09:17:47.385Z",
+      "used": false,
+      "created_at": "2026-06-26T08:17:47.386Z"
+    }
+  ],
+  "support_tickets": [
+    {
+      "id": "96cfc7eb-8c5b-498d-87dc-3b72dfb79e4c",
+      "user_id": "43df4c61-b6c4-4a2a-b594-fa8314b029b3",
+      "user_email": "admin@ralph-analytics.com",
+      "subject": "Sprint 4 test",
+      "message": "Testing support ticket API",
+      "priority": "low",
+      "status": "open",
+      "created_at": "2026-06-25T19:27:09.083Z",
+      "updated_at": "2026-06-25T19:27:09.083Z"
+    }
+  ]
+}

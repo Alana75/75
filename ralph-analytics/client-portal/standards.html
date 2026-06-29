@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Standards Core — Ralph Analytics</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0f1117;--surface:#1a1d26;--surface2:#21253a;--border:#2a2d3e;
+  --orange:#E8521A;--orange2:#c44415;--text:#e8eaf0;--muted:#8b8fa8;
+  --green:#22c55e;--amber:#f59e0b;--red:#ef4444;--blue:#3b82f6;
+}
+body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;min-height:100vh}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;height:56px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:100}
+.topbar .logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:15px;text-decoration:none;color:var(--text)}
+.logo-icon{width:32px;height:32px;background:var(--orange);border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;color:#fff}
+.breadcrumb{color:var(--muted);font-size:13px;display:flex;align-items:center;gap:6px}
+.breadcrumb a{color:var(--orange);text-decoration:none}
+.ml-auto{margin-left:auto}
+.btn{padding:8px 16px;border-radius:6px;border:none;cursor:pointer;font-size:13px;font-weight:600;transition:all .15s}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--muted)}
+.btn-outline:hover{border-color:var(--orange);color:var(--orange)}
+.layout{display:grid;grid-template-columns:280px 1fr;height:calc(100vh - 56px)}
+.sidebar{background:var(--surface);border-right:1px solid var(--border);padding:20px 0;overflow-y:auto}
+.sidebar-section{padding:0 16px;margin-bottom:4px}
+.sidebar-label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;padding:12px 8px 6px}
+.std-item{display:flex;align-items:center;gap:10px;padding:10px 8px;border-radius:8px;cursor:pointer;transition:all .15s;border:1px solid transparent}
+.std-item:hover{background:var(--surface2)}
+.std-item.active{background:rgba(232,82,26,.12);border-color:rgba(232,82,26,.3)}
+.std-badge{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0}
+.std-info{flex:1;min-width:0}
+.std-name{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.std-owner{font-size:11px;color:var(--muted)}
+.main{overflow-y:auto;padding:0}
+.standard-header{padding:32px 32px 24px;border-bottom:1px solid var(--border)}
+.standard-meta{display:flex;align-items:flex-start;gap:20px;margin-bottom:20px}
+.std-icon-lg{width:56px;height:56px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;flex-shrink:0}
+.standard-name{font-size:22px;font-weight:700;margin-bottom:4px}
+.standard-sub{font-size:14px;color:var(--muted);margin-bottom:10px}
+.tags{display:flex;gap:8px;flex-wrap:wrap}
+.tag{padding:4px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:20px;font-size:12px;color:var(--muted)}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:20px}
+.stat-box{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px}
+.stat-val{font-size:22px;font-weight:700;margin-bottom:2px}
+.stat-lbl{font-size:12px;color:var(--muted)}
+.sections-area{padding:24px 32px}
+.section-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;margin-bottom:16px;overflow:hidden}
+.section-header{padding:16px 20px;display:flex;align-items:center;gap:12px;cursor:pointer;user-select:none}
+.section-header:hover{background:rgba(255,255,255,.02)}
+.section-title{font-size:15px;font-weight:600;flex:1}
+.section-meta{font-size:12px;color:var(--muted)}
+.chevron{transition:transform .2s;color:var(--muted)}
+.section-card.open .chevron{transform:rotate(90deg)}
+.req-list{border-top:1px solid var(--border);padding:0}
+.req-item{padding:16px 20px;border-bottom:1px solid var(--border);display:grid;grid-template-columns:1fr auto;gap:16px}
+.req-item:last-child{border-bottom:none}
+.req-title{font-size:14px;font-weight:600;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.req-desc{font-size:13px;color:var(--muted);line-height:1.5;margin-bottom:8px}
+.req-clause{font-size:11px;color:var(--blue);font-family:monospace}
+.severity{padding:3px 8px;border-radius:4px;font-size:11px;font-weight:700;text-transform:uppercase}
+.severity-critical{background:rgba(239,68,68,.15);color:var(--red)}
+.severity-major{background:rgba(245,158,11,.15);color:var(--amber)}
+.severity-minor{background:rgba(59,130,246,.15);color:var(--blue)}
+.evidence-list{margin-top:10px}
+.evidence-title{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;margin-bottom:6px}
+.evidence-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);margin-bottom:4px}
+.dot{width:5px;height:5px;background:var(--orange);border-radius:50%;flex-shrink:0}
+.metrics-list{margin-top:10px}
+.metric-row{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:10px 12px;margin-bottom:6px}
+.metric-name{font-size:12px;font-weight:600;margin-bottom:2px}
+.metric-rule{font-size:11px;color:var(--orange);font-family:monospace}
+.metric-freq{font-size:11px;color:var(--muted);margin-top:2px}
+.no-std{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--muted);gap:12px}
+.no-std-icon{font-size:48px;opacity:.3}
+.search-bar{padding:16px 32px;border-bottom:1px solid var(--border)}
+.search-input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);font-size:14px;outline:none}
+.search-input:focus{border-color:var(--orange)}
+.req-right{text-align:right}
+.filter-bar{display:flex;gap:8px;padding:0 32px 16px;flex-wrap:wrap}
+.filter-btn{padding:6px 12px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:12px;cursor:pointer;transition:all .15s}
+.filter-btn.active{background:var(--orange);color:#fff;border-color:var(--orange)}
+
+/* ── AI GAP ANALYSIS ── */
+.ai-gap-panel{background:linear-gradient(135deg,rgba(99,102,241,.08),rgba(168,85,247,.06));border:1px solid rgba(99,102,241,.25);border-radius:12px;padding:20px;margin:16px;}
+.ai-badge{background:rgba(99,102,241,.2);color:#818cf8;font-size:.65rem;font-weight:800;padding:2px 8px;border-radius:10px;text-transform:uppercase;letter-spacing:.05em;}
+.ai-btn{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;border-radius:8px;font-size:.82rem;font-weight:700;cursor:pointer;border:none;font-family:inherit;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;transition:all .2s;}
+.ai-btn:hover{opacity:.88;} .ai-btn:disabled{opacity:.5;cursor:not-allowed;}
+.ai-gap-row{background:rgba(0,0,0,.2);border:1px solid rgba(255,255,255,.05);border-radius:8px;padding:12px 14px;margin-bottom:8px;}
+.ai-gap-section{font-weight:700;font-size:.82rem;color:#f0f2f7;margin-bottom:3px;}
+.ai-gap-desc{font-size:.78rem;color:#9aa0b4;margin-bottom:6px;}
+.ai-gap-meta{display:flex;gap:10px;flex-wrap:wrap;}
+.ai-pri{font-size:.68rem;font-weight:700;padding:2px 8px;border-radius:8px;}
+.pri-high{background:rgba(239,68,68,.15);color:#ef4444;}
+.pri-medium{background:rgba(245,158,11,.15);color:#f59e0b;}
+.pri-low{background:rgba(74,222,128,.15);color:#4ade80;}
+.ai-effort{font-size:.68rem;color:#9aa0b4;padding:2px 8px;border:1px solid rgba(255,255,255,.07);border-radius:8px;}
+.ai-spinner{width:16px;height:16px;border:2px solid rgba(99,102,241,.3);border-top-color:#818cf8;border-radius:50%;animation:ai-spin2 .7s linear infinite;}
+@keyframes ai-spin2{to{transform:rotate(360deg)}}
+
+</style>
+</head>
+<body>
+<div class="topbar">
+  <a href="/client" class="logo">
+    <div class="logo-icon">RA</div>
+    RALPH ANALYTICS
+  </a>
+  <div class="breadcrumb">
+    <span>›</span>
+    <span>Standards Core</span>
+  </div>
+  <div class="ml-auto">
+    <button class="btn btn-outline" onclick="window.location='/client'">⬅ Dashboard</button>
+  </div>
+</div>
+
+<div class="layout">
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Standards Library</div>
+    </div>
+    <div id="std-list"></div>
+  </div>
+
+  <!-- Main -->
+  <div class="main" id="main-content">
+    <div class="no-std" style="height:calc(100vh - 56px)">
+      <div class="no-std-icon">📋</div>
+      <div style="font-size:16px;font-weight:600;color:var(--text)">Select a Standard</div>
+      <div style="font-size:14px">Choose from the library on the left</div>
+    </div>
+  </div>
+</div>
+
+<script>
+const STANDARDS = {
+  RBA: {
+    id:'RBA', label:'RBA', name:'Responsible Business Alliance Code of Conduct',
+    version:'1.0', owner:'Responsible Business Alliance',
+    scope:'Electronics, apparel, automotive and other industries across global supply chains',
+    certBody:'RBA Validated Audit Process (VAP)', auditFreq:'Annual or as required',
+    source:'https://www.responsiblebusiness.org/code-of-conduct/',
+    color:'#E8521A', bg:'rgba(232,82,26,.15)',
+    sections:[
+      {id:'labour',title:'Labour',clause:'RBA CoC Section A',requirements:[
+        {id:'no-forced-labour',title:'Freely Chosen Employment',severity:'critical',clause:'RBA CoC A1',
+         desc:'All work is voluntary. Forced, bonded, trafficked, indentured, or prison labour are prohibited. Workers must be free to leave work or terminate their employment with reasonable notice.',
+         evidence:['Employee contracts (signed, in worker\'s language)','Payroll records showing wages paid in full','Recruitment agency agreements','Exit interview records','No retention of identity documents policy'],
+         metrics:[{name:'Forced Labour Cases',rule:'metric == 0',freq:'annual',unit:'cases'}]},
+        {id:'child-labour',title:'Child Labour Prohibition',severity:'critical',clause:'RBA CoC A2',
+         desc:'Child labour is not to be used. Minimum age for employment must comply with local law but may not be less than 15 years.',
+         evidence:['Age verification records for all workers','Young worker (15–18) protection policy','Remediation plan if child labour is found'],
+         metrics:[{name:'Child Labour Cases',rule:'metric == 0',freq:'annual',unit:'workers'}]},
+        {id:'working-hours',title:'Working Hours',severity:'major',clause:'RBA CoC A3',
+         desc:'Working hours must comply with applicable local laws. Workers must be provided with at least one day off per seven days.',
+         evidence:['Time and attendance records','Overtime authorisation logs','Worker acknowledgement of working hours policy'],
+         metrics:[{name:'Avg Weekly Hours',rule:'metric <= 60',freq:'monthly',unit:'hours'},{name:'Days without rest',rule:'metric == 0',freq:'weekly',unit:'days'}]},
+        {id:'wages',title:'Wages & Benefits',severity:'major',clause:'RBA CoC A4',
+         desc:'Compensation paid to workers must comply with all applicable wage laws, including those relating to minimum wages, overtime and legally mandated benefits.',
+         evidence:['Payroll records','Minimum wage compliance documentation','Benefit enrolment records'],
+         metrics:[{name:'Minimum Wage Compliance',rule:'metric == 100',freq:'monthly',unit:'%'}]},
+        {id:'humane-treatment',title:'Humane Treatment',severity:'major',clause:'RBA CoC A5',
+         desc:'There is to be no harsh or inhumane treatment of workers, including any sexual harassment, abuse, corporal punishment, mental or physical coercion.',
+         evidence:['Disciplinary policy','Grievance mechanism records','Worker survey results'],
+         metrics:[{name:'Harassment Incidents',rule:'metric == 0',freq:'annual',unit:'cases'}]},
+      ]},
+      {id:'health-safety',title:'Health & Safety',clause:'RBA CoC Section B',requirements:[
+        {id:'occ-safety',title:'Occupational Safety',severity:'major',clause:'RBA CoC B1',
+         desc:'Worker exposure to potential safety hazards must be identified, evaluated and controlled. Workers must be provided with appropriate PPE.',
+         evidence:['Hazard identification register','PPE provision records','Safety training certificates','Incident/near-miss register'],
+         metrics:[{name:'Lost Time Injury Rate',rule:'metric <= 3',freq:'annual',unit:'per 200k hrs'},{name:'Safety Training Completion',rule:'metric >= 95',freq:'annual',unit:'%'}]},
+        {id:'emergency',title:'Emergency Preparedness',severity:'major',clause:'RBA CoC B2',
+         desc:'Potential emergency situations must be identified and assessed. Emergency response plans must be established, maintained and tested periodically.',
+         evidence:['Emergency response plan','Fire drill records','First aid equipment inspection log','Emergency contact list'],
+         metrics:[{name:'Drills Conducted',rule:'metric >= 2',freq:'annual',unit:'drills/year'}]},
+      ]},
+      {id:'environment',title:'Environment',clause:'RBA CoC Section C',requirements:[
+        {id:'env-permits',title:'Environmental Permits & Reporting',severity:'major',clause:'RBA CoC C1',
+         desc:'All required environmental permits, approvals and registrations must be obtained, maintained and kept current.',
+         evidence:['Current environmental permits','Waste disposal records','Air/water emission monitoring reports'],
+         metrics:[{name:'Permit Compliance',rule:'metric == 100',freq:'annual',unit:'%'}]},
+      ]},
+      {id:'ethics',title:'Ethics',clause:'RBA CoC Section D',requirements:[
+        {id:'no-bribery',title:'No Bribery / Corruption',severity:'critical',clause:'RBA CoC D1',
+         desc:'Zero tolerance for bribery or corruption in any form. This includes improper advantage to acquire or retain business.',
+         evidence:['Anti-corruption policy','Ethics training records','Whistleblower mechanism','Gifts & hospitality register'],
+         metrics:[{name:'Corruption Incidents',rule:'metric == 0',freq:'annual',unit:'cases'}]},
+      ]},
+    ]
+  },
+  OSHA: {
+    id:'OSHA', label:'OSHA', name:'Occupational Safety and Health Standards (General Industry)',
+    version:'1.0', owner:'U.S. Department of Labor — OSHA',
+    scope:'General industry workplaces across all sectors in the United States',
+    certBody:'OSHA Compliance Officer', auditFreq:'Continuous / as-inspected',
+    source:'https://www.osha.gov/laws-regs/regulations/standardnumber/1910',
+    color:'#3b82f6', bg:'rgba(59,130,246,.15)',
+    sections:[
+      {id:'ppe',title:'Personal Protective Equipment (PPE)',clause:'29 CFR 1910.132',requirements:[
+        {id:'ppe-assessment',title:'PPE Hazard Assessment & Selection',severity:'major',clause:'29 CFR 1910.132(d)',
+         desc:'Employers must assess the workplace to determine if hazards are present that necessitate the use of PPE and select appropriate PPE.',
+         evidence:['Written hazard assessment','PPE selection justification','Worker fit-test records','PPE issuance log'],
+         metrics:[{name:'PPE Compliance Rate',rule:'metric >= 98',freq:'monthly',unit:'%'}]},
+      ]},
+      {id:'hazard-communication',title:'Hazard Communication (HazCom / GHS)',clause:'29 CFR 1910.1200',requirements:[
+        {id:'hazcom',title:'Chemical Hazard Communication',severity:'major',clause:'29 CFR 1910.1200(b)',
+         desc:'Employers must maintain a written HazCom programme, safety data sheets (SDS) for all hazardous chemicals, and label all containers.',
+         evidence:['Written HazCom programme','Complete SDS library','Container labelling audit','HazCom training records'],
+         metrics:[{name:'SDS Coverage',rule:'metric == 100',freq:'annual',unit:'%'},{name:'Workers Trained',rule:'metric >= 100',freq:'annual',unit:'%'}]},
+      ]},
+      {id:'electrical-safety',title:'Electrical Safety',clause:'29 CFR 1910.303',requirements:[
+        {id:'electrical',title:'Electrical Installation & Maintenance',severity:'critical',clause:'29 CFR 1910.303',
+         desc:'All electrical equipment must be listed, labelled and installed in accordance with its listing. Appropriate guarding must be maintained.',
+         evidence:['Electrical inspection reports','LOTO programme documentation','Arc flash hazard analysis','Qualified electrician certifications'],
+         metrics:[{name:'Electrical Incidents',rule:'metric == 0',freq:'annual',unit:'incidents'},{name:'LOTO Compliance',rule:'metric == 100',freq:'quarterly',unit:'%'}]},
+      ]},
+      {id:'fire-safety',title:'Fire Safety',clause:'29 CFR 1910.157',requirements:[
+        {id:'fire-extinguishers',title:'Portable Fire Extinguishers',severity:'major',clause:'29 CFR 1910.157',
+         desc:'Portable fire extinguishers must be provided, mounted, located, identified and maintained per NFPA 10.',
+         evidence:['Monthly inspection tags','Annual maintenance records','Training completion records'],
+         metrics:[{name:'Extinguisher Inspection Rate',rule:'metric == 100',freq:'monthly',unit:'%'}]},
+        {id:'emergency-action',title:'Emergency Action Plan',severity:'major',clause:'29 CFR 1910.38',
+         desc:'Employers must have a written emergency action plan that covers actions workers must take to ensure their safety in a fire or other emergency.',
+         evidence:['Written EAP','Evacuation route maps','Drill records','Worker notification system test'],
+         metrics:[{name:'Annual Drills',rule:'metric >= 2',freq:'annual',unit:'drills'}]},
+      ]},
+      {id:'recordkeeping',title:'Recordkeeping',clause:'29 CFR 1904',requirements:[
+        {id:'injury-recordkeeping',title:'Injury & Illness Recordkeeping',severity:'minor',clause:'29 CFR 1904.7',
+         desc:'Employers must record work-related injuries and illnesses on OSHA Forms 300, 300A, and 301 and post the annual summary.',
+         evidence:['OSHA 300 Log','OSHA 300A annual summary (posted Feb-Apr)','OSHA 301 incident reports','5-year records retention'],
+         metrics:[{name:'OSHA 300 Log Current',rule:'metric == 1',freq:'annual',unit:'boolean'}]},
+      ]},
+    ]
+  },
+  IRMA: {
+    id:'IRMA', label:'IRMA', name:'Initiative for Responsible Mining Assurance Standard',
+    version:'1.0', owner:'Initiative for Responsible Mining Assurance (IRMA)',
+    scope:'Industrial-scale and large-scale mining operations globally',
+    certBody:'IRMA Third-Party Auditor', auditFreq:'Every 3 years',
+    source:'https://responsiblemining.net/irma-standard/',
+    color:'#22c55e', bg:'rgba(34,197,94,.15)',
+    sections:[
+      {id:'business-integrity',title:'Business Integrity',clause:'IRMA Chapter 1',requirements:[
+        {id:'anti-corruption',title:'Anti-Corruption',severity:'critical',clause:'IRMA 1.1',
+         desc:'Mining companies must have an anti-corruption programme that covers all forms of bribery including facilitation payments.',
+         evidence:['Anti-corruption policy','Third-party due diligence records','Training completion','Incident reporting logs'],
+         metrics:[{name:'Corruption Incidents',rule:'metric == 0',freq:'annual',unit:'cases'}]},
+        {id:'revenue-transparency',title:'Revenue Transparency',severity:'major',clause:'IRMA 1.2',
+         desc:'Companies must publicly disclose payments to governments per EITI or equivalent standard.',
+         evidence:['EITI report or equivalent disclosure','Government payment records','Audit verification'],
+         metrics:[{name:'Disclosure Completeness',rule:'metric == 100',freq:'annual',unit:'%'}]},
+      ]},
+      {id:'planning-management',title:'Planning for Positive Outcomes',clause:'IRMA Chapter 2',requirements:[
+        {id:'esia',title:'Environmental & Social Impact Assessment',severity:'critical',clause:'IRMA 2.1',
+         desc:'A comprehensive ESIA must be conducted before mining operations commence and updated periodically.',
+         evidence:['ESIA report','Public consultation records','Regulatory approval','Monitoring plan'],
+         metrics:[{name:'ESIA Current',rule:'metric == 1',freq:'annual',unit:'boolean'}]},
+        {id:'closure-planning',title:'Mine Closure Planning',severity:'major',clause:'IRMA 2.2',
+         desc:'A mine closure and reclamation plan must be developed, funded and updated throughout the mine life.',
+         evidence:['Closure plan','Financial assurance documentation','Stakeholder consultation records'],
+         metrics:[{name:'Closure Fund Adequacy',rule:'metric >= 100',freq:'annual',unit:'%'}]},
+      ]},
+      {id:'community',title:'Community & Stakeholder Engagement',clause:'IRMA Chapter 3',requirements:[
+        {id:'fpic',title:'Free, Prior and Informed Consent (FPIC)',severity:'critical',clause:'IRMA 3.1',
+         desc:'Operations affecting Indigenous Peoples must obtain FPIC before proceeding with any significant changes.',
+         evidence:['FPIC documentation','Consent agreements','Ongoing engagement records'],
+         metrics:[{name:'FPIC Obtained',rule:'metric == 1',freq:'per-project',unit:'boolean'}]},
+        {id:'grievance',title:'Community Grievance Mechanism',severity:'major',clause:'IRMA 3.2',
+         desc:'An accessible, culturally appropriate grievance mechanism must be established and maintained.',
+         evidence:['Grievance mechanism policy','Grievance log','Response time records','Resolution documentation'],
+         metrics:[{name:'Grievance Resolution Rate',rule:'metric >= 90',freq:'annual',unit:'%'},{name:'Avg Response Days',rule:'metric <= 30',freq:'annual',unit:'days'}]},
+      ]},
+      {id:'environment-irma',title:'Environmental Responsibility',clause:'IRMA Chapter 4',requirements:[
+        {id:'water',title:'Water Stewardship',severity:'major',clause:'IRMA 4.1',
+         desc:'Mining operations must manage water use responsibly, protect water quality and avoid material impacts on downstream water users.',
+         evidence:['Water use permits','Discharge monitoring reports','Baseline water quality data','Water management plan'],
+         metrics:[{name:'Water Discharge Compliance',rule:'metric == 100',freq:'quarterly',unit:'%'}]},
+        {id:'biodiversity',title:'Biodiversity Protection',severity:'major',clause:'IRMA 4.2',
+         desc:'Companies must assess biodiversity impacts and implement measures to avoid, minimise, and offset impacts on ecosystems.',
+         evidence:['Biodiversity baseline study','Impact assessment','Mitigation plan','Monitoring reports'],
+         metrics:[{name:'Rehabilitation Rate',rule:'metric >= 80',freq:'annual',unit:'%'}]},
+      ]},
+      {id:'labour-irma',title:'Labour Rights',clause:'IRMA Chapter 5',requirements:[
+        {id:'ohs-irma',title:'Occupational Health & Safety',severity:'critical',clause:'IRMA 5.1',
+         desc:'Companies must establish and maintain an OHS management system that meets ILO standards and prevents work-related fatalities and injuries.',
+         evidence:['OHS management system documentation','Fatality prevention programme','Worker OHS committee records'],
+         metrics:[{name:'Fatalities',rule:'metric == 0',freq:'annual',unit:'deaths'},{name:'LTIFR',rule:'metric <= 2',freq:'annual',unit:'per million hrs'}]},
+      ]},
+    ]
+  },
+  TEXTILE_EXCHANGE: {
+    id:'TEXTILE_EXCHANGE', label:'TE', name:'Textile Exchange Standards Framework',
+    version:'1.0', owner:'Textile Exchange',
+    scope:'Textile, apparel and fibre industries — raw material to finished product',
+    certBody:'Textile Exchange Approved Certification Body', auditFreq:'Annual',
+    source:'https://textileexchange.org/standards/',
+    color:'#a855f7', bg:'rgba(168,85,247,.15)',
+    sections:[
+      {id:'organic-content',title:'Organic Content Standard (OCS)',clause:'TE OCS',requirements:[
+        {id:'organic-input',title:'Organic Input Material Verification',severity:'critical',clause:'OCS 2.0 §4',
+         desc:'All organic input materials must be certified to a recognised organic standard (e.g. GOTS, NOP, EU Organic) and transaction certificates must be obtained.',
+         evidence:['Organic farm certificate','Transaction certificates (TCs)','Input material test reports'],
+         metrics:[{name:'TC Coverage',rule:'metric == 100',freq:'per-production-batch',unit:'%'}]},
+        {id:'chain-of-custody',title:'Chain of Custody — Organic Content',severity:'critical',clause:'OCS 2.0 §5',
+         desc:'A documented chain of custody must be maintained from raw fibre through to finished product to ensure organic claims are traceable.',
+         evidence:['CoC documentation','Lot/batch traceability records','Supplier certificates'],
+         metrics:[{name:'Traceability Coverage',rule:'metric == 100',freq:'annual',unit:'%'}]},
+      ]},
+      {id:'recycled-content',title:'Recycled Claim Standard (RCS) / Global Recycled Standard (GRS)',clause:'TE GRS/RCS',requirements:[
+        {id:'recycled-verification',title:'Recycled Content Verification',severity:'major',clause:'GRS 4.0 §5',
+         desc:'Recycled content claims must be verified through third-party certification. The percentage of recycled content must be accurately stated on all product labels.',
+         evidence:['GRS/RCS certificate','Pre-consumer/post-consumer waste documentation','Blending records'],
+         metrics:[{name:'Recycled Content Accuracy',rule:'metric == 100',freq:'per-product',unit:'%'}]},
+      ]},
+      {id:'responsible-wool',title:'Responsible Wool Standard (RWS)',clause:'TE RWS',requirements:[
+        {id:'animal-welfare',title:'Animal Welfare — Wool',severity:'critical',clause:'RWS 2.0 §4',
+         desc:'Farms must demonstrate compliance with animal welfare requirements including no mulesing, no live export to slaughter, and five freedoms compliance.',
+         evidence:['Farm audit certificate','Mulesing-free declaration','Five freedoms assessment'],
+         metrics:[{name:'Mulesing-Free Compliance',rule:'metric == 100',freq:'annual',unit:'%'}]},
+        {id:'land-management',title:'Land Management',severity:'major',clause:'RWS 2.0 §5',
+         desc:'Farms must implement practices that maintain soil health, protect water resources and manage stocking rates to prevent overgrazing.',
+         evidence:['Land management plan','Stocking rate records','Soil health assessment'],
+         metrics:[{name:'Stocking Rate Compliance',rule:'metric <= 100',freq:'annual',unit:'% of carrying capacity'}]},
+      ]},
+      {id:'responsible-down',title:'Responsible Down Standard (RDS)',clause:'TE RDS',requirements:[
+        {id:'no-live-plucking',title:'No Live Plucking or Force Feeding',severity:'critical',clause:'RDS 3.0 §4',
+         desc:'All down and feather materials must come from birds that have not been live plucked or force fed at any point in the supply chain.',
+         evidence:['RDS certificate','Supplier declarations','Supply chain map','Farm inspection records'],
+         metrics:[{name:'Live Plucking Incidents',rule:'metric == 0',freq:'annual',unit:'cases'}]},
+      ]},
+      {id:'chemical-compliance',title:'Chemical Compliance (GOTS Chemical Requirements)',clause:'TE/GOTS Chemical',requirements:[
+        {id:'restricted-substances',title:'Restricted Substances',severity:'critical',clause:'GOTS 7.0 Annex 6',
+         desc:'All chemical inputs must comply with the GOTS Restricted Substances List (RSL). Third-party testing of finished goods is required.',
+         evidence:['Chemical inventory','RSL compliance declarations','Third-party test reports','Chemical supplier SDS'],
+         metrics:[{name:'RSL Compliance',rule:'metric == 100',freq:'per-production-batch',unit:'%'}]},
+      ]},
+    ]
+  }
+};
+
+let currentStd = null;
+let openSections = new Set();
+let filterSev = 'all';
+let searchQ = '';
+
+function severityBadge(s){
+  return `<span class="severity severity-${s}">${s}</span>`;
+}
+
+function renderSidebar(){
+  const list = document.getElementById('std-list');
+  list.innerHTML = Object.values(STANDARDS).map(s => `
+    <div class="sidebar-section">
+      <div class="std-item ${currentStd===s.id?'active':''}" onclick="loadStandard('${s.id}')">
+        <div class="std-badge" style="background:${s.bg};color:${s.color}">${s.label}</div>
+        <div class="std-info">
+          <div class="std-name">${s.name.length > 35 ? s.name.substring(0,35)+'...' : s.name}</div>
+          <div class="std-owner">${s.owner.split('—')[0].split('(')[0].trim()}</div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function countBySeverity(std, sev){
+  return std.sections.flatMap(s=>s.requirements).filter(r=>r.severity===sev).length;
+}
+
+function loadStandard(id){
+  currentStd = id;
+  openSections = new Set();
+  filterSev = 'all';
+  searchQ = '';
+  renderSidebar();
+  renderMain();
+}
+
+function toggleSection(id){
+  if(openSections.has(id)) openSections.delete(id);
+  else openSections.add(id);
+  renderRequirements();
+}
+
+function renderRequirements(){
+  const std = STANDARDS[currentStd];
+  std.sections.forEach(sec => {
+    const card = document.querySelector(`[data-section="${sec.id}"]`);
+    if(!card) return;
+    if(openSections.has(sec.id)){
+      card.classList.add('open');
+      let reqHtml = '<div class="req-list">';
+      const reqs = sec.requirements.filter(r => {
+        if(filterSev !== 'all' && r.severity !== filterSev) return false;
+        if(searchQ && !r.title.toLowerCase().includes(searchQ) && !r.desc.toLowerCase().includes(searchQ)) return false;
+        return true;
+      });
+      reqs.forEach(r => {
+        reqHtml += `
+          <div class="req-item">
+            <div>
+              <div class="req-title">${severityBadge(r.severity)} ${r.title}</div>
+              <div class="req-clause">${r.clause}</div>
+              <div class="req-desc" style="margin-top:8px">${r.desc}</div>
+              <div class="evidence-list">
+                <div class="evidence-title">Evidence Required (${r.evidence.length})</div>
+                ${r.evidence.map(e=>`<div class="evidence-item"><div class="dot"></div>${e}</div>`).join('')}
+              </div>
+              ${r.metrics.length ? `
+              <div class="metrics-list">
+                <div class="evidence-title" style="margin-top:10px">Compliance Metrics</div>
+                ${r.metrics.map(m=>`
+                  <div class="metric-row">
+                    <div class="metric-name">${m.name}</div>
+                    <div class="metric-rule">Rule: ${m.rule} ${m.unit?'('+m.unit+')':''}</div>
+                    <div class="metric-freq">Reporting: ${m.freq}</div>
+                  </div>
+                `).join('')}
+              </div>` : ''}
+            </div>
+            <div class="req-right" style="white-space:nowrap">${severityBadge(r.severity)}</div>
+          </div>`;
+      });
+      reqHtml += '</div>';
+      let existing = card.querySelector('.req-list');
+      if(existing) existing.remove();
+      card.insertAdjacentHTML('beforeend', reqHtml);
+    } else {
+      card.classList.remove('open');
+      let existing = card.querySelector('.req-list');
+      if(existing) existing.remove();
+    }
+  });
+}
+
+function renderMain(){
+  const std = STANDARDS[currentStd];
+  if(!std){ document.getElementById('main-content').innerHTML = '<div class="no-std" style="height:calc(100vh - 56px)"><div class="no-std-icon">📋</div><div>Select a Standard</div></div>'; return; }
+  const critical = countBySeverity(std,'critical');
+  const major = countBySeverity(std,'major');
+  const minor = countBySeverity(std,'minor');
+  const total = critical+major+minor;
+  const totalEvidence = std.sections.flatMap(s=>s.requirements).flatMap(r=>r.evidence).length;
+
+  document.getElementById('main-content').innerHTML = `
+    <div class="standard-header">
+      <div class="standard-meta">
+        <div class="std-icon-lg" style="background:${std.bg};color:${std.color}">${std.label}</div>
+        <div>
+          <div class="standard-name">${std.name}</div>
+          <div class="standard-sub">v${std.version} · ${std.certBody}</div>
+          <div class="tags">
+            <span class="tag">Audit: ${std.auditFreq}</span>
+            <span class="tag">${std.sections.length} Sections</span>
+            <span class="tag">${total} Requirements</span>
+            <a href="${std.source}" target="_blank" class="tag" style="color:var(--blue);cursor:pointer">Official Source ↗</a>
+          </div>
+        </div>
+      </div>
+      <div class="stats-row">
+        <div class="stat-box"><div class="stat-val">${total}</div><div class="stat-lbl">Total Requirements</div></div>
+        <div class="stat-box"><div class="stat-val" style="color:var(--red)">${critical}</div><div class="stat-lbl">Critical</div></div>
+        <div class="stat-box"><div class="stat-val" style="color:var(--amber)">${major}</div><div class="stat-lbl">Major</div></div>
+        <div class="stat-box"><div class="stat-val" style="color:var(--blue)">${totalEvidence}</div><div class="stat-lbl">Evidence Points</div></div>
+      </div>
+    </div>
+    <div class="search-bar">
+      <input type="text" class="search-input" placeholder="Search requirements, descriptions, clauses..." 
+        oninput="searchQ=this.value.toLowerCase();renderSectionsOnly()" id="search-input">
+    </div>
+    <div class="filter-bar" id="filter-bar">
+      <button class="filter-btn active" onclick="setFilter('all')">All (${total})</button>
+      <button class="filter-btn" onclick="setFilter('critical')">Critical (${critical})</button>
+      <button class="filter-btn" onclick="setFilter('major')">Major (${major})</button>
+      <button class="filter-btn" onclick="setFilter('minor')">Minor (${minor})</button>
+    </div>
+    <div class="sections-area" id="sections-area"></div>
+  `;
+  renderSectionsOnly();
+  // Inject AI Gap Analysis panel (idempotent)
+  if (!document.getElementById('ai-gap-panel')) {
+    const panel = document.createElement('div');
+    panel.id = 'ai-gap-panel';
+    panel.className = 'ai-gap-panel';
+    panel.innerHTML = `
+      <div style="display:flex;align-items:center;gap:10px;font-size:.88rem;font-weight:700;margin-bottom:8px;">
+        <span>✦</span><span>AI Compliance Gap Analysis</span>
+        <span class="ai-badge">GPT-4o</span>
+      </div>
+      <p style="font-size:.8rem;color:#9aa0b4;margin-bottom:14px;">Analyse this standard against your programme context — AI identifies compliance gaps, priority items, and estimated remediation effort.</p>
+      <button class="ai-btn" id="ai-gap-btn" onclick="runAIGapAnalysis()">✦ Run Gap Analysis</button>
+      <div id="ai-gap-result" style="display:none;margin-top:14px;"></div>
+    `;
+    const mainContent = document.getElementById('main-content');
+    if (mainContent) mainContent.appendChild(panel);
+  } else {
+    // Reset if standard changed
+    document.getElementById('ai-gap-result').style.display = 'none';
+    const btn = document.getElementById('ai-gap-btn');
+    if (btn) btn.innerHTML = '✦ Run Gap Analysis';
+  }
+}
+
+function renderSectionsOnly(){
+  const std = STANDARDS[currentStd];
+  const area = document.getElementById('sections-area');
+  if(!area) return;
+  area.innerHTML = std.sections.map(sec => {
+    const total = sec.requirements.filter(r => {
+      if(filterSev !== 'all' && r.severity !== filterSev) return false;
+      if(searchQ && !r.title.toLowerCase().includes(searchQ) && !r.desc.toLowerCase().includes(searchQ)) return false;
+      return true;
+    }).length;
+    if(total === 0) return '';
+    const critical = sec.requirements.filter(r=>r.severity==='critical').length;
+    return `
+      <div class="section-card ${openSections.has(sec.id)?'open':''}" data-section="${sec.id}">
+        <div class="section-header" onclick="toggleSection('${sec.id}')">
+          <svg class="chevron" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <div class="section-title">${sec.title}</div>
+          <span class="section-meta">${sec.clause}</span>
+          <span style="margin-left:12px;font-size:12px;color:var(--muted)">${total} req${total!==1?'s':''}</span>
+          ${critical>0?`<span class="severity severity-critical" style="margin-left:8px">${critical} critical</span>`:''}
+        </div>
+      </div>`;
+  }).join('');
+  if(openSections.size) renderRequirements();
+}
+
+function setFilter(sev){
+  filterSev = sev;
+  document.querySelectorAll('.filter-btn').forEach((b,i) => {
+    b.classList.toggle('active', ['all','critical','major','minor'][i] === sev);
+  });
+  openSections = new Set();
+  renderSectionsOnly();
+  // Inject AI Gap Analysis panel (idempotent)
+  if (!document.getElementById('ai-gap-panel')) {
+    const panel = document.createElement('div');
+    panel.id = 'ai-gap-panel';
+    panel.className = 'ai-gap-panel';
+    panel.innerHTML = `
+      <div style="display:flex;align-items:center;gap:10px;font-size:.88rem;font-weight:700;margin-bottom:8px;">
+        <span>✦</span><span>AI Compliance Gap Analysis</span>
+        <span class="ai-badge">GPT-4o</span>
+      </div>
+      <p style="font-size:.8rem;color:#9aa0b4;margin-bottom:14px;">Analyse this standard against your programme context — AI identifies compliance gaps, priority items, and estimated remediation effort.</p>
+      <button class="ai-btn" id="ai-gap-btn" onclick="runAIGapAnalysis()">✦ Run Gap Analysis</button>
+      <div id="ai-gap-result" style="display:none;margin-top:14px;"></div>
+    `;
+    const mainContent = document.getElementById('main-content');
+    if (mainContent) mainContent.appendChild(panel);
+  } else {
+    // Reset if standard changed
+    document.getElementById('ai-gap-result').style.display = 'none';
+    const btn = document.getElementById('ai-gap-btn');
+    if (btn) btn.innerHTML = '✦ Run Gap Analysis';
+  }
+}
+
+// ── AI Gap Analysis ──────────────────────────────────────────────────────────
+async function runAIGapAnalysis() {
+  const stdKey = currentStd;
+  if (!stdKey || !STANDARDS[stdKey]) return;
+  const std = STANDARDS[stdKey];
+
+  const btn      = document.getElementById('ai-gap-btn');
+  const resultEl = document.getElementById('ai-gap-result');
+  if (!btn || !resultEl) return;
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="ai-spinner"></span> Analysing gaps…';
+  resultEl.style.display = 'block';
+  resultEl.innerHTML = '<div style="color:#818cf8;font-size:.82rem;display:flex;align-items:center;gap:8px;"><span class="ai-spinner"></span> Sending to GPT-4o…</div>';
+
+  try {
+    const findings = std.sections.flatMap(sec =>
+      sec.requirements.map(r => ({
+        section: sec.title,
+        clause: r.clause || sec.clause,
+        requirement: r.title,
+        severity: r.severity,
+        description: r.desc,
+      }))
+    );
+
+    const resp = await fetch('/proxy/ai/ai/gap-analysis', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        currentFindings: findings.slice(0, 40),  // limit payload
+        standard: std.shortName || stdKey,
+        organisation: 'Organisation',
+      }),
+    });
+    const data = await resp.json();
+    if (data.error) throw new Error(data.error);
+
+    const priClass = { High:'pri-high', Medium:'pri-medium', Low:'pri-low' };
+
+    resultEl.innerHTML = `
+      ${data.summary ? `<div style="background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.2);border-radius:8px;padding:12px 14px;font-size:.82rem;line-height:1.6;color:#c8cde0;margin-bottom:14px;">${data.summary}</div>` : ''}
+      <div style="font-size:.72rem;font-weight:700;color:#9aa0b4;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;">
+        ${data.gaps?.length || 0} Gap${data.gaps?.length !== 1 ? 's' : ''} Identified
+      </div>
+      ${(data.gaps || []).map(g => `
+        <div class="ai-gap-row">
+          <div class="ai-gap-section">${g.section || 'General'}</div>
+          <div class="ai-gap-desc">${g.gap || ''}</div>
+          <div class="ai-gap-meta">
+            <span class="ai-pri ${priClass[g.priority] || 'pri-medium'}">${g.priority || 'Medium'} Priority</span>
+            <span class="ai-effort">Effort: ${g.effort || 'Medium'}</span>
+          </div>
+        </div>
+      `).join('')}
+      ${data.usage ? `<div style="font-size:.7rem;color:#5a6177;margin-top:8px;">${data.usage.total_tokens} tokens used</div>` : ''}
+    `;
+  } catch(err) {
+    resultEl.innerHTML = `<div style="color:#f87171;font-size:.82rem;">⚠ ${err.message}</div>`;
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '✦ Re-run Gap Analysis';
+  }
+}
+
+renderSidebar();
+</script>
+</body>
+</html>

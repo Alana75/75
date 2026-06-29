@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Ralph Analytics">
+  <meta name="theme-color" content="#E8521A">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="apple-touch-icon" href="/icons/icon-192.png">
+<title>Ralph Analytics — Client Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#1e2330;--bg2:#252b3b;--bg3:#2d3347;--bg-side:#171c27;
+  --border:rgba(255,255,255,0.07);--border-o:rgba(232,82,26,0.35);
+  --text:#f0f2f7;--muted:#9aa0b4;--dim:#5a6177;
+  --o:#E8521A;--o2:#FF6B35;
+  --success:#4ade80;--warn:#f59e0b;--danger:#f87171;
+  --r:8px;--font:'Inter',system-ui,sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:var(--font);background:var(--bg);color:var(--text);height:100vh;overflow:hidden;}
+
+/* LOGIN */
+#login-screen{position:fixed;inset:0;background:var(--bg-side);display:flex;align-items:center;justify-content:center;z-index:200;}
+.login-box{background:var(--bg2);border:1px solid rgba(232,82,26,.2);border-radius:14px;padding:48px 40px;width:380px;max-width:90vw;}
+.login-logo{display:flex;align-items:center;gap:12px;font-weight:800;font-size:1rem;margin-bottom:4px;}
+.logo-box{width:34px;height:34px;border-radius:7px;background:var(--o);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.8rem;color:#fff;flex-shrink:0;}
+.login-sub{font-size:.82rem;color:var(--muted);margin-bottom:24px;padding-left:46px;}
+.client-badge{display:inline-block;padding:3px 12px;background:rgba(232,82,26,.1);color:var(--o);border-radius:20px;font-size:.7rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;margin-bottom:22px;}
+.form-group{margin-bottom:16px;}
+label{font-size:.72rem;font-weight:700;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;display:block;margin-bottom:7px;}
+input,select{width:100%;padding:10px 14px;background:var(--bg-side);border:1px solid var(--border);border-radius:var(--r);color:var(--text);font-family:var(--font);font-size:.875rem;outline:none;transition:border-color .2s;}
+input:focus,select:focus{border-color:var(--border-o);}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:10px 18px;border-radius:var(--r);font-size:.84rem;font-weight:700;cursor:pointer;transition:all .2s;border:none;font-family:var(--font);}
+.btn-full{width:100%;}
+.btn-primary{background:var(--o);color:#fff;box-shadow:0 4px 14px rgba(232,82,26,.28);}
+.btn-primary:hover{background:var(--o2);}
+.btn-outline{background:transparent;color:var(--muted);border:1px solid var(--border);}
+.btn-outline:hover{border-color:var(--border-o);color:var(--text);}
+.btn-sm{padding:5px 12px;font-size:.77rem;}
+.btn-back{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:var(--r);font-size:.8rem;font-weight:700;cursor:pointer;background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--muted);transition:all .2s;text-decoration:none;}
+.btn-back:hover{border-color:var(--border-o);color:var(--text);}
+.btn-back svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+#login-err{color:var(--danger);font-size:.82rem;margin-top:10px;display:none;}
+
+/* SHELL */
+#app{display:none;height:100vh;flex-direction:column;}#app.visible{display:flex!important;}
+#app.visible{display:flex;}
+
+/* TOPBAR */
+.topbar{padding:12px 28px;background:var(--bg-side);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.top-left{display:flex;align-items:center;gap:14px;}
+.top-brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:.9rem;}
+.top-brand .logo-box{width:28px;height:28px;font-size:.68rem;}
+.page-title{font-size:.9rem;font-weight:700;color:var(--muted);}
+.top-right{display:flex;align-items:center;gap:10px;}
+.user-pill{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:20px;padding:5px 12px 5px 6px;font-size:.78rem;}
+.avatar-sm{width:22px;height:22px;border-radius:50%;background:var(--o);color:#fff;font-size:.62rem;font-weight:800;display:flex;align-items:center;justify-content:center;}
+
+/* NAV TABS */
+.nav-tabs{padding:0 28px;background:var(--bg-side);border-bottom:1px solid var(--border);display:flex;gap:2px;}
+.tab{padding:11px 18px;font-size:.83rem;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all .18s;background:none;border-top:none;border-left:none;border-right:none;font-family:var(--font);}
+.tab:hover{color:var(--text);}
+.tab.active{color:var(--o);border-bottom-color:var(--o);}
+
+/* CONTENT */
+.content{flex:1;overflow-y:auto;padding:24px 28px;}
+
+/* VIEWS */
+.view{display:none;}
+.view.active{display:block;}
+
+/* WELCOME BANNER */
+.welcome-banner{background:linear-gradient(135deg,rgba(232,82,26,.1),rgba(232,82,26,.04));border:1px solid rgba(232,82,26,.2);border-radius:12px;padding:24px 28px;margin-bottom:22px;display:flex;align-items:center;justify-content:space-between;}
+.wb-text h2{font-size:1.1rem;font-weight:800;margin-bottom:4px;}
+.wb-text p{font-size:.83rem;color:var(--muted);}
+
+/* STAT CARDS */
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px;}
+.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:18px 20px;}
+.stat-label{font-size:.68rem;font-weight:700;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:7px;}
+.stat-value{font-size:1.6rem;font-weight:900;line-height:1;color:var(--o);}
+.stat-sub{font-size:.7rem;color:var(--dim);margin-top:5px;}
+
+/* CARD */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;margin-bottom:18px;overflow:hidden;}
+.card-header{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.card-title{font-size:.88rem;font-weight:700;}
+.card-body{padding:18px;}
+
+/* PACKAGE GRID */
+.pkg-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+.pkg-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:20px;transition:border-color .25s,transform .2s;}
+.pkg-card:hover{border-color:var(--border-o);transform:translateY(-2px);}
+.pkg-icon{width:38px;height:38px;border-radius:9px;background:rgba(232,82,26,.1);display:flex;align-items:center;justify-content:center;margin-bottom:14px;}
+.pkg-icon svg{width:20px;height:20px;stroke:var(--o);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+.pkg-name{font-size:.85rem;font-weight:700;margin-bottom:5px;}
+.pkg-desc{font-size:.76rem;color:var(--muted);line-height:1.6;margin-bottom:12px;}
+.pkg-footer{display:flex;align-items:center;justify-content:space-between;}
+
+/* BADGE */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:.67rem;font-weight:700;}
+.badge-pro{background:rgba(232,82,26,.1);color:var(--o);}
+.badge-ent{background:rgba(245,158,11,.1);color:var(--warn);}
+.badge-free{background:rgba(99,179,237,.1);color:#63b3ed;}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse;font-size:.82rem;}
+thead tr{border-bottom:1px solid var(--border);}
+th{text-align:left;padding:9px 13px;font-size:.68rem;font-weight:700;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;}
+tbody tr{border-bottom:1px solid rgba(255,255,255,.04);transition:background .15s;}
+tbody tr:hover{background:rgba(255,255,255,.02);}
+td{padding:11px 13px;}
+td:last-child{text-align:right;}
+
+/* EMPTY */
+.empty{text-align:center;padding:48px;color:var(--muted);}
+.empty svg{width:36px;height:36px;stroke:var(--dim);fill:none;stroke-width:1.5;margin-bottom:12px;}
+
+/* SPINNER */
+.spinner{width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--o);border-radius:50%;animation:spin .7s linear infinite;margin:24px auto;display:block;}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── GAP ANALYSIS ── */
+#gap-table{width:100%;border-collapse:collapse;font-size:.78rem;}
+#gap-table th{background:var(--bg3);color:var(--muted);font-weight:600;padding:9px 12px;text-align:left;font-size:.7rem;text-transform:uppercase;letter-spacing:.04em;}
+#gap-table td{padding:9px 12px;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:middle;}
+#gap-table tr:hover td{background:rgba(255,255,255,.02);}
+.gap-name{font-weight:600;font-size:.8rem;color:#f0f2f7;}
+.gap-scope{font-size:.68rem;color:#9aa0b4;margin-top:1px;}
+.gap-cat{font-size:.7rem;padding:2px 8px;border-radius:10px;font-weight:600;}
+.cat-core{background:rgba(232,82,26,.12);color:#E8521A;}
+.cat-orig{background:rgba(99,102,241,.12);color:#818cf8;}
+.gap-port{font-family:monospace;font-size:.75rem;color:#9aa0b4;}
+.s-ok{color:#4ade80;font-weight:700;}
+.s-partial{color:#f59e0b;font-weight:700;}
+.s-no{color:#f87171;font-weight:700;}
+.s-na{color:#5a6177;}
+.next-step{font-size:.71rem;color:#9aa0b4;max-width:200px;}
+.pri-now{color:#f87171;font-size:.7rem;font-weight:700;}
+.pri-soon{color:#f59e0b;font-size:.7rem;font-weight:700;}
+.pri-done{color:#4ade80;font-size:.7rem;font-weight:600;}
+.gap-dot{width:8px;height:8px;border-radius:50%;display:inline-block;flex-shrink:0;}
+
+.ai-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(232,82,26,.1);border:1px solid rgba(232,82,26,.2);border-radius:20px;padding:3px 10px;font-size:.7rem;font-weight:700;color:#E8521A;margin-left:8px;}
+.ai-badge::before{content:'⚡';font-size:.65rem;}
+
+
+  /* ── Mobile responsive (Sprint 5) ─────────────────────────────── */
+  @media (max-width: 768px) {
+    .sb-nav { display: none !important; }
+    .sb-nav.mobile-open { display: flex !important; position: fixed; inset: 0; z-index: 300; width: 260px; }
+    #app { flex-direction: column !important; }
+    .main-content { padding: 12px !important; }
+    .login-box { padding: 32px 24px !important; margin: 16px !important; width: calc(100vw - 32px) !important; max-width: 100% !important; }
+    table { font-size: .78rem !important; }
+    th, td { padding: 8px 6px !important; }
+    .dash-cards { grid-template-columns: 1fr 1fr !important; }
+    /* Safe area for iPhone notch */
+    body { padding-top: env(safe-area-inset-top); }
+  }
+  @media (max-width: 480px) {
+    .dash-cards { grid-template-columns: 1fr !important; }
+    h2 { font-size: 1.1rem !important; }
+  }
+
+</style>
+  <script>
+    if ("serviceWorker" in navigator) { window.addEventListener("load", () => { navigator.serviceWorker.register("/sw.js").catch(()=>{}); }); }
+    let deferredPrompt = null;
+    window.addEventListener("beforeinstallprompt", e => {
+      deferredPrompt = e;
+      e.preventDefault();
+    });
+    window.addEventListener("appinstalled", () => {
+      document.getElementById("install-btn").style.display = "none";
+    });
+    function installApp() {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then(() => { deferredPrompt = null; });
+      } else {
+        // Show manual install instructions
+        const ua = navigator.userAgent;
+        let msg = "";
+        if (/iPhone|iPad/.test(ua)) {
+          msg = "On iPhone/iPad:\n1. Tap the Share button (□↑) in Safari\n2. Scroll down and tap \"Add to Home Screen\"\n3. Tap \"Add\"";
+        } else if (/Android/.test(ua)) {
+          msg = "On Android Chrome:\n1. Tap the menu (⋮) in Chrome\n2. Tap \"Add to Home screen\"\n3. Tap \"Add\"";
+        } else {
+          msg = "To install on desktop Chrome or Edge:\n1. Look for the install icon (⊕) in the address bar\n2. Click it and select \"Install\"\n\nOn other browsers:\nAdd this page to your bookmarks for quick access.";
+        }
+        alert(msg);
+      }
+    }
+  </script>
+</head>
+<body>
+
+  <!-- Mobile hamburger -->
+  <button id="mob-menu-btn" onclick="document.querySelector('.sb-nav')?.classList.toggle('mobile-open')"
+    style="display:none;position:fixed;top:14px;left:14px;z-index:400;width:40px;height:40px;border-radius:8px;background:#E8521A;border:none;cursor:pointer;align-items:center;justify-content:center;color:#fff;font-size:1.3rem;">☰</button>
+  <style>
+    @media(max-width:768px){#mob-menu-btn{display:flex!important;}}
+    @media(max-width:768px){.main-content{margin-top:60px!important;}}
+  </style>
+
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="logo-box">RA</div>
+      RALPH ANALYTICS
+    </div>
+    <div class="login-sub">ralph-analytics.com</div>
+    <div class="client-badge">Client Portal</div>
+    <div class="form-group"><label>Email Address</label><input id="login-email" type="email" placeholder="you@organisation.org" autocomplete="username"/></div>
+    <div class="form-group"><label>Password</label><input id="login-pass" type="password" autocomplete="current-password"/></div>
+    <button id="signin-btn" class="btn btn-primary btn-full" onclick="doLogin()">Sign In</button>
+    <div id="login-err">Invalid email or password. Please try again.</div>
+    <div style="text-align:center;margin-top:12px;">
+      <div style="margin:6px 0 2px;text-align:center;">
+        <span style="font-size:.72rem;color:rgba(255,255,255,.25);">Demo account: client@demo.com / demo1234</span>
+      </div>
+      <a href="#" onclick="showForgotPanel();return false;" style="font-size:.78rem;color:var(--muted);text-decoration:none;border-bottom:1px dashed rgba(139,143,168,.3);padding-bottom:1px;">Forgot your password?</a>
+    </div>
+    <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:center;">
+      <a href="/" class="btn-back">
+        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+        Back to Website
+      </a>
+      <a href="/admin" class="btn-back" style="border-color:rgba(232,82,26,.2);color:var(--muted);">
+        Admin Portal →
+      </a>
+    </div>
+    
+  </div>
+</div>
+
+
+<!-- FORGOT PASSWORD PANEL -->
+<div id="forgot-panel" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:5000;align-items:center;justify-content:center;">
+  <div style="background:#161b22;border:1px solid #2a2d3e;border-radius:16px;padding:32px;max-width:380px;width:90%;">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;">
+      <div style="width:30px;height:30px;background:#E8521A;border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.75rem;color:#fff;">R</div>
+      <span style="font-weight:800;font-size:.9rem;">Reset Password</span>
+    </div>
+    <div id="forgot-msg" style="display:none;"></div>
+    <p style="font-size:.84rem;color:#8b8fa8;margin-bottom:18px;line-height:1.6;">Enter your email and we will send you a reset link.</p>
+    <label style="display:block;font-size:.72rem;font-weight:700;color:#8b8fa8;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;">Email Address</label>
+    <input type="email" id="forgot-email" placeholder="you@organisation.com"
+      style="width:100%;padding:10px 13px;background:#0d1117;border:1px solid #2a2d3e;border-radius:8px;color:#e8eaf0;font-size:.85rem;font-family:inherit;outline:none;margin-bottom:14px;"/>
+    <div style="display:flex;gap:10px;">
+      <button id="forgot-btn" onclick="submitForgot()"
+        style="flex:1;padding:11px;background:#E8521A;border:none;border-radius:8px;color:#fff;font-weight:700;font-size:.85rem;cursor:pointer;font-family:inherit;">Send Reset Link</button>
+      <button onclick="hideForgotPanel()"
+        style="flex:1;padding:11px;background:transparent;border:1px solid #2a2d3e;border-radius:8px;color:#8b8fa8;font-weight:600;font-size:.85rem;cursor:pointer;font-family:inherit;">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+
+<!-- AI Transparency Banner — EU AI Act Art. 13 · SA AI Policy -->
+<div id="ai-transparency-bar" style="background:rgba(232,82,26,.07);border-bottom:1px solid rgba(232,82,26,.15);padding:7px 24px;display:flex;align-items:center;justify-content:space-between;font-size:.74rem;color:#E8521A;gap:12px;flex-wrap:wrap;">
+  <span>⚡ <strong>AI-Assisted Platform:</strong> Some analyses and reports on this platform are generated with AI assistance (OpenAI GPT-4o). All AI outputs are advisory and require human review.</span>
+  <a href="/privacy#ai" style="color:#E8521A;font-weight:700;white-space:nowrap;text-decoration:none;border-bottom:1px solid rgba(232,82,26,.3);">AI Policy →</a>
+</div>
+  <div class="topbar">
+    <div class="top-left">
+      <div class="top-brand">
+        <div class="logo-box">RA</div>
+        RALPH ANALYTICS
+      </div>
+      <div class="page-title" id="page-title">Dashboard</div>
+    </div>
+    <div class="top-right">
+      <a href="/" class="btn-back">
+        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+        Website
+      </a>
+      <div class="user-pill">
+        <div class="avatar-sm" id="user-avatar">C</div>
+        <span id="user-name">Client</span>
+      </div>
+      <button id="install-btn"
+        onclick="installApp()"
+        style="background:#E8521A;color:#fff;border:none;display:flex;align-items:center;gap:6px;padding:6px 14px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 16l-4-4h3V4h2v8h3l-4 4z"/><path d="M20 20H4"/></svg>
+        Download App
+      </button>
+      <button class="btn btn-outline btn-sm" onclick="signOut()">Sign out</button>
+    </div>
+  </div>
+
+  <div class="nav-tabs">
+    <button class="tab active" onclick="showTab('dashboard')">Dashboard</button>
+    <button class="tab" onclick="showTab('packages')">My Packages</button>
+    <button class="tab" onclick="showTab('reports')">Reports</button>
+    <button class="tab" onclick="showTab('support')">Support</button>
+    <button class="tab" onclick="showTab('platform-status')">📊 Platform Status</button>
+    <button class="tab" onclick="window.location.href='/rba/air'" style="background:rgba(232,81,10,.15);color:#e8510a;border:1px solid rgba(232,81,10,.3)">✦ RBA AIR Portal</button>
+  </div>
+
+  <div class="content">
+
+    <!-- DASHBOARD -->
+    <div class="view active" id="view-dashboard">
+      <div class="welcome-banner">
+        <div class="wb-text">
+          <h2>Welcome back, <span id="dash-name">Client</span></h2>
+          <p id="dash-org">Your analytics workspace is ready.</p>
+        </div>
+        <div style="display:flex;gap:10px;">
+          <button class="btn btn-outline btn-sm" onclick="showTab('packages')">View Packages</button>
+          <button class="btn btn-primary btn-sm" onclick="showTab('reports')">View Reports</button>
+        </div>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat-card"><div class="stat-label">Active Packages</div><div class="stat-value" id="dash-pkg-count">—</div><div class="stat-sub">Assigned to your account</div></div>
+        <div class="stat-card"><div class="stat-label">Reports Available</div><div class="stat-value">4</div><div class="stat-sub">Ready to download</div></div>
+        <div class="stat-card"><div class="stat-label">Account Tier</div><div class="stat-value" id="dash-tier" style="font-size:1rem;margin-top:4px;">—</div><div class="stat-sub">Current subscription</div></div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+        <div class="card">
+          <div class="card-header"><div class="card-title">Your Packages</div><button class="btn btn-outline btn-sm" onclick="showTab('packages')">View all →</button></div>
+          <div id="dash-pkg-list" style="padding:8px 0;"><div class="spinner"></div></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Recent Activity</div></div>
+          <div style="padding:8px 0;">
+            <div style="display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid var(--border);">
+              <div style="width:7px;height:7px;border-radius:50%;background:var(--success);flex-shrink:0;"></div>
+              <div><div style="font-size:.82rem;font-weight:600;">Package access granted</div><div style="font-size:.72rem;color:var(--muted);">Standards Core — Today</div></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid var(--border);">
+              <div style="width:7px;height:7px;border-radius:50%;background:var(--o);flex-shrink:0;"></div>
+              <div><div style="font-size:.82rem;font-weight:600;">Q2 2026 Report ready</div><div style="font-size:.72rem;color:var(--muted);">Field Audit Report — 2 days ago</div></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;padding:10px 16px;">
+              <div style="width:7px;height:7px;border-radius:50%;background:var(--dim);flex-shrink:0;"></div>
+              <div><div style="font-size:.82rem;font-weight:600;">Account created</div><div style="font-size:.72rem;color:var(--muted);">Platform onboarding complete</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PACKAGES -->
+    <div class="view" id="view-packages">
+      <div class="card" style="margin-bottom:18px;">
+        <div class="card-header"><div class="card-title">Your Assigned Packages</div><span style="font-size:.75rem;color:var(--muted);" id="pkg-count-label">Loading…</span></div>
+        <div class="card-body">
+          <div id="pkg-grid" class="pkg-grid"><div class="spinner"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- REPORTS -->
+    <div class="view" id="view-reports">
+
+      <!-- AI Narrative Generator -->
+      <div class="card" style="margin-bottom:18px;border-left:3px solid var(--accent);">
+        <div class="card-header">
+          <div class="card-title" style="display:flex;align-items:center;gap:8px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+            AI Report Narrative Generator
+          </div>
+          <span style="font-size:.75rem;color:var(--muted);background:rgba(99,102,241,.1);padding:2px 8px;border-radius:4px;">Powered by GPT-4o</span>
+        </div>
+        <div class="card-body">
+          <p style="font-size:.85rem;color:var(--muted);margin-bottom:12px;">Generate a professional narrative for any report. AI produces board-ready language — requires human review before use.</p>
+          <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:end;margin-bottom:12px;">
+            <div>
+              <label style="font-size:.78rem;font-weight:600;display:block;margin-bottom:4px;">Report Type</label>
+              <select id="ai-report-type" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:6px;background:var(--card);color:var(--text);font-size:.85rem;">
+                <option value="field-audit">Field Audit Summary</option>
+                <option value="compliance">Standards Compliance Review</option>
+                <option value="m-and-e">M&amp;E Annual Report</option>
+                <option value="risk">Risk Assessment Report</option>
+                <option value="esg">ESG / Sustainability Report</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-size:.78rem;font-weight:600;display:block;margin-bottom:4px;">Period</label>
+              <select id="ai-report-period" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:6px;background:var(--card);color:var(--text);font-size:.85rem;">
+                <option value="Q2 2026">Q2 2026</option>
+                <option value="Q1 2026">Q1 2026</option>
+                <option value="FY 2025">Full Year 2025</option>
+                <option value="H1 2026">H1 2026</option>
+              </select>
+            </div>
+            <button class="btn btn-primary" id="ai-generate-btn" onclick="generateAINarrative()" style="white-space:nowrap;">Generate Narrative</button>
+          </div>
+          <div id="ai-narrative-loading" style="display:none;text-align:center;padding:16px;font-size:.85rem;color:var(--muted);">Generating with GPT-4o...</div>
+          <div id="ai-narrative-error" style="display:none;background:rgba(220,38,38,.06);border:1px solid rgba(220,38,38,.2);border-radius:6px;padding:10px;font-size:.82rem;color:#dc2626;margin-top:8px;"></div>
+          <div id="ai-narrative-result" style="display:none;">
+            <div style="background:rgba(99,102,241,.05);border:1px solid rgba(99,102,241,.2);border-radius:8px;padding:16px;margin-top:4px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+                <span style="font-size:.78rem;font-weight:700;color:var(--accent);">AI-GENERATED NARRATIVE — REQUIRES HUMAN REVIEW</span>
+                <button onclick="copyNarrative()" style="font-size:.75rem;padding:3px 10px;border:1px solid var(--border);border-radius:4px;background:transparent;cursor:pointer;color:var(--text);">Copy</button>
+              </div>
+              <div id="ai-narrative-text" style="font-size:.88rem;line-height:1.7;color:var(--text);white-space:pre-wrap;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI Field Audit Analysis -->
+      <div class="card" style="margin-bottom:18px;border-left:3px solid #0ea5e9;">
+        <div class="card-header">
+          <div class="card-title" style="display:flex;align-items:center;gap:8px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+            AI Field Audit Analysis
+          </div>
+          <span style="font-size:.75rem;color:var(--muted);background:rgba(14,165,233,.1);padding:2px 8px;border-radius:4px;">Powered by GPT-4o</span>
+        </div>
+        <div class="card-body">
+          <p style="font-size:.85rem;color:var(--muted);margin-bottom:12px;">Paste raw audit findings. AI identifies patterns, flags anomalies, assesses risk, and recommends corrective actions.</p>
+          <textarea id="audit-findings-input" rows="5" placeholder="Paste your raw audit findings, observations, or data here..." style="width:100%;padding:10px;border:1px solid var(--border);border-radius:6px;background:var(--card);color:var(--text);font-size:.84rem;resize:vertical;font-family:inherit;box-sizing:border-box;"></textarea>
+          <div style="display:flex;gap:10px;margin-top:10px;align-items:center;">
+            <button class="btn btn-primary" onclick="runAuditAnalysis()" id="audit-analysis-btn">Analyse Findings</button>
+            <span style="font-size:.75rem;color:var(--muted);">Results are advisory — apply professional judgement</span>
+          </div>
+          <div id="audit-analysis-loading" style="display:none;text-align:center;padding:16px;font-size:.85rem;color:var(--muted);">Analysing with GPT-4o...</div>
+          <div id="audit-analysis-error" style="display:none;background:rgba(220,38,38,.06);border:1px solid rgba(220,38,38,.2);border-radius:6px;padding:10px;font-size:.82rem;color:#dc2626;margin-top:8px;"></div>
+          <div id="audit-analysis-result" style="display:none;margin-top:14px;">
+            <div style="background:rgba(14,165,233,.05);border:1px solid rgba(14,165,233,.2);border-radius:8px;padding:16px;">
+              <div style="font-size:.78rem;font-weight:700;color:#0ea5e9;margin-bottom:8px;">AI AUDIT ANALYSIS — FOR REVIEW</div>
+              <div id="audit-analysis-text" style="font-size:.88rem;line-height:1.7;color:var(--text);white-space:pre-wrap;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="card">
+        <div class="card-header"><div class="card-title">Available Reports</div><button class="btn btn-outline btn-sm">Request Report</button></div>
+        <table>
+          <thead><tr><th>Report</th><th>Period</th><th>Type</th><th>Status</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Q2 2026 Field Audit Summary</strong></td><td style="color:var(--muted)">Apr–Jun 2026</td><td><span class="badge badge-pro">Audit</span></td><td><span style="color:var(--success);font-size:.78rem;font-weight:700;">● Ready</span></td><td><button class="btn btn-primary btn-sm">Download</button></td></tr>
+            <tr><td><strong>Standards Compliance Review</strong></td><td style="color:var(--muted)">Q1 2026</td><td><span class="badge badge-pro">Compliance</span></td><td><span style="color:var(--success);font-size:.78rem;font-weight:700;">● Ready</span></td><td><button class="btn btn-primary btn-sm">Download</button></td></tr>
+            <tr><td><strong>Programme Performance Dashboard</strong></td><td style="color:var(--muted)">YTD 2026</td><td><span class="badge badge-ent">Analytics</span></td><td><span style="color:var(--success);font-size:.78rem;font-weight:700;">● Ready</span></td><td><button class="btn btn-primary btn-sm">Download</button></td></tr>
+            <tr><td><strong>Annual M&amp;E Report 2025</strong></td><td style="color:var(--muted)">Jan–Dec 2025</td><td><span class="badge badge-pro">M&amp;E</span></td><td><span style="color:var(--success);font-size:.78rem;font-weight:700;">● Ready</span></td><td><button class="btn btn-primary btn-sm">Download</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SUPPORT -->
+    <div class="view" id="view-support">
+      <div class="card">
+        <div class="card-header"><div class="card-title">Get Support</div></div>
+        <div class="card-body">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:22px;">
+            <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:22px;">
+              <div style="font-size:.88rem;font-weight:700;margin-bottom:6px;">📧 Email Support</div>
+              <div style="font-size:.8rem;color:var(--muted);margin-bottom:12px;">Typical response within 1 business day.</div>
+              <a href="mailto:admin@ralph-analytics.com" class="btn btn-outline btn-sm">admin@ralph-analytics.com</a>
+            </div>
+            <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:22px;">
+              <div style="font-size:.88rem;font-weight:700;margin-bottom:6px;">📞 Schedule a Call</div>
+              <div style="font-size:.8rem;color:var(--muted);margin-bottom:12px;">Book time with your Ralph Analytics consultant.</div>
+              <a href="mailto:admin@ralph-analytics.com?subject=Schedule a Call" class="btn btn-primary btn-sm">Book a Call →</a>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <div class="form-group"><label>Subject</label><input id="sup-subject" placeholder="Describe your question or issue"/></div>
+            <div class="form-group"><label>Priority</label>
+              <select id="sup-priority" style="width:100%;padding:10px 14px;background:var(--bg-side);border:1px solid var(--border);border-radius:var(--r);color:var(--text);font-family:var(--font);font-size:.875rem;outline:none;">
+                <option value="low">Low — General question</option>
+                <option value="medium" selected>Medium — Issue affecting work</option>
+                <option value="high">High — Blocking issue</option>
+                <option value="urgent">Urgent — Platform down</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group"><label>Message</label><textarea id="sup-msg" style="width:100%;padding:10px 14px;background:var(--bg-side);border:1px solid var(--border);border-radius:var(--r);color:var(--text);font-family:var(--font);font-size:.875rem;outline:none;resize:vertical;min-height:100px;transition:border-color .2s;" placeholder="Tell us more..."></textarea></div>
+          <button class="btn btn-primary" onclick="submitSupport()" id="sup-submit-btn">Send Message →</button>
+          <div id="sup-result" style="display:none;"></div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- PLATFORM STATUS TAB -->
+    <div class="view" id="view-platform-status">
+      <div class="welcome-banner" style="margin-bottom:18px;">
+        <div class="wb-text">
+          <h2 style="font-size:1rem;">Platform Package Status</h2>
+          <p>All 19 registered packages — code status, PM2 deployment, API readiness, and client UI availability.</p>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <span style="width:8px;height:8px;border-radius:50%;background:#4ade80;display:inline-block;"></span>
+          <span style="font-size:.75rem;color:#9aa0b4;">Orchestrator: 19 packages registered</span>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:18px;">
+        <div class="stat-card"><div class="stat-label">Total Packages</div><div class="stat-value">19</div><div class="stat-sub">Registered</div></div>
+        <div class="stat-card"><div class="stat-label">Code Written</div><div class="stat-value" style="color:#4ade80;">19</div><div class="stat-sub">All scaffolded</div></div>
+        <div class="stat-card"><div class="stat-label">Live PM2</div><div class="stat-value" style="color:#4ade80;">8</div><div class="stat-sub">Running on server</div></div>
+        <div class="stat-card"><div class="stat-label">Client UI</div><div class="stat-value" style="color:var(--o);">6</div><div class="stat-sub">Pages built</div></div>
+        <div class="stat-card"><div class="stat-label">Deploy Needed</div><div class="stat-value" style="color:#f59e0b;">11</div><div class="stat-sub">Code ready</div></div>
+      </div>
+
+      <div class="card" style="margin-bottom:18px;padding:16px 20px;">
+        <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+          <span style="font-size:.8rem;font-weight:600;">Overall Platform Build Progress</span>
+          <span style="font-size:.8rem;color:var(--o);font-weight:700;">65% Complete</span>
+        </div>
+        <div style="background:#2d3347;border-radius:6px;height:10px;overflow:hidden;">
+          <div style="width:65%;height:100%;background:linear-gradient(90deg,var(--o),#FF6B35);border-radius:6px;"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:8px;font-size:.7rem;color:#9aa0b4;">
+          <span>Code: 100% ✓</span><span>PM2 Deploy: 42% (8/19)</span><span>API Live: 58% (11/19)</span><span>Client UI: 32% (6/19)</span>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:16px;">
+        <div class="card-header">
+          <div class="card-title">Package Gap Analysis</div>
+          <select id="gap-filter" onchange="filterGap(this.value)" style="background:#2d3347;border:1px solid rgba(255,255,255,.07);color:#f0f2f7;border-radius:6px;padding:4px 10px;font-size:.75rem;outline:none;">
+            <option value="all">All packages</option>
+            <option value="core">Enterprise (new)</option>
+            <option value="orig">Original Platform</option>
+            <option value="needed">Deploy Needed</option>
+          </select>
+        </div>
+        <div style="overflow-x:auto;">
+          <table id="gap-table" style="width:100%;border-collapse:collapse;font-size:.78rem;">
+            <thead>
+              <tr style="border-bottom:1px solid #2a2d3e;">
+                <th style="padding:8px 6px;text-align:left;color:#9aa0b4;font-weight:600;width:28px;">#</th>
+                <th style="padding:8px 6px;text-align:left;color:#9aa0b4;font-weight:600;">Package</th>
+                <th style="padding:8px 6px;text-align:left;color:#9aa0b4;font-weight:600;">Category</th>
+                <th style="padding:8px 6px;text-align:left;color:#9aa0b4;font-weight:600;">Port</th>
+                <th style="padding:8px 6px;text-align:center;color:#9aa0b4;font-weight:600;">Code</th>
+                <th style="padding:8px 6px;text-align:center;color:#9aa0b4;font-weight:600;">PM2</th>
+                <th style="padding:8px 6px;text-align:center;color:#9aa0b4;font-weight:600;">API</th>
+                <th style="padding:8px 6px;text-align:center;color:#9aa0b4;font-weight:600;">UI</th>
+                <th style="padding:8px 6px;text-align:left;color:#9aa0b4;font-weight:600;">Priority</th>
+                <th style="padding:8px 6px;text-align:left;color:#9aa0b4;font-weight:600;">Next Step</th>
+              </tr>
+            </thead>
+            <tbody id="gap-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:16px;flex-wrap:wrap;font-size:.72rem;color:#9aa0b4;padding:0 2px 16px;">
+        <span style="font-weight:600;">Legend:</span>
+        <span><span style="color:#4ade80;">✓</span> Done</span>
+        <span><span style="color:#f59e0b;">◑</span> Partial</span>
+        <span><span style="color:#ef4444;">✗</span> Missing</span>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /app -->
+
+<script>
+'use strict';
+
+const PKG_ICONS = {
+  'standards':   `<svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>`,
+  'field-audit': `<svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>`,
+  'report':      `<svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>`,
+  'translation': `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>`,
+  'ai':          `<svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/></svg>`,
+  'default':     `<svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>`,
+};
+
+const PKG_DESCS = {
+  // Original
+  '@ralph/standards-core':        'Access and apply reporting standards frameworks for your programme context.',
+  '@ralph/standards-ai-agent':    'AI-powered standards matching and compliance gap identification.',
+  '@ralph/field-audit-core':      'Structured field audit tools, checklists, and data capture workflows.',
+  '@ralph/field-audit-ai-agent':  'AI-assisted audit analysis, anomaly detection, and recommendations.',
+  '@ralph/field-audit-desktop':   'Offline-capable desktop application for field data collection.',
+  '@ralph/report-templates-core': 'Professional report templates for donor, government, and ESG reporting.',
+  '@ralph/report-ai-agent':       'Automated report generation and narrative drafting from your data.',
+  '@ralph/translation-core':      'Multi-language document translation and localisation tools.',
+  '@ralph/translation-ai-agent':  'AI-powered translation with context-aware terminology management.',
+  '@ralph/agents':                'Ralph agent framework for custom workflow automation.',
+  '@ralph/server-agents':         'Server-side agent orchestration and task management.',
+  '@ralph/package-orchestrator':  'Platform package registry and access management.',
+  // Core Enterprise
+  '@ralph/regulatory-compliance-audit-readiness-system': 'Regulatory compliance management, ISO audit readiness, gap analysis and certification tracking.',
+  '@ralph/supply-chain-vetting-monitoring-system':       'Supplier vetting, risk scoring, ESG monitoring, RBA/SMETA audit management across all tiers.',
+  '@ralph/intelligent-risk-management-platform':         'Enterprise risk register, ISO 31000 risk scoring, mitigation workflows and KRI dashboards.',
+  '@ralph/impact-assessment-results-framework-system':   'Results framework management, KPI tracking, impact measurement and SDG alignment reporting.',
+  '@ralph/corrective-action-plan-tracker-system':        'Full CAP lifecycle, SLA management, evidence verification, escalation engine and closeout workflow.',
+  '@ralph/compliance-intelligence-dashboard':            'Real-time executive dashboard — compliance scores, risk indicators, supplier metrics and KPI tiles.',
+  '@ralph/governance-reporting-export-system':           'Board-ready reports, ESG disclosures, regulatory submissions, narrative AI and PDF/Excel export.',
+};
+
+function pkgIcon(name) {
+  if(name.includes('standards'))                    return PKG_ICONS.standards;
+  if(name.includes('field-audit'))                  return PKG_ICONS['field-audit'];
+  if(name.includes('report') || name.includes('governance')) return PKG_ICONS.report;
+  if(name.includes('translation'))                  return PKG_ICONS.translation;
+  if(name.includes('ai') || name.includes('agent')) return PKG_ICONS.ai;
+  if(name.includes('risk') || name.includes('irmp')) return PKG_ICONS.default;
+  if(name.includes('compliance') || name.includes('rcars')) return PKG_ICONS.standards;
+  if(name.includes('supply') || name.includes('scvms')) return PKG_ICONS['field-audit'];
+  if(name.includes('cap') || name.includes('capts')) return PKG_ICONS.report;
+  if(name.includes('impact') || name.includes('iarfs')) return PKG_ICONS.default;
+  if(name.includes('dashboard') || name.includes('cid')) return PKG_ICONS.default;
+  return PKG_ICONS.default;
+}
+function pkgTier(name) {
+  if(name.includes('ai-agent')||name.includes('desktop')) return '<span class="badge badge-ent">Enterprise</span>';
+  if(name.includes('orchestrator')) return '<span class="badge badge-free">Free</span>';
+  return '<span class="badge badge-pro">Professional</span>';
+}
+
+let currentUser = null;
+let AUTH_TOKEN = localStorage.getItem('ralph_client_token') || '';
+
+async function doLogin() {
+  var email = (document.getElementById('login-email').value || '').trim().toLowerCase();
+  var pass  = (document.getElementById('login-pass').value || '');
+  var errEl = document.getElementById('login-err');
+  var btn   = document.getElementById('signin-btn');
+  
+  errEl.style.display = 'none';
+  if (!email || !pass) {
+    errEl.textContent = 'Please enter your email and password.';
+    errEl.style.display = 'block';
+    return;
+  }
+  if (btn) { btn.disabled = true; btn.textContent = 'Signing in...'; }
+  
+  try {
+    var apiUrl = window.location.origin + '/api/auth/login';
+    var resp = await fetch(apiUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email, password: pass }),
+      credentials: 'same-origin'
+    });
+    var data = await resp.json();
+    
+    if (!resp.ok) {
+      errEl.textContent = data.error || 'Invalid email or password.';
+      errEl.style.display = 'block';
+      if (btn) { btn.disabled = false; btn.textContent = 'Sign In'; }
+      return;
+    }
+    if (data.user && data.user.role === 'admin') {
+      errEl.textContent = 'Admin accounts must use the Admin Portal.';
+      errEl.style.display = 'block';
+      if (btn) { btn.disabled = false; btn.textContent = 'Sign In'; }
+      return;
+    }
+    
+    // SUCCESS — store token and show app
+    AUTH_TOKEN = data.token;
+    localStorage.setItem('ralph_client_token', data.token);
+    currentUser = data.user;
+    currentUser.clientSlug = data.user.slug;
+    
+    showApp(data.user);
+    
+  } catch(err) {
+    console.error('Login error:', err);
+    var msg = 'Connection error. ';
+    if (err && err.message) msg += err.message;
+    errEl.textContent = msg;
+    errEl.style.display = 'block';
+    if (btn) { btn.disabled = false; btn.textContent = 'Sign In'; }
+  }
+}
+
+
+function showTab(tab) {
+  // Hide all views
+  document.querySelectorAll('.view').forEach(function(v) {
+    v.classList.remove('active');
+    v.style.display = 'none';
+  });
+  // Deactivate all tabs
+  document.querySelectorAll('.tab').forEach(function(t) {
+    t.classList.remove('active');
+  });
+  // Map tab name to view id
+  var viewMap = {
+    'dashboard':       'view-dashboard',
+    'packages':        'view-packages',
+    'reports':         'view-reports',
+    'support':         'view-support',
+    'platform-status': 'view-platform-status'
+  };
+  var viewId = viewMap[tab] || ('view-' + tab);
+  var view = document.getElementById(viewId);
+  if (view) {
+    view.style.display = 'block';
+    view.classList.add('active');
+  }
+  // Activate matching tab button
+  document.querySelectorAll('.tab').forEach(function(t) {
+    if (t.getAttribute('onclick') && t.getAttribute('onclick').indexOf("'" + tab + "'") !== -1) {
+      t.classList.add('active');
+    }
+  });
+  // Lazy-load section data
+  if (tab === 'packages') { try { loadPackages(); } catch(e) {} }
+  if (tab === 'reports')  { try { loadReports();  } catch(e) {} }
+  if (tab === 'platform-status') { try { loadPlatformStatus(); } catch(e) {} }
+}
+
+function showApp(user) {
+  // Hide login, show app — simple and explicit
+  var loginScreen = document.getElementById('login-screen');
+  var appDiv = document.getElementById('app');
+  if (loginScreen) loginScreen.style.display = 'none';
+  if (appDiv) { appDiv.style.cssText = 'display:flex!important;height:100vh;flex-direction:column;'; }
+  
+  // Populate user info
+  var firstName = (user.name || 'User').split(' ')[0];
+  var initial   = (user.name || 'U')[0].toUpperCase();
+  ['user-name','dash-name'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = firstName;
+  });
+  var av = document.getElementById('user-avatar');
+  if (av) av.textContent = initial;
+  var dorg = document.getElementById('dash-org');
+  if (dorg) dorg.textContent = (user.org || '') + ' — your analytics workspace is ready.';
+  
+  // Load dashboard data
+  setTimeout(function() {
+    try { loadDashboard(); } catch(e) { console.warn('loadDashboard:', e.message); }
+  }, 100);
+}
+
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('login-pass').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+  // Auto-login from stored token
+  if (AUTH_TOKEN) { validateStoredToken(); }
+});
+
+async function validateStoredToken() {
+  try {
+    var resp = await fetch('/api/auth/me', {
+      headers: { 'Authorization': 'Bearer ' + AUTH_TOKEN }
+    });
+    if (resp.ok) {
+      var data = await resp.json();
+      currentUser = data.user;
+      currentUser.clientSlug = data.user.slug;
+      showApp(data.user);
+    } else {
+      AUTH_TOKEN = '';
+      localStorage.removeItem('ralph_client_token');
+    }
+  } catch(e) {
+    AUTH_TOKEN = '';
+    localStorage.removeItem('ralph_client_token');
+  }
+}
+
+
+async function getClientPackages() {
+  // Try live orchestrator first
+  try {
+    const slug = currentUser?.clientSlug;
+    if(!slug) return getMockPackages();
+    const r = await fetch(`/api/client-packages/${slug}`);
+    if(r.ok) {
+      const d = await r.json();
+      if(d.data && d.data.length > 0) return d.data;
+    }
+  } catch(e) {}
+  return getMockPackages();
+}
+
+function getMockPackages() {
+  const byOrg = {
+    'Demo Organisation': ['@ralph/standards-core','@ralph/field-audit-core','@ralph/report-templates-core'],
+    'CARE International': ['@ralph/standards-core','@ralph/field-audit-core','@ralph/report-templates-core','@ralph/translation-core'],
+  };
+  const pkgs = byOrg[currentUser?.org] || byOrg['Demo Organisation'];
+  return pkgs.map(p => ({ packageName: p, enabled: true }));
+}
+
+async function loadDashboard() {
+  const pkgs = await getClientPackages();
+  const enabled = pkgs.filter(p => p.assignment ? p.assignment.enabled !== false : p.enabled !== false);
+  document.getElementById('dash-pkg-count').textContent = enabled.length;
+  const tier = currentUser?.org?.includes('International') ? 'Professional' : 'Professional';
+  document.getElementById('dash-tier').textContent = tier;
+  document.getElementById('dash-pkg-list').innerHTML = enabled.slice(0,4).map(p => {
+    const name = p.name || p.packageName || p.package || '?';
+    const short = name.replace('@ralph/','').replace(/-/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
+    return `<div style="display:flex;align-items:center;gap:10px;padding:9px 16px;border-bottom:1px solid var(--border);">
+      <div style="width:7px;height:7px;border-radius:50%;background:var(--o);flex-shrink:0;"></div>
+      <div style="font-size:.82rem;font-weight:600;">${short}</div>
+      ${pkgTier(name)}
+    </div>`;
+  }).join('') + (enabled.length > 4 ? `<div style="padding:10px 16px;font-size:.75rem;color:var(--muted);">+${enabled.length-4} more packages</div>` : '');
+}
+
+async function loadPackages() {
+  document.getElementById('pkg-grid').innerHTML = '<div class="spinner"></div>';
+  const pkgs = await getClientPackages();
+  const enabled = pkgs.filter(p => p.assignment ? p.assignment.enabled !== false : p.enabled !== false);
+  document.getElementById('pkg-count-label').textContent = `${enabled.length} package${enabled.length !== 1 ? 's' : ''} assigned`;
+  if(!enabled.length) {
+    document.getElementById('pkg-grid').innerHTML = '<div class="empty"><svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg><p>No packages assigned yet.<br/>Contact your Ralph Analytics account manager.</p></div>';
+    return;
+  }
+  document.getElementById('pkg-grid').innerHTML = enabled.map(p => {
+    const name = p.name || p.packageName || p.package || '?';
+    const short = name.replace('@ralph/','').replace(/-/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
+    const desc = PKG_DESCS[name] || 'Access your Ralph Analytics package.';
+    return `<div class="pkg-card">
+      <div class="pkg-icon">${pkgIcon(name)}</div>
+      <div class="pkg-name">${short}</div>
+      <div class="pkg-desc">${desc}</div>
+      <div class="pkg-footer">
+        ${pkgTier(name)}
+        <button class="btn btn-outline btn-sm" onclick="openPackage('${name}')">Open →</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function submitSupport() {
+  const subj    = document.getElementById('sup-subject').value.trim();
+  const msg     = document.getElementById('sup-msg').value.trim();
+  const priority= document.getElementById('sup-priority')?.value || 'medium';
+  const btn     = document.getElementById('sup-submit-btn');
+  const resEl   = document.getElementById('sup-result');
+  if(!subj || !msg) {
+    resEl.textContent='Please fill in both fields.';
+    resEl.style.cssText='display:block;color:#ef4444;font-size:.82rem;margin-top:10px;';
+    return;
+  }
+  btn.disabled=true; btn.textContent='Sending...';
+  try {
+    const res = await apiFetch('/api/support/ticket', { method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({subject:subj, message:msg, priority}) });
+    const data = await res.json();
+    if (res.ok) {
+      resEl.textContent='✅ Support ticket submitted. We will respond within 1 business day.';
+      resEl.style.cssText='display:block;color:#4ade80;font-size:.82rem;margin-top:10px;';
+      document.getElementById('sup-subject').value='';
+      document.getElementById('sup-msg').value='';
+      btn.textContent='Sent ✓';
+      setTimeout(()=>{btn.disabled=false; btn.textContent='Send Message →'; resEl.style.display='none';}, 4000);
+    } else {
+      resEl.textContent=data.error||'Failed to submit. Please try again.';
+      resEl.style.cssText='display:block;color:#ef4444;font-size:.82rem;margin-top:10px;';
+      btn.disabled=false; btn.textContent='Send Message →';
+    }
+  } catch(e) { if(e.message!=='Session expired'){btn.disabled=false;btn.textContent='Send Message →';} }
+}
+
+// Package route mapping
+const PKG_ROUTES = {
+  // ── Original packages ──────────────────────────────────────────────────
+  '@ralph/field-audit-core':                           '/client/field-audit',
+  '@ralph/field-audit-ai-agent':                       '/client/field-audit',
+  '@ralph/field-audit-desktop':                        '/client/field-audit',
+  '@ralph/field-audit-offline':                        '/client/field-audit',
+  '@ralph/standards-core':                             '/client/standards',
+  '@ralph/standards-ai-agent':                         '/client/standards',
+  '@ralph/report-templates-core':                      '/client/reports',
+  '@ralph/report-ai-agent':                            '/client/reports',
+  '@ralph/translation-core':                           '/client/translation',
+  '@ralph/translation-ai-agent':                       '/client/translation',
+  // ── Core Enterprise packages (deployed) ───────────────────────────────
+  '@ralph/regulatory-compliance-audit-readiness-system': '/client/rcars',
+  '@ralph/supply-chain-vetting-monitoring-system':       '/client/scvms',
+  '@ralph/intelligent-risk-management-platform':         '/client/irmp',
+  '@ralph/impact-assessment-results-framework-system':   '/client/iarfs',
+  '@ralph/corrective-action-plan-tracker-system':        '/client/capts',
+  '@ralph/compliance-intelligence-dashboard':            '/client/dashboard',
+  '@ralph/governance-reporting-export-system':           '/client/reporting',
+};
+
+function openPackage(name) {
+  const route = PKG_ROUTES[name];
+  if (route) {
+    window.location.href = route;
+  } else {
+    // Show modal for packages without dedicated page
+    showPkgModal(name);
+  }
+}
+
+function showPkgModal(name) {
+  const desc = PKG_DESCS[name] || 'Module operational and available via API.';
+  const shortName = name.replace('@ralph/','').replace(/-system$/,'').replace(/-platform$/,'');
+  const existing = document.getElementById('pkg-modal');
+  if(existing) existing.remove();
+  const modal = document.createElement('div');
+  modal.id='pkg-modal';
+  modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;display:flex;align-items:center;justify-content:center;';
+  modal.innerHTML=`<div style="background:#1a1f30;border:1px solid rgba(232,82,26,.3);border-radius:14px;padding:32px;max-width:440px;width:90%;">
+    <div style="font-weight:800;font-size:1rem;margin-bottom:6px;">${shortName}</div>
+    <div style="font-size:.75rem;color:#9aa0b4;margin-bottom:16px;">${name}</div>
+    <div style="font-size:.85rem;line-height:1.6;color:#c8cde0;margin-bottom:20px;">${desc}</div>
+    <div style="background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.2);border-radius:8px;padding:10px 14px;font-size:.78rem;color:#4ade80;margin-bottom:20px;">
+      ✓ Module is live on server — API operational
+    </div>
+    <div style="display:flex;gap:10px;">
+      <button class="btn btn-primary btn-sm" onclick="document.getElementById('pkg-modal').remove()">Close</button>
+    </div>
+  </div>`;
+  modal.addEventListener('click', e => { if(e.target===modal) modal.remove(); });
+  document.body.appendChild(modal);
+}
+
+function showForgotPanel() {
+  var el = document.getElementById('forgot-email');
+  if(el) el.value = '';
+  var msg = document.getElementById('forgot-msg');
+  if(msg) msg.style.display = 'none';
+  var btn = document.getElementById('forgot-btn');
+  if(btn) { btn.disabled = false; btn.textContent = 'Send Reset Link'; }
+  document.getElementById('forgot-panel').style.display = 'flex';
+  setTimeout(function(){ if(el) el.focus(); }, 100);
+}
+function hideForgotPanel() { document.getElementById('forgot-panel').style.display = 'none'; }
+async function submitForgot() {
+  var email = document.getElementById('forgot-email').value.trim();
+  var btn   = document.getElementById('forgot-btn');
+  if (!email) { showForgotMsg('Please enter your email address.','err'); return; }
+  btn.disabled = true; btn.textContent = 'Sending...';
+  try {
+    var res  = await fetch('/api/auth/forgot-password', { method:'POST',
+      headers:{'Content-Type':'application/json'}, body: JSON.stringify({email:email}) });
+    var data = await res.json();
+    showForgotMsg(data.message || 'If that email exists, a reset link has been sent.', 'ok');
+    btn.textContent = 'Sent ✓';
+  } catch(e) {
+    showForgotMsg('Network error. Please try again.','err');
+    btn.disabled = false; btn.textContent = 'Send Reset Link';
+  }
+}
+function showForgotMsg(text, type) {
+  var el = document.getElementById('forgot-msg');
+  el.textContent = text;
+  var base = 'display:block;padding:10px 14px;border-radius:7px;font-size:.83rem;margin-bottom:14px;';
+  el.style.cssText = base + (type==='ok'
+    ? 'background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.2);color:#4ade80;'
+    : 'background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#ef4444;');
+}
+document.getElementById('forgot-panel').addEventListener('click', function(e){ if(e.target===this) hideForgotPanel(); });
+
+
+// ── JWT 401 interceptor ────────────────────────────────────
+async function apiFetch(url, options) {
+  options = options || {};
+  options.headers = options.headers || {};
+  if (AUTH_TOKEN) options.headers['Authorization'] = 'Bearer ' + AUTH_TOKEN;
+  const res = await fetch(url, options);
+  if (res.status === 401) {
+    AUTH_TOKEN = ''; localStorage.removeItem('ralph_client_token'); currentUser = null;
+    document.getElementById('app').classList.remove('visible');
+    document.getElementById('login-screen').style.display = 'flex';
+    const err = document.getElementById('login-err');
+    err.textContent = 'Your session has expired. Please sign in again.';
+    err.style.display = 'block';
+    throw new Error('Session expired');
+  }
+  return res;
+}
+
+// Change password (logged-in user)
+async function changePassword() {
+  const curr = document.getElementById('cp-current').value;
+  const np   = document.getElementById('cp-new').value;
+  const np2  = document.getElementById('cp-confirm').value;
+  const msg  = document.getElementById('cp-msg');
+  if (!curr || !np || !np2) { showCpMsg('All fields are required.','err'); return; }
+  if (np.length < 8)         { showCpMsg('New password must be at least 8 characters.','err'); return; }
+  if (np !== np2)            { showCpMsg('Passwords do not match.','err'); return; }
+  try {
+    const res  = await apiFetch('/api/auth/change-password', { method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({currentPassword: curr, newPassword: np}) });
+    const data = await res.json();
+    if (res.ok) {
+      showCpMsg('Password updated successfully.','ok');
+      document.getElementById('cp-current').value='';
+      document.getElementById('cp-new').value='';
+      document.getElementById('cp-confirm').value='';
+    } else { showCpMsg(data.error||'Failed to update password.','err'); }
+  } catch(e) { if(e.message!=='Session expired') showCpMsg('Connection error.','err'); }
+}
+function showCpMsg(txt,type) {
+  const el=document.getElementById('cp-msg');
+  el.textContent=txt;
+  el.style.cssText='display:block;padding:10px 14px;border-radius:7px;font-size:.83rem;margin-top:10px;'
+    +(type==='ok'?'background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.2);color:#4ade80;'
+                :'background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#ef4444;');
+}
+
+
+  // ── AI NARRATIVE GENERATOR ───────────────────────────────────────────────
+  async function generateAINarrative() {
+    const reportType = document.getElementById('ai-report-type').value;
+    const period     = document.getElementById('ai-report-period').value;
+    const btn        = document.getElementById('ai-generate-btn');
+    const loading    = document.getElementById('ai-narrative-loading');
+    const result     = document.getElementById('ai-narrative-result');
+    const errBox     = document.getElementById('ai-narrative-error');
+    const textEl     = document.getElementById('ai-narrative-text');
+    result.style.display = 'none'; errBox.style.display = 'none';
+    loading.style.display = 'block'; btn.disabled = true; btn.textContent = 'Generating...';
+    try {
+      const resp = await apiFetch('/api/ai/generate-narrative', {
+        method: 'POST',
+        body: JSON.stringify({ reportType, period,
+          context: 'Ralph Analytics client report. Type: ' + reportType + '. Period: ' + period + '.' })
+      });
+      if (!resp.ok) throw new Error('Server error ' + resp.status);
+      const data = await resp.json();
+      textEl.textContent = data.narrative || data.text || data.result || JSON.stringify(data);
+      result.style.display = 'block';
+    } catch(e) {
+      errBox.textContent = 'Could not connect to AI service: ' + (e.message || 'Unknown error');
+      errBox.style.display = 'block';
+    } finally {
+      loading.style.display = 'none'; btn.disabled = false; btn.textContent = 'Generate Narrative';
+    }
+  }
+  function copyNarrative() {
+    navigator.clipboard.writeText(document.getElementById('ai-narrative-text').textContent)
+      .then(() => alert('Narrative copied to clipboard'));
+  }
+  // ── AI AUDIT ANALYSIS ─────────────────────────────────────────────────────
+  async function runAuditAnalysis() {
+    const findings = document.getElementById('audit-findings-input').value.trim();
+    const btn      = document.getElementById('audit-analysis-btn');
+    const loading  = document.getElementById('audit-analysis-loading');
+    const result   = document.getElementById('audit-analysis-result');
+    const errBox   = document.getElementById('audit-analysis-error');
+    const textEl   = document.getElementById('audit-analysis-text');
+    if (!findings) { alert('Please paste your audit findings first.'); return; }
+    result.style.display = 'none'; errBox.style.display = 'none';
+    loading.style.display = 'block'; btn.disabled = true; btn.textContent = 'Analysing...';
+    try {
+      const resp = await apiFetch('/api/ai/analyse-audit', {
+        method: 'POST',
+        body: JSON.stringify({ findings, auditType: 'field-audit',
+          context: 'Ralph Analytics client platform - field audit analysis' })
+      });
+      if (!resp.ok) throw new Error('Server error ' + resp.status);
+      const data = await resp.json();
+      textEl.textContent = data.analysis || data.text || data.result || JSON.stringify(data);
+      result.style.display = 'block';
+    } catch(e) {
+      errBox.textContent = 'Could not connect to AI service: ' + (e.message || 'Unknown error');
+      errBox.style.display = 'block';
+    } finally {
+      loading.style.display = 'none'; btn.disabled = false; btn.textContent = 'Analyse Findings';
+    }
+  }
+
+
+// ── Platform Status Functions ──────────────────────────────────────────────
+var GAP_PACKAGES = [
+  { n:'ralph-analytics (Main App)',          cat:'orig',  port:3000, code:1, pm2:1, api:1, ui:1,  pri:'Live',    next:'✓ All good' },
+  { n:'ralph-orchestrator',                  cat:'orig',  port:4020, code:1, pm2:1, api:1, ui:0,  pri:'Live',    next:'Admin only' },
+  { n:'ralph-ai (AI Service)',               cat:'orig',  port:4001, code:1, pm2:1, api:1, ui:0,  pri:'Live',    next:'Internal API' },
+  { n:'ralph-messaging',                     cat:'orig',  port:4002, code:1, pm2:1, api:1, ui:0,  pri:'Live',    next:'Internal API' },
+  { n:'field-audit-core',                    cat:'orig',  port:3040, code:1, pm2:1, api:1, ui:1,  pri:'Live',    next:'✓ All good' },
+  { n:'governance-reporting-export',         cat:'orig',  port:3050, code:1, pm2:1, api:1, ui:1,  pri:'Live',    next:'✓ All good' },
+  { n:'translation-core',                    cat:'orig',  port:3060, code:1, pm2:1, api:1, ui:1,  pri:'Live',    next:'✓ All good' },
+  { n:'regulatory-compliance-readiness',     cat:'orig',  port:3070, code:1, pm2:0, api:0, ui:0,  pri:'Medium',  next:'Run PM2 start' },
+  { n:'site-report-monitor',                 cat:'orig',  port:3110, code:1, pm2:1, api:1, ui:1,  pri:'Live',    next:'✓ All good' },
+  { n:'intelligent-risk-management',         cat:'core',  port:3080, code:1, pm2:0, api:0, ui:0,  pri:'High',    next:'Deploy + build UI' },
+  { n:'supply-chain-vetting-monitoring',     cat:'core',  port:3090, code:1, pm2:0, api:0, ui:0,  pri:'High',    next:'Deploy + build UI' },
+  { n:'corrective-action-plan-tracker',      cat:'core',  port:3100, code:1, pm2:0, api:0, ui:0,  pri:'High',    next:'Deploy + build UI' },
+  { n:'compliance-intelligence-dashboard',   cat:'core',  port:3120, code:1, pm2:0, api:0, ui:0,  pri:'High',    next:'Deploy + build UI' },
+  { n:'impact-assessment-results-framework', cat:'core',  port:3130, code:1, pm2:0, api:0, ui:0,  pri:'Medium',  next:'Deploy + build UI' },
+  { n:'rba-air-portal',                      cat:'core',  port:3140, code:1, pm2:0, api:1, ui:1,  pri:'High',    next:'PM2 process + expand' },
+  { n:'audit-desktop-companion',             cat:'core',  port:3150, code:1, pm2:0, api:0, ui:0,  pri:'Low',     next:'Phase 2' },
+  { n:'stakeholder-engagement-tracker',      cat:'core',  port:3160, code:1, pm2:0, api:0, ui:0,  pri:'Low',     next:'Phase 2' },
+  { n:'esg-disclosure-engine',               cat:'core',  port:3170, code:1, pm2:0, api:0, ui:0,  pri:'Low',     next:'Phase 2' },
+  { n:'gender-responsive-audit-system',      cat:'core',  port:3180, code:1, pm2:0, api:0, ui:0,  pri:'Low',     next:'Phase 2' }
+];
+
+function statusIcon(val) {
+  if (val === 1) return '<span class="s-ok">✓</span>';
+  if (val === 0.5) return '<span class="s-partial">◑</span>';
+  if (val === -1) return '<span class="s-na">—</span>';
+  return '<span class="s-no">✗</span>';
+}
+
+function priColor(p) {
+  if (p === 'Live')   return 'color:#4ade80;font-weight:700;';
+  if (p === 'High')   return 'color:#f59e0b;font-weight:600;';
+  if (p === 'Medium') return 'color:#3b82f6;';
+  return 'color:#9aa0b4;';
+}
+
+function renderGap(filter) {
+  var tbody = document.getElementById('gap-tbody');
+  if (!tbody) return;
+  var list = filter === 'all' ? GAP_PACKAGES : GAP_PACKAGES.filter(function(p){ return p.cat === filter || (filter === 'needed' && p.pm2 === 0); });
+  var html = '';
+  list.forEach(function(p, i) {
+    html += '<tr>' +
+      '<td style="color:#9aa0b4;">' + (i+1) + '</td>' +
+      '<td style="font-weight:500;font-size:.78rem;">' + p.n + '</td>' +
+      '<td><span style="font-size:.7rem;padding:2px 7px;border-radius:10px;background:' + (p.cat==='core'?'rgba(232,82,26,.15)':'rgba(59,130,246,.12)') + ';color:' + (p.cat==='core'?'var(--o)':'#93c5fd') + ';">' + (p.cat==='core'?'Enterprise':'Original') + '</span></td>' +
+      '<td style="font-family:monospace;font-size:.75rem;color:#9aa0b4;">:' + p.port + '</td>' +
+      '<td style="text-align:center;">' + statusIcon(p.code) + '</td>' +
+      '<td style="text-align:center;">' + statusIcon(p.pm2)  + '</td>' +
+      '<td style="text-align:center;">' + statusIcon(p.api)  + '</td>' +
+      '<td style="text-align:center;">' + statusIcon(p.ui)   + '</td>' +
+      '<td style="font-size:.72rem;' + priColor(p.pri) + '">' + p.pri + '</td>' +
+      '<td style="font-size:.71rem;color:#9aa0b4;">' + p.next + '</td>' +
+    '</tr>';
+  });
+  tbody.innerHTML = html;
+}
+
+function loadPlatformStatus() {
+  renderGap('all');
+  var sel = document.getElementById('gap-filter');
+  if (sel) sel.value = 'all';
+}
+
+function filterGap(val) {
+  renderGap(val);
+}
+// ── End Platform Status Functions ──────────────────────────────────────────
+
+</script>
+
+</body>
+</html>

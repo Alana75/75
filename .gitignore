@@ -1,0 +1,40 @@
+# Dependencies
+**/node_modules/
+node_modules/
+
+# Environment files
+.env
+.env.production
+.env.local
+.env.*
+!.env.example
+
+# Logs
+*.log
+logs/
+npm-debug.log*
+
+# Runtime
+pids/
+*.pid
+*.seed
+.npm
+
+# Build outputs
+dist/
+build/
+coverage/
+.nyc_output/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# DB
+*.sqlite
+*.db
+
+# Misc
+/tmp/
+*.bin
+package-lock.json

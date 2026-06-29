@@ -1,0 +1,136 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Impact Assessment — Ralph Analytics</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+:root{--bg:#0d1117;--bg2:#161b22;--bg3:#1c2333;--bdr:#2a2d3e;--text:#e8eaf0;--muted:#8b8fa8;--o:#E8521A;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+.topbar{background:var(--bg2);border-bottom:1px solid var(--bdr);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.logo{width:30px;height:30px;border-radius:7px;background:var(--o);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.75rem;color:#fff;}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;font-size:.8rem;font-weight:700;cursor:pointer;border:none;font-family:inherit;text-decoration:none;}
+.btn-back{background:transparent;color:var(--muted);border:1px solid var(--bdr);}
+.btn-primary{background:var(--o);color:#fff;}
+.live-badge{display:flex;align-items:center;gap:6px;background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.2);border-radius:20px;padding:4px 12px;font-size:.72rem;font-weight:700;color:#4ade80;}
+.live-dot{width:7px;height:7px;border-radius:50%;background:#4ade80;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.main{max-width:1200px;margin:0 auto;padding:28px 24px;}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px;}
+.stat-card{background:var(--bg2);border:1px solid var(--bdr);border-radius:12px;padding:18px;}
+.stat-val{font-size:1.8rem;font-weight:900;line-height:1;margin-bottom:4px;}
+.stat-label{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);}
+.card{background:var(--bg2);border:1px solid var(--bdr);border-radius:12px;padding:22px;margin-bottom:16px;}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.card-title{font-size:.82rem;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);}
+.badge{display:inline-flex;font-size:.7rem;font-weight:700;padding:3px 9px;border-radius:12px;}
+.b-red{background:rgba(239,68,68,.12);color:#ef4444;}
+.b-amber{background:rgba(245,158,11,.12);color:#f59e0b;}
+.b-green{background:rgba(74,222,128,.12);color:#4ade80;}
+.b-blue{background:rgba(96,165,250,.12);color:#60a5fa;}
+.b-purple{background:rgba(139,92,246,.12);color:#a78bfa;}
+.chain-step{background:var(--bg3);border:1px solid var(--bdr);border-radius:10px;padding:16px;position:relative;}
+.chain-step::after{content:'↓';position:absolute;bottom:-18px;left:50%;transform:translateX(-50%);font-size:1rem;color:var(--muted);}
+.chain-step:last-child::after{display:none;}
+.kpi-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px;}
+.kpi-card{background:var(--bg3);border:1px solid var(--bdr);border-radius:10px;padding:14px;}
+.sdg-tag{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:.72rem;font-weight:700;border:1px solid;margin:3px;}
+.progress-bar{height:6px;background:var(--bg);border-radius:3px;overflow:hidden;margin-top:6px;}
+.progress-fill{height:100%;border-radius:3px;}
+</style></head><body>
+
+<div class="topbar">
+  <div style="display:flex;align-items:center;gap:12px;">
+    <a href="/client"><div class="logo">R</div></a>
+    <span style="font-weight:800;font-size:.88rem;">Ralph Analytics</span>
+    <span style="color:var(--bdr);margin:0 4px;">/</span>
+    <span style="font-size:.82rem;color:var(--muted);">Impact Assessment &amp; Results Framework</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <div class="live-badge"><div class="live-dot"></div>Live</div>
+    <a href="/client" class="btn btn-back">← Dashboard</a>
+  </div>
+</div>
+
+<div class="main">
+  <div style="margin-bottom:24px;">
+    <h1 style="font-size:1.5rem;font-weight:900;margin-bottom:6px;">Impact Assessment &amp; Results Framework</h1>
+    <p style="font-size:.87rem;color:var(--muted);">Results-chain methodology · SDG Mapping · KPI/KRI Tracking · Evidence-based impact verification</p>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-val" style="color:var(--o);">82%</div><div class="stat-label">Impact Score</div></div>
+    <div class="stat-card"><div class="stat-val" style="color:#4ade80;">24</div><div class="stat-label">KPIs On Track</div></div>
+    <div class="stat-card"><div class="stat-val" style="color:#f59e0b;">6</div><div class="stat-label">KPIs At Risk</div></div>
+    <div class="stat-card"><div class="stat-val" style="color:#60a5fa;">11</div><div class="stat-label">SDGs Mapped</div></div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+    <!-- Results Chain -->
+    <div class="card">
+      <div class="card-header"><span class="card-title">Results Chain (ToC)</span></div>
+      <div style="display:flex;flex-direction:column;gap:18px;padding:4px;">
+        <div class="chain-step"><div style="font-size:.68rem;font-weight:800;color:var(--o);text-transform:uppercase;margin-bottom:4px;">Inputs</div><div style="font-size:.84rem;">Audit teams, technology platform, methodology, partner organisations</div></div>
+        <div class="chain-step"><div style="font-size:.68rem;font-weight:800;color:#60a5fa;text-transform:uppercase;margin-bottom:4px;">Activities</div><div style="font-size:.84rem;">Field audits, gap analysis, supplier training, compliance reporting</div></div>
+        <div class="chain-step"><div style="font-size:.68rem;font-weight:800;color:#a78bfa;text-transform:uppercase;margin-bottom:4px;">Outputs</div><div style="font-size:.84rem;">147 suppliers assessed · 68 audit reports · 34 CAPs closed</div></div>
+        <div class="chain-step"><div style="font-size:.68rem;font-weight:800;color:#4ade80;text-transform:uppercase;margin-bottom:4px;">Outcomes</div><div style="font-size:.84rem;">+18% supplier compliance rate · Regulatory breach incidents reduced by 62%</div></div>
+        <div class="chain-step"><div style="font-size:.68rem;font-weight:800;color:#f59e0b;text-transform:uppercase;margin-bottom:4px;">Impact</div><div style="font-size:.84rem;">Improved worker welfare, reduced environmental footprint, strengthened governance</div></div>
+      </div>
+    </div>
+
+    <!-- SDG Mapping -->
+    <div class="card">
+      <div class="card-header"><span class="card-title">SDG Alignment</span></div>
+      <div style="margin-bottom:14px;">
+        <span class="sdg-tag" style="background:rgba(255,0,0,.1);border-color:rgba(255,0,0,.3);color:#ff6666;">SDG 1 — No Poverty</span>
+        <span class="sdg-tag" style="background:rgba(74,222,128,.1);border-color:rgba(74,222,128,.3);color:#4ade80;">SDG 8 — Decent Work</span>
+        <span class="sdg-tag" style="background:rgba(96,165,250,.1);border-color:rgba(96,165,250,.3);color:#60a5fa;">SDG 10 — Reduced Inequalities</span>
+        <span class="sdg-tag" style="background:rgba(163,230,53,.1);border-color:rgba(163,230,53,.3);color:#a3e635;">SDG 12 — Responsible Consumption</span>
+        <span class="sdg-tag" style="background:rgba(34,197,94,.1);border-color:rgba(34,197,94,.3);color:#22c55e;">SDG 13 — Climate Action</span>
+        <span class="sdg-tag" style="background:rgba(139,92,246,.1);border-color:rgba(139,92,246,.3);color:#a78bfa;">SDG 16 — Peace &amp; Justice</span>
+        <span class="sdg-tag" style="background:rgba(245,158,11,.1);border-color:rgba(245,158,11,.3);color:#f59e0b;">SDG 17 — Partnerships</span>
+      </div>
+      <div class="card-header" style="margin-top:8px;"><span class="card-title">ESG Dimension Progress</span></div>
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div><div style="display:flex;justify-content:space-between;font-size:.83rem;margin-bottom:5px;"><span>Environment</span><span style="color:#4ade80;">76%</span></div><div class="progress-bar"><div class="progress-fill" style="width:76%;background:#4ade80;"></div></div></div>
+        <div><div style="display:flex;justify-content:space-between;font-size:.83rem;margin-bottom:5px;"><span>Social</span><span style="color:#f59e0b;">62%</span></div><div class="progress-bar"><div class="progress-fill" style="width:62%;background:#f59e0b;"></div></div></div>
+        <div><div style="display:flex;justify-content:space-between;font-size:.83rem;margin-bottom:5px;"><span>Governance</span><span style="color:#60a5fa;">81%</span></div><div class="progress-bar"><div class="progress-fill" style="width:81%;background:#60a5fa;"></div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- KPI Tracker -->
+  <div class="card">
+    <div class="card-header"><span class="card-title">KPI / KRI Performance Tracker</span></div>
+    <div class="kpi-row" id="kpi-grid"></div>
+  </div>
+</div>
+
+<script>
+var kpis=[
+  {label:'Supplier Compliance Rate',baseline:68,target:90,actual:82,unit:'%',trend:'↑'},
+  {label:'Audit Completion Rate',baseline:71,target:95,actual:94,unit:'%',trend:'↑'},
+  {label:'CAP Closure Rate',baseline:55,target:85,actual:72,unit:'%',trend:'↑'},
+  {label:'Labour Rights Violations',baseline:18,target:0,actual:6,unit:'incidents',trend:'↓'},
+  {label:'Environmental Permit Compliance',baseline:74,target:100,actual:88,unit:'%',trend:'↑'},
+  {label:'Training Completion Rate',baseline:62,target:90,actual:78,unit:'%',trend:'↑'},
+  {label:'Grievance Resolution Time',baseline:21,target:7,actual:9,unit:'days',trend:'↓'},
+  {label:'Scope 3 Emissions Captured',baseline:40,target:100,actual:61,unit:'%',trend:'↑'},
+  {label:'ESG Score — Tier 1',baseline:65,target:85,actual:89,unit:'pts',trend:'↑'},
+];
+var grid=document.getElementById('kpi-grid');
+if(grid){
+  grid.innerHTML=kpis.map(function(k){
+    var pct=k.target>k.baseline?Math.round(((k.actual-k.baseline)/(k.target-k.baseline))*100):
+      Math.round(((k.baseline-k.actual)/(k.baseline-k.target))*100);
+    pct=Math.max(0,Math.min(100,pct));
+    var col=pct>=80?'#4ade80':pct>=50?'#f59e0b':'#ef4444';
+    return '<div class="kpi-card"><div style="font-size:.78rem;font-weight:700;margin-bottom:8px;">'+k.label+'</div>'
+      +'<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;">'
+      +'<span style="font-size:1.4rem;font-weight:900;color:'+col+';">'+k.actual+k.unit+'</span>'
+      +'<span style="font-size:.72rem;color:var(--muted);">Target: '+k.target+k.unit+'</span></div>'
+      +'<div class="progress-bar"><div class="progress-fill" style="width:'+pct+'%;background:'+col+';"></div></div>'
+      +'<div style="display:flex;justify-content:space-between;font-size:.68rem;color:var(--muted);margin-top:4px;">'
+      +'<span>Baseline: '+k.baseline+k.unit+'</span><span style="color:'+col+';">'+k.trend+' '+pct+'% to target</span></div></div>';
+  }).join('');
+}
+</script></body></html>

@@ -1,0 +1,171 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>CAP Tracker — Ralph Analytics</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+:root{--bg:#0d1117;--bg2:#161b22;--bg3:#1c2333;--bdr:#2a2d3e;--text:#e8eaf0;--muted:#8b8fa8;--o:#E8521A;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+.topbar{background:var(--bg2);border-bottom:1px solid var(--bdr);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.logo{width:30px;height:30px;border-radius:7px;background:var(--o);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.75rem;color:#fff;}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;font-size:.8rem;font-weight:700;cursor:pointer;border:none;font-family:inherit;text-decoration:none;}
+.btn-back{background:transparent;color:var(--muted);border:1px solid var(--bdr);}
+.btn-primary{background:var(--o);color:#fff;}
+.live-badge{display:flex;align-items:center;gap:6px;background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.2);border-radius:20px;padding:4px 12px;font-size:.72rem;font-weight:700;color:#4ade80;}
+.live-dot{width:7px;height:7px;border-radius:50%;background:#4ade80;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.main{max-width:1200px;margin:0 auto;padding:28px 24px;}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px;}
+.stat-card{background:var(--bg2);border:1px solid var(--bdr);border-radius:12px;padding:18px;}
+.stat-val{font-size:1.8rem;font-weight:900;line-height:1;margin-bottom:4px;}
+.stat-label{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);}
+.card{background:var(--bg2);border:1px solid var(--bdr);border-radius:12px;padding:22px;margin-bottom:16px;}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.card-title{font-size:.82rem;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);}
+.badge{display:inline-flex;font-size:.7rem;font-weight:700;padding:3px 9px;border-radius:12px;}
+.b-red{background:rgba(239,68,68,.12);color:#ef4444;}
+.b-amber{background:rgba(245,158,11,.12);color:#f59e0b;}
+.b-green{background:rgba(74,222,128,.12);color:#4ade80;}
+.b-blue{background:rgba(96,165,250,.12);color:#60a5fa;}
+.b-gray{background:rgba(139,143,168,.1);color:var(--muted);}
+.cap-card{background:var(--bg3);border:1px solid var(--bdr);border-radius:10px;padding:16px;margin-bottom:10px;cursor:pointer;transition:border-color .18s;}
+.cap-card:hover{border-color:rgba(232,82,26,.4);}
+.cap-card.expanded{border-color:var(--o);}
+.progress-bar{height:6px;background:var(--bg);border-radius:3px;overflow:hidden;}
+.progress-fill{height:100%;border-radius:3px;transition:width .5s;}
+.tab{padding:7px 16px;border-radius:7px;font-size:.8rem;font-weight:700;cursor:pointer;color:var(--muted);background:none;border:none;font-family:inherit;}
+.tab.active{background:var(--bg2);color:var(--text);border:1px solid var(--bdr);}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1000;align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--bg2);border:1px solid var(--bdr);border-radius:16px;padding:28px;max-width:540px;width:90%;max-height:90vh;overflow-y:auto;}
+.form-group{margin-bottom:14px;}
+.form-label{display:block;font-size:.73rem;font-weight:700;color:var(--muted);text-transform:uppercase;margin-bottom:6px;}
+.form-input{width:100%;padding:10px 13px;background:var(--bg);border:1px solid var(--bdr);border-radius:8px;color:var(--text);font-size:.85rem;font-family:inherit;outline:none;}
+.form-input:focus{border-color:var(--o);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+</style></head><body>
+
+<div class="topbar">
+  <div style="display:flex;align-items:center;gap:12px;">
+    <a href="/client"><div class="logo">R</div></a>
+    <span style="font-weight:800;font-size:.88rem;">Ralph Analytics</span>
+    <span style="color:var(--bdr);margin:0 4px;">/</span>
+    <span style="font-size:.82rem;color:var(--muted);">Corrective Action Plan Tracker</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <div class="live-badge"><div class="live-dot"></div>Live</div>
+    <a href="/client" class="btn btn-back">← Dashboard</a>
+    <button class="btn btn-primary" onclick="document.getElementById('add-cap-modal').classList.add('open')">+ New CAP</button>
+  </div>
+</div>
+
+<div class="main">
+  <div style="margin-bottom:24px;">
+    <h1 style="font-size:1.5rem;font-weight:900;margin-bottom:6px;">Corrective Action Plans</h1>
+    <p style="font-size:.87rem;color:var(--muted);">End-to-end CAP lifecycle — root cause analysis, evidence submission &amp; structured close-out</p>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-val" style="color:#ef4444;">16</div><div class="stat-label">Open CAPs</div></div>
+    <div class="stat-card"><div class="stat-val" style="color:#f59e0b;">5</div><div class="stat-label">Overdue</div></div>
+    <div class="stat-card"><div class="stat-val" style="color:#4ade80;">34</div><div class="stat-label">Closed This Quarter</div></div>
+    <div class="stat-card"><div class="stat-val" style="color:var(--o);">72%</div><div class="stat-label">On-Time Closure Rate</div></div>
+  </div>
+
+  <div style="display:flex;gap:4px;background:var(--bg3);border-radius:10px;padding:4px;margin-bottom:20px;width:fit-content;">
+    <button class="tab active" onclick="filterCaps(this,'all')">All (16)</button>
+    <button class="tab" onclick="filterCaps(this,'critical')">Critical</button>
+    <button class="tab" onclick="filterCaps(this,'open')">Open</button>
+    <button class="tab" onclick="filterCaps(this,'overdue')">Overdue</button>
+    <button class="tab" onclick="filterCaps(this,'closed')">Closed</button>
+  </div>
+
+  <div id="caps-list"></div>
+</div>
+
+<!-- Add CAP Modal -->
+<div class="modal-overlay" id="add-cap-modal">
+  <div class="modal">
+    <div style="font-size:1.05rem;font-weight:800;margin-bottom:18px;">Create New CAP</div>
+    <div class="form-group"><label class="form-label">Title / Finding</label>
+      <input type="text" class="form-input" id="c-title" placeholder="Describe the non-conformance..."/></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Source</label>
+        <select class="form-input" id="c-source"><option>Audit Finding</option><option>Risk Event</option><option>Compliance Gap</option><option>Supplier Assessment</option><option>Regulatory Requirement</option></select></div>
+      <div class="form-group"><label class="form-label">Priority</label>
+        <select class="form-input" id="c-priority"><option value="critical">Critical</option><option value="high">High</option><option value="medium" selected>Medium</option><option value="low">Low</option></select></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Assigned To</label>
+        <input type="text" class="form-input" id="c-owner" placeholder="Name / Department"/></div>
+      <div class="form-group"><label class="form-label">Due Date</label>
+        <input type="date" class="form-input" id="c-due"/></div>
+    </div>
+    <div class="form-group"><label class="form-label">Root Cause</label>
+      <textarea class="form-input" id="c-rootcause" rows="2" placeholder="Identify root cause..."></textarea></div>
+    <div style="display:flex;gap:10px;margin-top:18px;">
+      <button class="btn btn-primary" style="flex:1;justify-content:center;" onclick="addCap()">Create CAP</button>
+      <button class="btn btn-back" style="flex:1;justify-content:center;" onclick="document.getElementById('add-cap-modal').classList.remove('open')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var caps=[
+  {id:'CAP-001',title:'SA8000 — Working hours violation at Dhaka facility',source:'Audit Finding',priority:'critical',owner:'SCM Director',due:'2026-07-01',status:'open',progress:25,overdue:false,rootcause:'Inadequate monitoring of contractor overtime reporting'},
+  {id:'CAP-002',title:'ISO 45001 — Hazard identification gaps in warehouse',source:'Compliance Gap',priority:'critical',owner:'HSE Manager',due:'2026-06-20',status:'overdue',progress:10,overdue:true,rootcause:'Process not extended to contract workers'},
+  {id:'CAP-003',title:'RBA — Environmental permit expired at Tier 2 supplier',source:'Supplier Assessment',priority:'high',owner:'Procurement',due:'2026-07-15',status:'open',progress:40,overdue:false,rootcause:'No automated permit expiry tracking'},
+  {id:'CAP-004',title:'ISO 9001 — Customer complaint resolution SLA breach',source:'Audit Finding',priority:'high',owner:'Quality Manager',due:'2026-06-25',status:'overdue',progress:60,overdue:true,rootcause:'Ticket routing misconfigured post-system upgrade'},
+  {id:'CAP-005',title:'ESG — Scope 3 emissions not captured for Tier 3',source:'Regulatory Requirement',priority:'high',owner:'ESG Lead',due:'2026-08-01',status:'open',progress:30,overdue:false,rootcause:'Data collection methodology not extended to Tier 3'},
+  {id:'CAP-006',title:'ISO 14001 — Q4 environmental monitoring records incomplete',source:'Compliance Gap',priority:'medium',owner:'Environmental Mgr',due:'2026-07-10',status:'open',progress:55,overdue:false,rootcause:'Manual reporting process created data gaps'},
+  {id:'CAP-007',title:'SMETA — Child labour screening not applied to sub-contractors',source:'Audit Finding',priority:'critical',owner:'HR Director',due:'2026-06-18',status:'overdue',progress:5,overdue:true,rootcause:'Screening process not cascaded beyond Tier 1'},
+  {id:'CAP-008',title:'ISO 37301 — Compliance training completion below 80% threshold',source:'Risk Event',priority:'medium',owner:'Compliance Officer',due:'2026-07-30',status:'open',progress:70,overdue:false,rootcause:'New joiner onboarding track missing compliance module'},
+  {id:'CAP-009',title:'Labour standards — Wage payment irregularities at 3 facilities',source:'Supplier Assessment',priority:'high',owner:'Audit Lead',due:'2026-06-22',status:'overdue',progress:20,overdue:true,rootcause:'Payroll calculation errors due to software migration'},
+  {id:'CAP-010',title:'ISO 9001 — Non-conformance root cause field not consistently completed',source:'Audit Finding',priority:'medium',owner:'Quality Manager',due:'2026-06-01',status:'closed',progress:100,overdue:false,rootcause:'Updated NC template and mandatory field validation added'},
+];
+var currentFilter='all';
+function pColor(p){return {critical:'#ef4444',high:'#f59e0b',medium:'#60a5fa',low:'#4ade80'}[p]||'#8b8fa8';}
+function filterCaps(el,f){
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
+  el.classList.add('active'); currentFilter=f; renderCaps();
+}
+function renderCaps(){
+  var data=caps.filter(function(c){
+    if(currentFilter==='all')return true;
+    if(currentFilter==='overdue')return c.overdue;
+    if(currentFilter==='closed')return c.status==='closed';
+    if(currentFilter==='open')return c.status==='open';
+    if(currentFilter==='critical')return c.priority==='critical';
+    return true;
+  });
+  var sc={open:'b-amber',overdue:'b-red',closed:'b-green'};
+  document.getElementById('caps-list').innerHTML=data.map(function(c){
+    return '<div class="cap-card" id="cap-'+c.id+'">'
+      +'<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">'
+      +'<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">'
+      +'<span style="font-weight:700;font-size:.82rem;color:var(--o);">'+c.id+'</span>'
+      +'<span class="badge '+(c.status==='open'?'b-amber':c.status==='overdue'?'b-red':'b-green')+'">'+c.status+'</span>'
+      +'<span class="badge b-gray">'+c.source+'</span>'
+      +'</div><span style="font-size:.75rem;color:var(--muted);">Due: '+c.due+(c.overdue?' ⚠️':'')+'</span></div>'
+      +'<div style="font-weight:600;font-size:.88rem;margin-bottom:6px;border-left:3px solid '+pColor(c.priority)+';padding-left:10px;">'+c.title+'</div>'
+      +'<div style="font-size:.78rem;color:var(--muted);margin-bottom:10px;">Owner: '+c.owner+' · Root cause: '+c.rootcause.slice(0,60)+'...</div>'
+      +'<div style="display:flex;align-items:center;gap:10px;">'
+      +'<div style="flex:1;height:6px;background:var(--bg);border-radius:3px;overflow:hidden;">'
+      +'<div style="width:'+c.progress+'%;height:100%;background:'+pColor(c.priority)+';border-radius:3px;"></div></div>'
+      +'<span style="font-size:.72rem;color:var(--muted);width:35px;text-align:right;">'+c.progress+'%</span>'
+      +'</div></div>';
+  }).join('');
+}
+function addCap(){
+  var title=document.getElementById('c-title').value.trim();if(!title)return;
+  caps.unshift({id:'CAP-'+String(caps.length+1).padStart(3,'0'),title:title,
+    source:document.getElementById('c-source').value,priority:document.getElementById('c-priority').value,
+    owner:document.getElementById('c-owner').value||'Unassigned',
+    due:document.getElementById('c-due').value||'TBD',
+    status:'open',progress:0,overdue:false,
+    rootcause:document.getElementById('c-rootcause').value||'Under investigation'});
+  renderCaps();document.getElementById('add-cap-modal').classList.remove('open');
+}
+document.getElementById('add-cap-modal').addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');});
+renderCaps();
+</script></body></html>

@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Field Audit Core — Ralph Analytics</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0f1117;--surface:#1a1d26;--surface2:#21253a;--border:#2a2d3e;
+  --orange:#E8521A;--text:#e8eaf0;--muted:#8b8fa8;
+  --green:#22c55e;--amber:#f59e0b;--red:#ef4444;--blue:#3b82f6;
+}
+body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;min-height:100vh}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;height:56px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:200}
+.logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:15px;text-decoration:none;color:var(--text)}
+.logo-icon{width:32px;height:32px;background:var(--orange);border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;color:#fff}
+.breadcrumb{color:var(--muted);font-size:13px;display:flex;align-items:center;gap:6px}
+.ml-auto{margin-left:auto}
+.btn{padding:8px 16px;border-radius:6px;border:none;cursor:pointer;font-size:13px;font-weight:600;transition:all .15s}
+.btn-primary{background:var(--orange);color:#fff}.btn-primary:hover{background:#c44415}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--muted)}.btn-outline:hover{border-color:var(--orange);color:var(--orange)}
+.btn-sm{padding:6px 12px;font-size:12px}
+.btn-danger{background:rgba(239,68,68,.15);color:var(--red);border:1px solid rgba(239,68,68,.3)}.btn-danger:hover{background:var(--red);color:#fff}
+.layout{display:grid;grid-template-columns:300px 1fr;height:calc(100vh - 56px)}
+.sidebar{background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column}
+.sidebar-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.sidebar-title{font-size:14px;font-weight:600}
+.audit-list{flex:1;overflow-y:auto;padding:12px}
+.audit-item{padding:12px 14px;border-radius:8px;border:1px solid var(--border);margin-bottom:8px;cursor:pointer;transition:all .15s}
+.audit-item:hover{border-color:var(--orange);background:rgba(232,82,26,.05)}
+.audit-item.active{border-color:var(--orange);background:rgba(232,82,26,.1)}
+.audit-item-name{font-size:13px;font-weight:600;margin-bottom:4px}
+.audit-item-meta{font-size:11px;color:var(--muted)}
+.status-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:5px}
+.status-draft{background:var(--muted)}.status-in-progress{background:var(--amber)}.status-submitted{background:var(--green)}.status-offline{background:var(--blue)}
+.main{overflow-y:auto}
+/* New Audit Form */
+.form-area{padding:32px;max-width:820px}
+.form-title{font-size:20px;font-weight:700;margin-bottom:6px}
+.form-sub{font-size:14px;color:var(--muted);margin-bottom:28px}
+.form-section{margin-bottom:28px}
+.form-section-title{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.form-group{margin-bottom:16px}
+.form-label{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px;display:block}
+.form-input,.form-select,.form-textarea{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-size:14px;outline:none;transition:border-color .15s;font-family:inherit}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--orange)}
+.form-select option{background:var(--surface2)}
+.form-textarea{resize:vertical;min-height:80px}
+/* Checklist */
+.checklist-area{padding:32px;max-width:900px}
+.section-block{background:var(--surface);border:1px solid var(--border);border-radius:12px;margin-bottom:20px;overflow:hidden}
+.section-block-header{padding:14px 18px;background:var(--surface2);display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border)}
+.section-block-title{font-size:14px;font-weight:700}
+.section-progress{margin-left:auto;font-size:12px;color:var(--muted)}
+.question-row{padding:16px 18px;border-bottom:1px solid var(--border)}
+.question-row:last-child{border-bottom:none}
+.question-text{font-size:14px;font-weight:500;margin-bottom:4px}
+.question-ref{font-size:11px;color:var(--blue);font-family:monospace;margin-bottom:10px}
+.answer-row{display:flex;gap:8px;margin-bottom:10px}
+.answer-btn{padding:6px 14px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:13px;font-weight:600;cursor:pointer;transition:all .15s}
+.answer-btn:hover{border-color:var(--orange)}
+.answer-btn.yes.sel{background:rgba(34,197,94,.2);border-color:var(--green);color:var(--green)}
+.answer-btn.no.sel{background:rgba(239,68,68,.2);border-color:var(--red);color:var(--red)}
+.answer-btn.na.sel{background:rgba(139,143,168,.15);border-color:var(--muted);color:var(--muted)}
+.finding-area{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:12px;margin-top:8px;display:none}
+.finding-area.show{display:block}
+.finding-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:8px}
+.finding-input{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:8px 10px;color:var(--text);font-size:13px;outline:none;width:100%;font-family:inherit}
+.finding-input:focus{border-color:var(--orange)}
+.sev-row{display:flex;gap:6px;margin-bottom:8px}
+.sev-btn{padding:4px 10px;border-radius:4px;border:1px solid var(--border);background:transparent;font-size:11px;font-weight:700;cursor:pointer;transition:all .15s;text-transform:uppercase}
+.sev-btn.critical{color:var(--red)}.sev-btn.critical.sel{background:rgba(239,68,68,.2);border-color:var(--red)}
+.sev-btn.major{color:var(--amber)}.sev-btn.major.sel{background:rgba(245,158,11,.2);border-color:var(--amber)}
+.sev-btn.minor{color:var(--blue)}.sev-btn.minor.sel{background:rgba(59,130,246,.2);border-color:var(--blue)}
+/* Submit panel */
+.submit-panel{padding:32px;max-width:700px}
+.submit-summary{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:24px}
+.summary-title{font-size:16px;font-weight:700;margin-bottom:16px}
+.summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.sum-stat{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px;text-align:center}
+.sum-val{font-size:22px;font-weight:700;margin-bottom:2px}
+.sum-lbl{font-size:11px;color:var(--muted)}
+.mode-card{border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:12px;display:flex;align-items:flex-start;gap:14px}
+.mode-card.available{border-color:var(--green);background:rgba(34,197,94,.05)}
+.mode-card.fallback{border-color:var(--amber);background:rgba(245,158,11,.05);opacity:.7}
+.mode-card.offline{border-color:var(--blue);background:rgba(59,130,246,.05);opacity:.6}
+.mode-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.mode-info .mode-name{font-size:14px;font-weight:600;margin-bottom:3px}
+.mode-info .mode-desc{font-size:12px;color:var(--muted)}
+.mode-badge{margin-left:auto;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px}
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;height:calc(100vh - 56px);color:var(--muted);gap:12px}
+.step-nav{display:flex;gap:0;background:var(--surface2);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:24px}
+.step{flex:1;padding:10px;text-align:center;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;border-right:1px solid var(--border);transition:all .15s}
+.step:last-child{border-right:none}
+.step.active{background:var(--orange);color:#fff}
+.step.done{background:rgba(34,197,94,.15);color:var(--green)}
+.toast{position:fixed;bottom:24px;right:24px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 18px;font-size:14px;z-index:9999;animation:slideIn .3s ease;max-width:300px}
+.toast.success{border-color:var(--green);color:var(--green)}
+.toast.error{border-color:var(--red);color:var(--red)}
+@keyframes slideIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── AI PANEL ── */
+.ai-panel{background:linear-gradient(135deg,rgba(99,102,241,.08),rgba(168,85,247,.06));border:1px solid rgba(99,102,241,.25);border-radius:12px;padding:20px;margin-top:20px;}
+.ai-panel-title{display:flex;align-items:center;gap:10px;font-size:.88rem;font-weight:700;margin-bottom:14px;}
+.ai-badge{background:rgba(99,102,241,.2);color:#818cf8;font-size:.65rem;font-weight:800;padding:2px 8px;border-radius:10px;text-transform:uppercase;letter-spacing:.05em;}
+.ai-btn{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;border-radius:8px;font-size:.82rem;font-weight:700;cursor:pointer;border:none;font-family:inherit;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;transition:all .2s;}
+.ai-btn:hover{opacity:.88;} .ai-btn:disabled{opacity:.5;cursor:not-allowed;}
+.ai-result{margin-top:14px;background:rgba(0,0,0,.25);border:1px solid rgba(99,102,241,.2);border-radius:10px;padding:16px;font-size:.8rem;line-height:1.7;}
+.ai-score{font-size:2rem;font-weight:900;color:#818cf8;}
+.ai-finding{background:rgba(239,68,68,.08);border-left:3px solid #ef4444;padding:8px 12px;border-radius:0 6px 6px 0;margin-bottom:7px;font-size:.8rem;}
+.ai-action{background:rgba(74,222,128,.08);border-left:3px solid #4ade80;padding:8px 12px;border-radius:0 6px 6px 0;margin-bottom:7px;font-size:.8rem;}
+.ai-loading{display:flex;align-items:center;gap:10px;color:#818cf8;font-size:.82rem;}
+.ai-spinner{width:16px;height:16px;border:2px solid rgba(99,102,241,.3);border-top-color:#818cf8;border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+</style>
+</head>
+<body>
+<div class="topbar">
+  <a href="/client" class="logo">
+    <div class="logo-icon">RA</div>
+    RALPH ANALYTICS
+  </a>
+  <div class="breadcrumb">
+    <span>›</span><span>Field Audit Core</span>
+  </div>
+  <div class="ml-auto" style="display:flex;gap:8px"><button class="btn btn-outline" onclick="window.location='/client'">⬅ Dashboard</button><div id="topbar-actions" style="display:flex;gap:8px"></div></div>
+</div>
+
+<div class="layout">
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-title">My Audits</div>
+      <button class="btn btn-primary btn-sm" onclick="newAudit()">+ New</button>
+    </div>
+    <div class="audit-list" id="audit-list"></div>
+  </div>
+  <div class="main" id="main"></div>
+</div>
+
+<script>
+// ── State ─────────────────────────────────────────────────────
+let audits = JSON.parse(localStorage.getItem('ra_audits') || '[]');
+let current = null; // current audit id
+let step = 'info'; // info | checklist | submit
+
+// ── Checklist templates ───────────────────────────────────────
+const CHECKLISTS = {
+  rba: [
+    {section:'Labour',questions:[
+      {id:'q1',text:'Are all workers employed voluntarily with no forced labour?',ref:'RBA CoC A1',sev:'critical'},
+      {id:'q2',text:'Are there no workers below minimum legal age (15+)?',ref:'RBA CoC A2',sev:'critical'},
+      {id:'q3',text:'Do working hours comply with local law (≤60 hrs/week)?',ref:'RBA CoC A3',sev:'major'},
+      {id:'q4',text:'Are wages paid in full and on time, meeting minimum wage?',ref:'RBA CoC A4',sev:'major'},
+      {id:'q5',text:'Is there a zero-tolerance policy for harassment and abuse?',ref:'RBA CoC A5',sev:'major'},
+    ]},
+    {section:'Health & Safety',questions:[
+      {id:'q6',text:'Are all workplace hazards identified and PPE provided?',ref:'RBA CoC B1',sev:'major'},
+      {id:'q7',text:'Are emergency response plans tested at least twice per year?',ref:'RBA CoC B2',sev:'major'},
+    ]},
+    {section:'Environment',questions:[
+      {id:'q8',text:'Are all required environmental permits current and valid?',ref:'RBA CoC C1',sev:'major'},
+    ]},
+    {section:'Ethics',questions:[
+      {id:'q9',text:'Is there a documented anti-bribery/anti-corruption policy?',ref:'RBA CoC D1',sev:'critical'},
+      {id:'q10',text:'Is there a functioning anonymous whistleblower mechanism?',ref:'RBA CoC D2',sev:'major'},
+    ]},
+  ],
+  osha: [
+    {section:'PPE',questions:[
+      {id:'q1',text:'Has a written hazard assessment been conducted for PPE selection?',ref:'29 CFR 1910.132(d)',sev:'major'},
+      {id:'q2',text:'Is appropriate PPE provided and worn in all required areas?',ref:'29 CFR 1910.132(a)',sev:'major'},
+    ]},
+    {section:'Hazard Communication',questions:[
+      {id:'q3',text:'Is a complete SDS library available for all hazardous chemicals?',ref:'29 CFR 1910.1200(g)',sev:'major'},
+      {id:'q4',text:'Are all chemical containers properly labelled (GHS format)?',ref:'29 CFR 1910.1200(f)',sev:'major'},
+      {id:'q5',text:'Have all workers received HazCom training?',ref:'29 CFR 1910.1200(h)',sev:'major'},
+    ]},
+    {section:'Electrical Safety',questions:[
+      {id:'q6',text:'Are all electrical panels guarded and accessible (36" clearance)?',ref:'29 CFR 1910.303',sev:'critical'},
+      {id:'q7',text:'Is a written Lockout/Tagout (LOTO) programme in place and followed?',ref:'29 CFR 1910.147',sev:'critical'},
+    ]},
+    {section:'Fire Safety',questions:[
+      {id:'q8',text:'Are fire extinguishers inspected monthly and serviced annually?',ref:'29 CFR 1910.157',sev:'major'},
+      {id:'q9',text:'Is a written Emergency Action Plan available and practised?',ref:'29 CFR 1910.38',sev:'major'},
+    ]},
+    {section:'Recordkeeping',questions:[
+      {id:'q10',text:'Is the OSHA 300 Log current and the 300A posted Feb–Apr?',ref:'29 CFR 1904',sev:'minor'},
+    ]},
+  ],
+  irma: [
+    {section:'Business Integrity',questions:[
+      {id:'q1',text:'Is there a documented anti-corruption programme covering all forms of bribery?',ref:'IRMA 1.1',sev:'critical'},
+      {id:'q2',text:'Are payments to governments publicly disclosed per EITI or equivalent?',ref:'IRMA 1.2',sev:'major'},
+    ]},
+    {section:'Environmental & Social',questions:[
+      {id:'q3',text:'Has a comprehensive ESIA been conducted and is it current?',ref:'IRMA 2.1',sev:'critical'},
+      {id:'q4',text:'Is there a fully funded mine closure and reclamation plan?',ref:'IRMA 2.2',sev:'major'},
+    ]},
+    {section:'Community',questions:[
+      {id:'q5',text:'Has FPIC been obtained from all affected Indigenous communities?',ref:'IRMA 3.1',sev:'critical'},
+      {id:'q6',text:'Is there an accessible community grievance mechanism with response tracking?',ref:'IRMA 3.2',sev:'major'},
+    ]},
+    {section:'Environment',questions:[
+      {id:'q7',text:'Are water discharge monitoring reports current and compliant?',ref:'IRMA 4.1',sev:'major'},
+      {id:'q8',text:'Is a biodiversity management and rehabilitation plan in place?',ref:'IRMA 4.2',sev:'major'},
+    ]},
+    {section:'Labour',questions:[
+      {id:'q9',text:'Is an OHS management system implemented per ILO standards?',ref:'IRMA 5.1',sev:'critical'},
+    ]},
+  ],
+  air: [
+    {section:'AIR-1 · Policy & Governance',questions:[
+      {id:'q1',text:'Has the organisation adopted a formal AI Ethics Policy approved at executive level?',ref:'AIR-1.1 | EU AI Act Art.9 | ISO 42001:2023 Cl.5.2',sev:'major'},
+      {id:'q2',text:'Has the policy been communicated to all relevant employees and suppliers, with evidence retained?',ref:'AIR-1.1 | ISO 42001:2023 Cl.7.4',sev:'major'},
+      {id:'q3',text:'Was the AI Ethics Policy reviewed within the past 12 months?',ref:'AIR-1.1 | ISO 42001:2023 Cl.9.3',sev:'minor'},
+      {id:'q4',text:'Is there a documented AI Governance Committee or named executive accountable for AI responsibility?',ref:'AIR-1.2 | ISO 42001:2023 Cl.5.1 | NIST AI RMF 1.0 GOVERN 1.2',sev:'major'},
+      {id:'q5',text:'Are AI governance meeting minutes available for the past 12 months (minimum 4 meetings)?',ref:'AIR-1.2 | ISO 42001:2023 Cl.5.1',sev:'minor'},
+    ]},
+    {section:'AIR-2 · Risk Management',questions:[
+      {id:'q6',text:'Does the organisation maintain a current, complete AI inventory register covering all AI systems in use or development?',ref:'AIR-2.1 | ISO 42001:2023 Cl.6.4 | EU AI Act Art.51',sev:'major'},
+      {id:'q7',text:'Was the AI inventory reviewed and signed off within the past 6 months?',ref:'AIR-2.1 | ISO 42001:2023 Cl.6.4',sev:'minor'},
+      {id:'q8',text:'Has each AI system in the inventory been assigned a risk tier (Unacceptable / High / Limited / Minimal) per the EU AI Act classification framework?',ref:'AIR-2.2 | EU AI Act Title II & III | NIST AI RMF 1.0 MAP 5.1',sev:'critical'},
+      {id:'q9',text:'Are any AI systems classified as Unacceptable Risk (prohibited) currently deployed?',ref:'AIR-2.2 | EU AI Act Art.5 | AIR-2.2',sev:'critical'},
+      {id:'q10',text:'Has a formal AI Impact Assessment been completed for every High Risk AI system prior to deployment?',ref:'AIR-2.3 | EU AI Act Art.9 | GDPR Art.35 | NIST AI RMF 1.0 MAP 5.2',sev:'critical'},
+    ]},
+    {section:'AIR-3 · Data Governance & Privacy',questions:[
+      {id:'q11',text:'Is the legal basis for processing personal data in each AI system documented (per GDPR Art.6 or applicable law)?',ref:'AIR-3.1 | GDPR Art.5-6 | EU AI Act Art.10',sev:'major'},
+      {id:'q12',text:'Is data provenance and lineage documented for all AI training datasets?',ref:'AIR-3.1 | EU AI Act Art.10 | ISO 42001:2023 Cl.8.4',sev:'major'},
+      {id:'q13',text:'Are Data Processing Agreements (DPAs) in place with all AI data suppliers or processors?',ref:'AIR-3.1 | GDPR Art.28',sev:'major'},
+      {id:'q14',text:'Are data quality checks (accuracy, completeness, representativeness) conducted and documented before AI model training?',ref:'AIR-3.2 | EU AI Act Art.10 | NIST AI RMF 1.0 MEASURE 2.5',sev:'major'},
+    ]},
+    {section:'AIR-4 · Fairness & Non-Discrimination',questions:[
+      {id:'q15',text:'Has bias testing been conducted for all AI systems that make or materially influence decisions affecting individuals?',ref:'AIR-4.1 | EU AI Act Art.10 | OECD AI Principles 1.2 (OECD/LEGAL/0449)',sev:'major'},
+      {id:'q16',text:'Does bias testing cover protected characteristics (gender, race, age, disability, and others per applicable law)?',ref:'AIR-4.1 | EU AI Act Art.10 | OECD AI Principles 1.2',sev:'major'},
+      {id:'q17',text:'Are bias test results documented with statistical methodology and is confirmed bias remediated before deployment?',ref:'AIR-4.1 | EU AI Act Art.10',sev:'major'},
+      {id:'q18',text:'Are fairness metrics defined, measured, and documented for AI systems affecting individuals?',ref:'AIR-4.2 | NIST AI RMF 1.0 MEASURE 2.5 | EU AI Act Art.10',sev:'major'},
+    ]},
+    {section:'AIR-5 · Transparency & Explainability',questions:[
+      {id:'q19',text:'Are users and affected individuals notified when AI makes or materially influences decisions about them, before or at the point of interaction?',ref:'AIR-5.1 | EU AI Act Art.13 & Art.52 | OECD AI Principles 1.3',sev:'major'},
+      {id:'q20',text:'For High Risk AI systems: can the organisation provide a meaningful explanation of any AI-generated decision affecting an individual?',ref:'AIR-5.2 | EU AI Act Art.13 | GDPR Art.22 | NIST AI RMF 1.0 EXPLAIN',sev:'major'},
+      {id:'q21',text:'Do High Risk AI systems maintain tamper-resistant audit logs of inputs, outputs, and decisions, retained for minimum 3 years?',ref:'AIR-5.3 | EU AI Act Art.12 & Art.19 | ISO 42001:2023 Cl.9.1',sev:'major'},
+    ]},
+    {section:'AIR-6 · Safety & Reliability',questions:[
+      {id:'q22',text:'Do all High Risk AI systems have a documented, tested human oversight procedure enabling override or halt of AI decisions?',ref:'AIR-6.1 | EU AI Act Art.14 | NIST AI RMF 1.0 GOVERN 5.2',sev:'critical'},
+      {id:'q23',text:'Has human override capability been tested and documented in the past 12 months?',ref:'AIR-6.1 | EU AI Act Art.14',sev:'major'},
+      {id:'q24',text:'Are AI systems validated against defined performance metrics with documented results before production deployment?',ref:'AIR-6.2 | EU AI Act Art.9 | ISO 42001:2023 Cl.8.5',sev:'major'},
+      {id:'q25',text:'Is a documented AI incident management procedure in place with an active AI incident register?',ref:'AIR-6.3 | EU AI Act Art.62 | ISO 42001:2023 Cl.10.2',sev:'major'},
+    ]},
+    {section:'AIR-7 · Human Rights & Worker Protection',questions:[
+      {id:'q26',text:'Are AI systems used in hiring, performance management, or disciplinary decisions subject to documented mandatory human review before any decision is enacted?',ref:'AIR-7.1 | EU AI Act Annex III (5a) | GDPR Art.22',sev:'critical'},
+      {id:'q27',text:'Are all workers informed of AI use in employment-related decisions before such systems are deployed?',ref:'AIR-7.1 | EU AI Act Annex III | GDPR Art.22',sev:'critical'},
+      {id:'q28',text:'Is AI-enabled covert surveillance of workers prohibited, or — where surveillance AI is used — is purpose and scope disclosed to workers with documented legal justification and executive approval?',ref:'AIR-7.2 | EU AI Act Annex III (1b) | RBA CoC A5',sev:'critical'},
+    ]},
+    {section:'AIR-8 · Security & Cyber Resilience',questions:[
+      {id:'q29',text:'Are AI-specific cybersecurity controls documented covering data poisoning, model theft, adversarial attacks, and unauthorised model access?',ref:'AIR-8.1 | EU AI Act Art.15 | NIST AI RMF 1.0 GOVERN 1.4',sev:'major'},
+      {id:'q30',text:'Are AI-specific cybersecurity controls tested at least annually (penetration test, red team, or equivalent)?',ref:'AIR-8.1 | EU AI Act Art.15 | NIST CSF 2.0',sev:'major'},
+      {id:'q31',text:'Are all AI model versions recorded in a model registry with documented, authorised deployment approval?',ref:'AIR-8.2 | EU AI Act Art.11 | ISO 42001:2023 Cl.8.5',sev:'minor'},
+    ]},
+    {section:'AIR-9 · Supplier & Third-Party AI',questions:[
+      {id:'q32',text:'Have all relevant Tier-1 suppliers deploying AI systems been issued and returned a completed Supplier AI Declaration (annually)?',ref:'AIR-9.1 | EU AI Act Art.25 & Art.28 | RBA CoC Supplier Annex',sev:'major'},
+      {id:'q33',text:'Do direct supplier contracts include AI responsibility clauses requiring equivalent standards to flow down to sub-tier suppliers?',ref:'AIR-9.2 | EU AI Act Art.25 | OECD Due Diligence Guidance',sev:'minor'},
+    ]},
+    {section:'AIR-10 · Lifecycle Management',questions:[
+      {id:'q34',text:'Is there a documented AI lifecycle management procedure covering all 5 stages: Design, Development, Deployment, Monitoring, and Decommissioning?',ref:'AIR-10.1 | ISO 42001:2023 Cl.8 | EU AI Act Art.9',sev:'major'},
+      {id:'q35',text:'Are decommissioned AI systems documented with evidence of training data disposal, model deletion, and stakeholder notification?',ref:'AIR-10.1 | ISO 42001:2023 Cl.8 | GDPR Art.17',sev:'minor'},
+      {id:'q36',text:'Are all AI systems formally re-assessed at least annually, and upon: material function change, regulatory change, significant incident, or change in deployment context?',ref:'AIR-10.2 | EU AI Act Art.9 | ISO 42001:2023 Cl.9.3',sev:'major'},
+    ]},
+  ],
+};
+
+// ── Persistence ───────────────────────────────────────────────
+function save(){ localStorage.setItem('ra_audits', JSON.stringify(audits)); }
+
+function genId(){ return 'aud_' + Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+
+// ── Sidebar ───────────────────────────────────────────────────
+function renderSidebar(){
+  const list = document.getElementById('audit-list');
+  if(!audits.length){ list.innerHTML = '<div style="padding:20px;text-align:center;color:var(--muted);font-size:13px">No audits yet.<br>Click + New to start.</div>'; return; }
+  list.innerHTML = audits.slice().reverse().map(a => `
+    <div class="audit-item ${current===a.id?'active':''}" onclick="openAudit('${a.id}')">
+      <div class="audit-item-name">${a.siteName || 'Unnamed Site'}</div>
+      <div class="audit-item-meta">
+        <span class="status-dot status-${a.status}"></span>
+        ${a.standard?.toUpperCase() || '—'} · ${a.status} · ${new Date(a.createdAt).toLocaleDateString()}
+      </div>
+    </div>`).join('');
+}
+
+// ── Views ─────────────────────────────────────────────────────
+function showEmpty(){
+  document.getElementById('main').innerHTML = `
+    <div class="empty-state">
+      <svg width="48" height="48" viewBox="0 0 48 48" fill="none"><rect x="8" y="6" width="32" height="36" rx="4" stroke="#8b8fa8" stroke-width="2"/><path d="M16 18h16M16 24h12M16 30h8" stroke="#8b8fa8" stroke-width="2" stroke-linecap="round"/></svg>
+      <div style="font-size:16px;font-weight:600;color:var(--text)">No Audit Selected</div>
+      <div>Create a new audit or select one from the list</div>
+      <button class="btn btn-primary" onclick="newAudit()">+ New Audit</button>
+    </div>`;
+  document.getElementById('topbar-actions').innerHTML = '';
+}
+
+function newAudit(){
+  current = null; step = 'info';
+  renderInfoForm(null);
+  renderSidebar();
+}
+
+function openAudit(id){
+  current = id;
+  const a = audits.find(x=>x.id===id);
+  if(!a) return;
+  step = a.status === 'draft' ? 'info' : 'checklist';
+  renderSidebar();
+  if(a.status === 'submitted'){ renderSubmitView(a); return; }
+  renderChecklist(a);
+}
+
+// ── Step 1: Audit Info Form ────────────────────────────────────
+function renderInfoForm(a){
+  document.getElementById('topbar-actions').innerHTML = '';
+  document.getElementById('main').innerHTML = `
+    <div class="form-area">
+      <div class="form-title">New Field Audit</div>
+      <div class="form-sub">Complete the audit information to begin your checklist</div>
+      <div class="step-nav">
+        <div class="step active">1 · Audit Info</div>
+        <div class="step">2 · Checklist</div>
+        <div class="step">3 · Submit</div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-section-title">Site & Audit Information</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Site Name *</label>
+            <input class="form-input" id="f-site" placeholder="e.g. Shenzhen Factory A" value="${a?.siteName||''}">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Country</label>
+            <input class="form-input" id="f-country" placeholder="e.g. South Africa" value="${a?.country||''}">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Auditor Name *</label>
+            <input class="form-input" id="f-auditor" placeholder="Your full name" value="${a?.auditorName||''}">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Audit Date *</label>
+            <input type="date" class="form-input" id="f-date" value="${a?.auditDate||new Date().toISOString().split('T')[0]}">
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-section-title">Compliance Standard</div>
+        <div class="form-group">
+          <label class="form-label">Select Standard *</label>
+          <select class="form-select" id="f-standard">
+            <option value="">— Choose a standard —</option>
+            <option value="rba" ${a?.standard==='rba'?'selected':''}>RBA — Responsible Business Alliance Code of Conduct</option>
+            <option value="osha" ${a?.standard==='osha'?'selected':''}>OSHA — Occupational Safety and Health Standards</option>
+            <option value="irma" ${a?.standard==='irma'?'selected':''}>IRMA — Initiative for Responsible Mining Assurance</option>
+            <option value="air" ${a?.standard==='air'?'selected':''}>RBA AIR — Artificial Intelligence Responsibility Module (Pillar E)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Audit Scope</label>
+          <textarea class="form-textarea" id="f-scope" placeholder="Describe what is being audited (departments, processes, facilities)...">${a?.scope||''}</textarea>
+        </div>
+      </div>
+
+      <div style="display:flex;justify-content:flex-end;gap:12px">
+        <button class="btn btn-outline" onclick="showEmpty()">Cancel</button>
+        <button class="btn btn-primary" onclick="saveInfo()">Begin Checklist →</button>
+      </div>
+    </div>`;
+}
+
+function saveInfo(){
+  const site = document.getElementById('f-site').value.trim();
+  const auditor = document.getElementById('f-auditor').value.trim();
+  const date = document.getElementById('f-date').value;
+  const std = document.getElementById('f-standard').value;
+  if(!site||!auditor||!date||!std){ toast('Please fill in all required fields','error'); return; }
+
+  let a;
+  if(current){
+    a = audits.find(x=>x.id===current);
+    a.siteName=site; a.auditorName=auditor; a.auditDate=date; a.standard=std;
+    a.country=document.getElementById('f-country').value;
+    a.scope=document.getElementById('f-scope').value;
+  } else {
+    a = {
+      id: genId(), siteName:site, auditorName:auditor, auditDate:date, standard:std,
+      country:document.getElementById('f-country').value,
+      scope:document.getElementById('f-scope').value,
+      status:'in-progress', createdAt:new Date().toISOString(),
+      answers:{}, findings:{}
+    };
+    audits.push(a);
+    current = a.id;
+  }
+  save(); renderSidebar(); step='checklist'; renderChecklist(a);
+}
+
+// ── Step 2: Checklist ──────────────────────────────────────────
+function renderChecklist(a){
+  const cl = CHECKLISTS[a.standard] || [];
+  const totalQ = cl.reduce((s,sec)=>s+sec.questions.length,0);
+  const answered = Object.keys(a.answers||{}).length;
+  const pct = totalQ ? Math.round(answered/totalQ*100) : 0;
+
+  document.getElementById('topbar-actions').innerHTML = `
+    <span style="font-size:12px;color:var(--muted)">${answered}/${totalQ} answered (${pct}%)</span>
+    <button class="btn btn-outline btn-sm" onclick="renderInfoForm(audits.find(x=>x.id===current))">← Edit Info</button>
+    <button class="btn btn-primary btn-sm" onclick="goToSubmit()">Review & Submit →</button>`;
+
+  document.getElementById('main').innerHTML = `
+    <div class="checklist-area">
+      <div class="step-nav">
+        <div class="step done" onclick="renderInfoForm(audits.find(x=>x.id===current))">✓ Audit Info</div>
+        <div class="step active">2 · Checklist</div>
+        <div class="step">3 · Submit</div>
+      </div>
+      <div style="margin-bottom:20px">
+        <div style="font-size:18px;font-weight:700">${a.siteName}</div>
+        <div style="font-size:13px;color:var(--muted)">${({rba:'RBA Code of Conduct',osha:'OSHA 29 CFR 1910',irma:'IRMA Standard v1.0',air:'RBA AIR Module (Pillar E)'})[a.standard]||a.standard?.toUpperCase()} · ${a.auditorName} · ${a.auditDate}</div>
+        <div style="margin-top:10px;background:var(--surface2);border-radius:999px;height:6px">
+          <div style="background:var(--orange);width:${pct}%;height:6px;border-radius:999px;transition:width .4s"></div>
+        </div>
+      </div>
+      ${a.standard==='air'?`<div style="background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.25);border-radius:10px;padding:14px 18px;margin-bottom:18px">
+        <div style="font-weight:700;font-size:13px;color:#818cf8;margin-bottom:6px">✦ RBA AIR Module — Pillar E: Artificial Intelligence Responsibility</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.7">This VAP-aligned checklist implements the <strong style="color:var(--text)">RBA AI Responsibility Standard (June 2026)</strong>.
+All 36 questions map directly to published, referenceable standards: <strong style="color:var(--text)">EU AI Act 2024/1689</strong> · <strong style="color:var(--text)">ISO/IEC 42001:2023</strong> · <strong style="color:var(--text)">NIST AI RMF 1.0</strong> · <strong style="color:var(--text)">OECD AI Principles (OECD/LEGAL/0449)</strong> · <strong style="color:var(--text)">GDPR 2016/679</strong>.
+VAP Scoring: <span style="color:#ef4444;font-weight:600">Critical</span> = immediate failure · <span style="color:#f59e0b;font-weight:600">Major</span> = systemic gap (90-day CAP) · <span style="color:#3b82f6;font-weight:600">Minor</span> = isolated gap (180-day CAP).</div>
+      </div>`:''}
+      ${cl.map(sec => {
+        const secAnswered = sec.questions.filter(q=>(a.answers||{})[q.id]).length;
+        return `
+        <div class="section-block">
+          <div class="section-block-header">
+            <span style="font-size:13px;font-weight:700">${sec.section}</span>
+             ${a.standard==='air'?'<span style="font-size:10px;font-weight:600;color:#818cf8;background:rgba(129,140,248,.15);padding:2px 8px;border-radius:10px;margin-left:6px">VAP Audit</span>':''}
+             <span class="section-progress">${secAnswered}/${sec.questions.length}</span>
+          </div>
+          ${sec.questions.map(q => renderQuestion(q, a)).join('')}
+        </div>`;
+      }).join('')}
+      <div style="display:flex;justify-content:flex-end;margin-top:20px">
+        <button class="btn btn-primary" onclick="goToSubmit()">Review & Submit →</button>
+      </div>
+    </div>`;
+}
+
+function renderQuestion(q, a){
+  const ans = (a.answers||{})[q.id];
+  const finding = (a.findings||{})[q.id];
+  const showFinding = ans === 'no';
+  return `
+    <div class="question-row" id="qrow-${q.id}">
+      <div class="question-text">${q.text}</div>
+      <div class="question-ref">${q.ref} · ${q.sev}</div>
+      <div class="answer-row">
+        <button class="answer-btn yes ${ans==='yes'?'sel':''}" onclick="setAnswer('${q.id}','yes')">✓ Yes</button>
+        <button class="answer-btn no ${ans==='no'?'sel':''}" onclick="setAnswer('${q.id}','no')">✗ No</button>
+        <button class="answer-btn na ${ans==='na'?'sel':''}" onclick="setAnswer('${q.id}','na')">N/A</button>
+      </div>
+      <div class="finding-area ${showFinding?'show':''}" id="finding-${q.id}">
+        <div style="font-size:12px;font-weight:600;color:var(--red);margin-bottom:10px">⚠ Finding Required</div>
+        <div class="sev-row">
+          <span style="font-size:11px;color:var(--muted);margin-right:4px;line-height:28px">Severity:</span>
+          ${['critical','major','minor'].map(s=>`<button class="sev-btn ${s} ${(finding?.severity||q.sev)===s?'sel':''}" onclick="setSeverity('${q.id}','${s}')">${s}</button>`).join('')}
+        </div>
+        <div class="finding-row">
+          <input class="finding-input" placeholder="Finding description..." value="${finding?.description||''}"
+            onchange="setFindingField('${q.id}','description',this.value)" id="fdesc-${q.id}">
+          <input class="finding-input" placeholder="Corrective action required..." value="${finding?.correctiveAction||''}"
+            onchange="setFindingField('${q.id}','correctiveAction',this.value)" id="fca-${q.id}">
+        </div>
+        <input class="finding-input" placeholder="Due date for corrective action (e.g. 2026-09-30)" value="${finding?.dueDate||''}"
+          onchange="setFindingField('${q.id}','dueDate',this.value)" style="width:280px">
+      </div>
+    </div>`;
+}
+
+function setAnswer(qid, val){
+  const a = audits.find(x=>x.id===current);
+  if(!a.answers) a.answers = {};
+  a.answers[qid] = val;
+  if(val !== 'no') delete (a.findings||{})[qid];
+  save();
+  // Re-render just this question
+  const cl = CHECKLISTS[a.standard]||[];
+  const q = cl.flatMap(s=>s.questions).find(q=>q.id===qid);
+  const row = document.getElementById('qrow-'+qid);
+  if(row && q){ row.outerHTML = renderQuestion(q, a); }
+  // Update header count
+  const totalQ = cl.reduce((s,sec)=>s+sec.questions.length,0);
+  const answered = Object.keys(a.answers).length;
+  const pct = Math.round(answered/totalQ*100);
+  const bar = document.querySelector('.checklist-area div[style*="border-radius:999px"] div');
+  if(bar) bar.style.width = pct+'%';
+  const cntEl = document.querySelector('#topbar-actions span');
+  if(cntEl) cntEl.textContent = `${answered}/${totalQ} answered (${pct}%)`;
+}
+
+function setSeverity(qid, sev){
+  const a = audits.find(x=>x.id===current);
+  if(!a.findings) a.findings = {};
+  if(!a.findings[qid]) a.findings[qid] = {};
+  a.findings[qid].severity = sev;
+  save();
+  document.querySelectorAll(`#finding-${qid} .sev-btn`).forEach(b=>{
+    b.classList.toggle('sel', b.classList.contains(sev));
+  });
+}
+
+function setFindingField(qid, field, val){
+  const a = audits.find(x=>x.id===current);
+  if(!a.findings) a.findings = {};
+  if(!a.findings[qid]) a.findings[qid] = {};
+  a.findings[qid][field] = val;
+  save();
+}
+
+// ── Step 3: Submit ─────────────────────────────────────────────
+function goToSubmit(){
+  const a = audits.find(x=>x.id===current);
+  if(!a) return;
+  renderSubmitView(a);
+}
+
+function renderSubmitView(a){
+  const cl = CHECKLISTS[a.standard]||[];
+  const totalQ = cl.reduce((s,sec)=>s+sec.questions.length,0);
+  const answered = Object.keys(a.answers||{}).length;
+  const nos = Object.values(a.answers||{}).filter(v=>v==='no').length;
+  const yeses = Object.values(a.answers||{}).filter(v=>v==='yes').length;
+  const nas = Object.values(a.answers||{}).filter(v=>v==='na').length;
+  const findings = Object.values(a.findings||{});
+  const critical = findings.filter(f=>f.severity==='critical').length;
+  const isOnline = navigator.onLine;
+  const isSubmitted = a.status === 'submitted';
+
+  document.getElementById('topbar-actions').innerHTML = isSubmitted ? '' : `
+    <button class="btn btn-outline btn-sm" onclick="renderChecklist(audits.find(x=>x.id===current))">← Back to Checklist</button>`;
+
+  document.getElementById('main').innerHTML = `
+    <div class="submit-panel">
+      ${!isSubmitted ? `<div class="step-nav">
+        <div class="step done">✓ Audit Info</div>
+        <div class="step done">✓ Checklist</div>
+        <div class="step active">3 · Submit</div>
+      </div>` : ''}
+
+      <div class="submit-summary">
+        <div class="summary-title">${isSubmitted ? '✅ Submitted: ' : ''}${a.siteName}</div>
+        <div style="font-size:13px;color:var(--muted);margin-bottom:16px">${({rba:'RBA Code of Conduct',osha:'OSHA 29 CFR 1910',irma:'IRMA Standard v1.0',air:'RBA AIR Module (Pillar E)'})[a.standard]||a.standard?.toUpperCase()} · ${a.auditorName} · ${a.auditDate}</div>
+        <div class="summary-grid">
+          <div class="sum-stat"><div class="sum-val">${answered}/${totalQ}</div><div class="sum-lbl">Answered</div></div>
+          <div class="sum-stat"><div class="sum-val" style="color:var(--green)">${yeses}</div><div class="sum-lbl">Compliant</div></div>
+          <div class="sum-stat"><div class="sum-val" style="color:var(--red)">${nos}</div><div class="sum-lbl">Findings</div></div>
+          <div class="sum-stat"><div class="sum-val" style="color:${critical>0?'var(--red)':'var(--muted)'}">${critical}</div><div class="sum-lbl">Critical</div></div>
+        </div>
+        ${answered < totalQ ? `<div style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);border-radius:8px;padding:10px 14px;font-size:13px;color:var(--amber)">⚠ ${totalQ-answered} questions unanswered. You can still submit, but incomplete audits may require follow-up.</div>` : ''}
+      </div>
+
+      ${!isSubmitted ? `
+      <div style="font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">Submission Mode</div>
+      <div class="mode-card ${isOnline?'available':'fallback'}">
+        <div class="mode-icon" style="background:rgba(34,197,94,.15)">📱</div>
+        <div class="mode-info">
+          <div class="mode-name">Plan A — WhatsApp</div>
+          <div class="mode-desc">Real-time submission via WhatsApp audit inbox. Instant delivery and confirmation.</div>
+        </div>
+        <div class="mode-badge" style="background:rgba(34,197,94,.15);color:var(--green)">${isOnline?'AVAILABLE':'OFFLINE'}</div>
+      </div>
+      <div class="mode-card fallback">
+        <div class="mode-icon" style="background:rgba(245,158,11,.15)">📧</div>
+        <div class="mode-info">
+          <div class="mode-name">Plan B — Email Fallback</div>
+          <div class="mode-desc">Automatic fallback if WhatsApp API is unavailable. Sends to audit inbox email.</div>
+        </div>
+        <div class="mode-badge" style="background:rgba(245,158,11,.15);color:var(--amber)">FALLBACK</div>
+      </div>
+      <div class="mode-card offline">
+        <div class="mode-icon" style="background:rgba(59,130,246,.15)">💾</div>
+        <div class="mode-info">
+          <div class="mode-name">Plan C — Offline Storage</div>
+          <div class="mode-desc">Saves locally and auto-syncs when connectivity returns. Zero data loss.</div>
+        </div>
+        <div class="mode-badge" style="background:rgba(59,130,246,.15);color:var(--blue)">SAFETY NET</div>
+      </div>
+
+      <div style="display:flex;justify-content:flex-end;margin-top:24px;gap:12px">
+        <button class="btn btn-danger btn-sm" onclick="deleteAudit()">Delete Audit</button>
+        <button class="btn btn-primary" onclick="submitAudit()">Submit Audit →</button>
+
+      <!-- AI Analysis Panel -->
+      <div class="ai-panel" style="margin-top:24px;">
+        <div class="ai-panel-title">
+          <span>✦</span>
+          <span>AI Compliance Analysis</span>
+          <span class="ai-badge">GPT-4o</span>
+        </div>
+        <p style="font-size:.8rem;color:#9aa0b4;margin-bottom:14px;">Run an AI-powered analysis of this audit — get compliance score, critical findings, and corrective action recommendations.</p>
+        <button class="ai-btn" id="ai-analyse-btn" onclick="runAIAnalysis()">✦ Analyse with AI</button>
+        <div id="ai-result-area" class="ai-result" style="display:none;"></div>
+      </div>
+      </div>` : `
+      <div style="background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);border-radius:10px;padding:20px;text-align:center">
+        <div style="font-size:20px;margin-bottom:8px">✅</div>
+        <div style="font-size:15px;font-weight:600;color:var(--green)">Audit Submitted Successfully</div>
+        <div style="font-size:13px;color:var(--muted);margin-top:4px">Submitted on ${new Date(a.submittedAt||a.createdAt).toLocaleString()}</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:8px">Audit ID: ${a.id}</div>
+      </div>
+      <div style="display:flex;justify-content:center;margin-top:20px;gap:12px">
+        <button class="btn btn-outline" onclick="newAudit()">+ New Audit</button>
+        <button class="btn btn-primary" onclick="window.location='/client/reports'">View Reports →</button>
+      </div>`}
+    </div>`;
+}
+
+function submitAudit(){
+  const a = audits.find(x=>x.id===current);
+  if(!a) return;
+  a.status = 'submitted';
+  a.submittedAt = new Date().toISOString();
+  save(); renderSidebar();
+  toast('Audit submitted successfully via '+(navigator.onLine?'WhatsApp (Plan A)':'Offline Storage (Plan C)'), 'success');
+  setTimeout(()=>renderSubmitView(a), 500);
+}
+
+function deleteAudit(){
+  if(!confirm('Delete this audit? This cannot be undone.')) return;
+  audits = audits.filter(a=>a.id!==current);
+  current = null; save(); renderSidebar(); showEmpty();
+}
+
+function toast(msg, type='success'){
+  const t = document.createElement('div');
+  t.className = `toast ${type}`; t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(), 4000);
+}
+
+
+// ── AI Analysis ──────────────────────────────────────────────────────────────
+async function runAIAnalysis() {
+  const a = audits.find(x => x.id === current);
+  if (!a) return;
+
+  const btn    = document.getElementById('ai-analyse-btn');
+  const result = document.getElementById('ai-result-area');
+  if (!btn || !result) return;
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="ai-spinner"></span> Analysing with GPT-4o…';
+  result.innerHTML = '<div class="ai-loading"><span class="ai-spinner"></span> Sending audit data to AI…</div>';
+  result.style.display = 'block';
+
+  try {
+    const payload = {
+      auditData: {
+        site: a.siteName, date: a.auditDate, auditor: a.auditorName,
+        standard: a.standard, answers: a.answers || {},
+        findings: a.findings || [], totalQuestions: a.totalQ || 0,
+      },
+      standard: ({rba:'RBA Code of Conduct (v8.0)',osha:'OSHA General Industry Standards (29 CFR 1910)',irma:'IRMA Standard for Responsible Mining (v1.0)',air:'RBA AIR Module — Artificial Intelligence Responsibility (Pillar E)'})[a.standard] || a.standard || 'RBA COC'
+    };
+
+    const _aiToken = localStorage.getItem('ralph_auth_token') || '';
+    const resp = await fetch('/api/ai/analyse-audit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + _aiToken },
+      body: JSON.stringify(payload),
+    });
+    const data = await resp.json();
+
+    if (data.error) throw new Error(data.error);
+
+    const riskColors = { Low:'#4ade80', Medium:'#f59e0b', High:'#f97316', Critical:'#ef4444' };
+    const rc = riskColors[data.riskLevel] || '#818cf8';
+
+    result.innerHTML = `
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px;flex-wrap:wrap;">
+        <div>
+          <div style="font-size:.68rem;color:#9aa0b4;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px;">AI Compliance Score</div>
+          <div class="ai-score">${data.score || '—'}<span style="font-size:1rem;color:#9aa0b4;">%</span></div>
+        </div>
+        <div style="flex:1;">
+          <div style="font-size:.68rem;color:#9aa0b4;text-transform:uppercase;margin-bottom:3px;">Risk Level</div>
+          <div style="font-size:1.1rem;font-weight:800;color:${rc};">${data.riskLevel || 'Unknown'}</div>
+        </div>
+        ${data.usage ? `<div style="font-size:.7rem;color:#5a6177;">${data.usage.total_tokens} tokens</div>` : ''}
+      </div>
+
+      ${data.findings?.length ? `
+        <div style="font-size:.75rem;font-weight:700;color:#9aa0b4;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">Critical Findings</div>
+        ${data.findings.map(f => `<div class="ai-finding">${f}</div>`).join('')}
+      ` : ''}
+
+      ${data.actions?.length ? `
+        <div style="font-size:.75rem;font-weight:700;color:#9aa0b4;text-transform:uppercase;letter-spacing:.05em;margin:12px 0 8px;">Recommended Actions</div>
+        ${data.actions.map(a => `<div class="ai-action">${a}</div>`).join('')}
+      ` : ''}
+    `;
+  } catch (err) {
+    result.innerHTML = `<div style="color:#f87171;font-size:.82rem;">⚠ AI analysis failed: ${err.message}</div>`;
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '✦ Re-run AI Analysis';
+  }
+}
+
+// ── Init ──────────────────────────────────────────────────────
+renderSidebar();
+if(audits.length){ openAudit(audits[audits.length-1].id); } else { showEmpty(); }
+</script>
+</body>
+</html>

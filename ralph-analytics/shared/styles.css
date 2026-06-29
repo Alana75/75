@@ -1,0 +1,24 @@
+/* Ralph Analytics — Design System */
+:root {
+  --bg:          #0d1117;
+  --bg-card:     #161b22;
+  --bg-hover:    #1c2128;
+  --border:      rgba(255,255,255,0.08);
+  --border-hi:   rgba(99,210,255,0.3);
+  --text:        #e6edf3;
+  --text-muted:  #8b949e;
+  --text-dim:    #484f58;
+  --primary:     #63d2ff;
+  --primary-dark:#0d8aad;
+  --success:     #56d364;
+  --warning:     #e3b341;
+  --danger:      #f85149;
+  --radius:      10px;
+  --radius-sm:   6px;
+  --shadow:      0 4px 24px rgba(0,0,0,0.4);
+  --font:        'Inter', system-ui, -apple-system, sans-serif;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:var(--font); background:var(--bg); color:var(--text); line-height:1.6; }
+a { color:var(--primary); text-decoration:none; }
+a:hover { text-decoration:underline; }

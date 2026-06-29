@@ -1,0 +1,1478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Ralph Analytics">
+  <meta name="theme-color" content="#E8521A">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="apple-touch-icon" href="/icons/icon-192.png">
+<title>Ralph Analytics — Admin Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#1e2330;--bg2:#252b3b;--bg3:#2d3347;--bg-side:#171c27;
+  --border:rgba(255,255,255,0.07);--border-o:rgba(232,82,26,0.38);
+  --text:#f0f2f7;--muted:#9aa0b4;--dim:#5a6177;
+  --o:#E8521A;--o2:#FF6B35;--o3:#c44315;
+  --success:#4ade80;--warn:#f59e0b;--danger:#f87171;--blue:#63b3ed;--purple:#a78bfa;
+  --r:8px;--font:'Inter',system-ui,sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:var(--font);background:var(--bg);color:var(--text);height:100vh;overflow:hidden;}
+
+/* LOGIN */
+#login-screen{position:fixed;inset:0;background:var(--bg-side);display:flex;align-items:center;justify-content:center;z-index:200;}
+.login-box{background:var(--bg2);border:1px solid rgba(232,82,26,.22);border-radius:14px;padding:48px 40px;width:380px;max-width:90vw;}
+.login-logo{display:flex;align-items:center;gap:12px;font-weight:800;font-size:1rem;margin-bottom:4px;}
+.logo-box{width:34px;height:34px;border-radius:7px;background:var(--o);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.8rem;color:#fff;flex-shrink:0;}
+.login-sub{font-size:.82rem;color:var(--muted);margin-bottom:24px;padding-left:46px;}
+.admin-badge{display:inline-block;padding:3px 12px;background:rgba(232,82,26,.12);color:var(--o);border-radius:20px;font-size:.7rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;margin-bottom:22px;}
+.form-group{margin-bottom:16px;}
+label{font-size:.72rem;font-weight:700;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;display:block;margin-bottom:7px;}
+input,select,textarea{width:100%;padding:10px 14px;background:var(--bg-side);border:1px solid var(--border);border-radius:var(--r);color:var(--text);font-family:var(--font);font-size:.875rem;outline:none;transition:border-color .2s;}
+input:focus,select:focus,textarea:focus{border-color:var(--border-o);}
+select option{background:var(--bg2);}
+textarea{resize:vertical;min-height:80px;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:10px 18px;border-radius:var(--r);font-size:.84rem;font-weight:700;cursor:pointer;transition:all .2s;border:none;font-family:var(--font);}
+.btn-full{width:100%;}
+.btn-primary{background:var(--o);color:#fff;box-shadow:0 4px 14px rgba(232,82,26,.3);}
+.btn-primary:hover{background:var(--o2);transform:translateY(-1px);}
+.btn-secondary{background:rgba(232,82,26,.1);color:var(--o);border:1px solid rgba(232,82,26,.2);}
+.btn-secondary:hover{background:rgba(232,82,26,.18);}
+.btn-outline{background:transparent;color:var(--muted);border:1px solid var(--border);}
+.btn-outline:hover{border-color:var(--border-o);color:var(--text);}
+.btn-danger{background:rgba(248,113,113,.1);color:var(--danger);border:1px solid rgba(248,113,113,.2);}
+.btn-danger:hover{background:rgba(248,113,113,.18);}
+.btn-sm{padding:5px 12px;font-size:.77rem;}
+.btn-xs{padding:3px 9px;font-size:.7rem;}
+.btn-back{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:var(--r);font-size:.8rem;font-weight:700;cursor:pointer;background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--muted);transition:all .2s;text-decoration:none;}
+.btn-back:hover{border-color:var(--border-o);color:var(--text);}
+.btn-back svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+#li-err{color:var(--danger);font-size:.82rem;margin-top:10px;display:none;}
+
+/* SHELL */
+#app{display:none;height:100vh;flex-direction:row;}
+#app.visible{display:flex;}
+.sidebar{width:220px;min-width:220px;background:var(--bg-side);border-right:1px solid var(--border);display:flex;flex-direction:column;}
+.sb-header{padding:16px 14px;border-bottom:1px solid var(--border);}
+.sb-logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:.88rem;}
+.sb-role{margin-top:6px;font-size:.67rem;color:var(--muted);}
+.sb-role span{background:rgba(232,82,26,.12);color:var(--o);padding:2px 9px;border-radius:20px;font-size:.67rem;font-weight:800;text-transform:uppercase;}
+.sb-nav{flex:1;padding:8px 6px;overflow-y:auto;}
+.nav-section{font-size:.62rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);padding:14px 10px 5px;}
+.nav-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:var(--r);cursor:pointer;font-size:.83rem;color:var(--muted);transition:all .15s;margin-bottom:2px;}
+.nav-item:hover{background:rgba(255,255,255,.04);color:var(--text);}
+.nav-item.active{background:rgba(232,82,26,.1);color:var(--o);}
+.nav-icon{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
+.sb-footer{padding:12px 14px;border-top:1px solid var(--border);}
+.user-chip{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.avatar{width:28px;height:28px;border-radius:50%;background:var(--o);color:#fff;font-size:.7rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.user-name{font-size:.82rem;font-weight:700;}
+.user-role{font-size:.68rem;color:var(--muted);}
+.sign-out{width:100%;background:rgba(248,113,113,.07);border:1px solid rgba(248,113,113,.15);color:var(--danger);border-radius:var(--r);padding:6px 10px;font-size:.78rem;font-weight:700;cursor:pointer;font-family:var(--font);transition:all .2s;}
+.sign-out:hover{background:rgba(248,113,113,.14);}
+
+/* MAIN */
+.main{flex:1;overflow:hidden;display:flex;flex-direction:column;}
+.topbar{padding:12px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:var(--bg-side);}
+.page-title{font-size:.97rem;font-weight:700;}
+.topbar-right{display:flex;align-items:center;gap:8px;}
+.status-pill{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:20px;padding:5px 12px;font-size:.75rem;color:var(--muted);}
+.dot-pulse{width:7px;height:7px;border-radius:50%;background:var(--o);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.3)}}
+.dot-ok{background:var(--success);}
+.dot-err{background:var(--danger);}
+.content{flex:1;overflow-y:auto;padding:22px;}
+
+/* VIEWS */
+.view{display:none;}
+.view.active{display:block;}
+
+/* STAT CARDS */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
+.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:18px 20px;}
+.stat-label{font-size:.68rem;font-weight:700;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:7px;}
+.stat-value{font-size:1.65rem;font-weight:900;line-height:1;}
+.stat-sub{font-size:.7rem;color:var(--dim);margin-top:5px;}
+
+/* CARD */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;margin-bottom:18px;overflow:hidden;}
+.card-header{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.card-title{font-size:.88rem;font-weight:700;}
+.card-body{padding:18px;}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse;font-size:.82rem;}
+thead tr{border-bottom:1px solid var(--border);}
+th{text-align:left;padding:9px 13px;font-size:.68rem;font-weight:700;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;}
+tbody tr{border-bottom:1px solid rgba(255,255,255,.04);transition:background .15s;}
+tbody tr:hover{background:rgba(255,255,255,.02);}
+td{padding:11px 13px;color:var(--text);}
+td:last-child{text-align:right;}
+
+/* BADGE */
+.badge{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:20px;font-size:.68rem;font-weight:700;}
+.badge-active{background:rgba(74,222,128,.1);color:var(--success);}
+.badge-inactive{background:rgba(255,255,255,.05);color:var(--dim);}
+.badge-free{background:rgba(99,179,237,.1);color:var(--blue);}
+.badge-professional{background:rgba(232,82,26,.1);color:var(--o);}
+.badge-enterprise{background:rgba(245,158,11,.1);color:var(--warn);}
+.badge-pending{background:rgba(245,158,11,.1);color:var(--warn);}
+.badge-approved{background:rgba(74,222,128,.1);color:var(--success);}
+.badge-dot{width:5px;height:5px;border-radius:50%;background:currentColor;}
+.badge-client{background:rgba(99,179,237,.1);color:var(--blue);}
+.badge-team{background:rgba(167,139,250,.1);color:var(--purple);}
+
+/* TOGGLE */
+.toggle{position:relative;display:inline-block;width:36px;height:20px;flex-shrink:0;}
+.toggle input{opacity:0;width:0;height:0;}
+.toggle-slider{position:absolute;inset:0;background:var(--bg3);border-radius:20px;cursor:pointer;transition:.3s;}
+.toggle-slider:before{content:'';position:absolute;width:14px;height:14px;left:3px;top:3px;background:var(--dim);border-radius:50%;transition:.3s;}
+.toggle input:checked+.toggle-slider{background:var(--o);}
+.toggle input:checked+.toggle-slider:before{transform:translateX(16px);background:#fff;}
+
+/* FORMS */
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.form-row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);backdrop-filter:blur(6px);z-index:300;display:none;align-items:center;justify-content:center;padding:16px;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--bg2);border:1px solid var(--border);border-radius:14px;width:520px;max-width:100%;max-height:88vh;overflow-y:auto;animation:mIn .24s ease;}
+@keyframes mIn{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:none}}
+.modal-header{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.modal-title{font-size:.95rem;font-weight:700;}
+.modal-close{background:none;border:none;color:var(--muted);cursor:pointer;font-size:1.3rem;line-height:1;transition:color .2s;}
+.modal-close:hover{color:var(--text);}
+.modal-body{padding:22px;}
+.modal-footer{padding:14px 22px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px;}
+
+/* TOAST */
+.toast{position:fixed;bottom:22px;right:22px;padding:12px 20px;border-radius:var(--r);font-size:.84rem;font-weight:600;z-index:500;display:none;border:1px solid;animation:tin .3s ease;}
+@keyframes tin{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.toast.success{background:rgba(74,222,128,.12);border-color:rgba(74,222,128,.3);color:var(--success);}
+.toast.error{background:rgba(248,113,113,.12);border-color:rgba(248,113,113,.3);color:var(--danger);}
+
+/* ASSIGN PANEL */
+#assign-panel{background:var(--bg2);border:1px solid var(--border);border-radius:10px;margin-bottom:16px;}
+
+/* SPINNER */
+.spinner{width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--o);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-row td{text-align:center;padding:24px;}
+
+/* EMPTY */
+.empty{text-align:center;padding:48px;color:var(--muted);}
+.empty svg{width:36px;height:36px;stroke:var(--dim);fill:none;stroke-width:1.5;margin-bottom:12px;}
+.empty p{font-size:.88rem;}
+
+/* ACCESS MANAGEMENT */
+.am-tabs{display:flex;gap:4px;margin-bottom:20px;background:var(--bg-side);border-radius:10px;padding:5px;}
+.am-tab{flex:1;padding:8px 14px;border-radius:7px;font-size:.82rem;font-weight:700;cursor:pointer;text-align:center;color:var(--muted);border:none;background:none;font-family:var(--font);transition:all .18s;}
+.am-tab.active{background:var(--bg2);color:var(--text);border:1px solid var(--border);}
+.am-pane{display:none;}
+.am-pane.active{display:block;}
+.am-item{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;border-bottom:1px solid var(--border);transition:background .15s;}
+.am-item:last-child{border-bottom:none;}
+.am-item:hover{background:rgba(255,255,255,.02);}
+.am-left{display:flex;align-items:center;gap:12px;}
+.am-avatar{width:34px;height:34px;border-radius:50%;background:rgba(232,82,26,.15);color:var(--o);font-size:.8rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.am-avatar.team{background:rgba(167,139,250,.12);color:var(--purple);}
+.am-name{font-size:.87rem;font-weight:600;}
+.am-meta{font-size:.73rem;color:var(--muted);margin-top:2px;}
+.am-actions{display:flex;align-items:center;gap:8px;}
+.pkg-list{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+.pkg-chip{background:rgba(232,82,26,.1);color:var(--o);padding:3px 10px;border-radius:20px;font-size:.7rem;font-weight:700;}
+
+/* ACCESS REQUEST CARD */
+.req-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+.req-item{display:flex;align-items:flex-start;justify-content:space-between;padding:16px 18px;border-bottom:1px solid var(--border);gap:16px;}
+.req-item:last-child{border-bottom:none;}
+.req-info{flex:1;}
+.req-name{font-size:.88rem;font-weight:700;}
+.req-detail{font-size:.76rem;color:var(--muted);margin-top:3px;line-height:1.6;}
+.req-msg{font-size:.78rem;color:var(--text);margin-top:8px;background:rgba(255,255,255,.03);border-radius:6px;padding:8px 10px;border-left:2px solid var(--border-o);}
+.req-actions{display:flex;gap:8px;flex-shrink:0;margin-top:4px;}
+
+  /* ── Mobile responsive (Sprint 5) ─────────────────────────────── */
+  @media (max-width: 768px) {
+    .sb-nav { display: none !important; }
+    .sb-nav.mobile-open { display: flex !important; position: fixed; inset: 0; z-index: 300; width: 260px; }
+    #app { flex-direction: column !important; }
+    .main-content { padding: 12px !important; }
+    .login-box { padding: 32px 24px !important; margin: 16px !important; width: calc(100vw - 32px) !important; max-width: 100% !important; }
+    table { font-size: .78rem !important; }
+    th, td { padding: 8px 6px !important; }
+    .dash-cards { grid-template-columns: 1fr 1fr !important; }
+    /* Safe area for iPhone notch */
+    body { padding-top: env(safe-area-inset-top); }
+  }
+  @media (max-width: 480px) {
+    .dash-cards { grid-template-columns: 1fr !important; }
+    h2 { font-size: 1.1rem !important; }
+  }
+
+</style>
+  <script>
+    if ("serviceWorker" in navigator) { window.addEventListener("load", () => { navigator.serviceWorker.register("/sw.js").catch(()=>{}); }); }
+    let deferredPrompt; window.addEventListener("beforeinstallprompt", e => { deferredPrompt = e; e.preventDefault(); document.getElementById("install-btn")?.removeAttribute("hidden"); }); function installApp() { if(deferredPrompt) { deferredPrompt.prompt(); deferredPrompt.userChoice.then(()=>{deferredPrompt=null;}); } }
+  </script>
+</head>
+<body>
+
+  <!-- Mobile hamburger -->
+  <button id="mob-menu-btn" onclick="document.querySelector('.sb-nav')?.classList.toggle('mobile-open')"
+    style="display:none;position:fixed;top:14px;left:14px;z-index:400;width:40px;height:40px;border-radius:8px;background:#E8521A;border:none;cursor:pointer;align-items:center;justify-content:center;color:#fff;font-size:1.3rem;">☰</button>
+  <style>
+    @media(max-width:768px){#mob-menu-btn{display:flex!important;}}
+    @media(max-width:768px){.main-content{margin-top:60px!important;}}
+  </style>
+
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="logo-box">RA</div>
+      RALPH ANALYTICS
+    </div>
+    <div class="login-sub">ralph-analytics.com</div>
+    <div class="admin-badge">Admin Portal</div>
+    <div class="form-group"><label>Email</label><input id="li-email" type="email" value="admin@ralph-analytics.com" autocomplete="username"/></div>
+    <div class="form-group"><label>Password</label><input id="li-pass" type="password" autocomplete="current-password"/></div>
+    <button class="btn btn-primary btn-full" onclick="doLogin()">Sign In</button>
+    <div id="li-err">Invalid email or password.</div>
+    <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border);text-align:center;">
+      <a href="/" class="btn-back" style="display:inline-flex;justify-content:center;width:100%;">
+        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+        Back to Website
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- APP SHELL -->
+<div id="app">
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sb-header">
+      <div class="sb-logo">
+        <div class="logo-box">RA</div>
+        RALPH ANALYTICS
+      </div>
+      <div class="sb-role"><span>Admin</span></div>
+    </div>
+    <nav class="sb-nav">
+      <div class="nav-section">Platform</div>
+      <div class="nav-item active" onclick="showView('dashboard')">
+        <svg class="nav-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </div>
+      <div class="nav-item" onclick="showView('packages')">
+        <svg class="nav-icon" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+        Packages
+      </div>
+      <div class="nav-item" onclick="showView('clients')">
+        <svg class="nav-icon" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Clients
+      </div>
+      <div class="nav-item" onclick="showView('assignments')">
+        <svg class="nav-icon" viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        Assignments
+      </div>
+      <div class="nav-item" onclick="showView('access')">
+        <svg class="nav-icon" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        Access Management
+      </div>
+      <div class="nav-section">System</div>
+      <div class="nav-item" onclick="showView('agents')">
+        <svg class="nav-icon" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="2" x2="9" y2="4"/><line x1="15" y1="2" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="22"/><line x1="15" y1="20" x2="15" y2="22"/><line x1="20" y1="9" x2="22" y2="9"/><line x1="20" y1="14" x2="22" y2="14"/><line x1="2" y1="9" x2="4" y2="9"/><line x1="2" y1="14" x2="4" y2="14"/></svg>
+        Agents
+      </div>
+    </nav>
+    <div class="sb-footer">
+      <div class="user-chip">
+        <div class="avatar" id="sb-avatar">A</div>
+        <div><div class="user-name" id="sb-name">Admin</div><div class="user-role">Administrator</div></div>
+      </div>
+      <button class="sign-out" onclick="signOut()">Sign out</button>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="main">
+    <div class="topbar">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <a href="/" class="btn-back">
+          <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+          Website
+        </a>
+        <div class="page-title" id="topbar-title">Dashboard</div>
+      </div>
+      <div class="topbar-right">
+        <div class="status-pill"><div class="dot-pulse" id="orch-dot"></div><span id="orch-status-label">Orchestrator</span></div>
+        <button class="btn btn-outline btn-sm" onclick="loadCurrentView()">↻ Refresh</button>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- DASHBOARD -->
+      <div class="view active" id="view-dashboard">
+        <div class="stat-grid" id="dash-stats">
+          <div class="stat-card"><div class="stat-label">Packages</div><div class="stat-value" id="dash-pkg-count">—</div><div class="stat-sub">Registered</div></div>
+          <div class="stat-card"><div class="stat-label">Clients</div><div class="stat-value" id="dash-cli-count">—</div><div class="stat-sub">Active tenants</div></div>
+          <div class="stat-card"><div class="stat-label">Assignments</div><div class="stat-value" id="dash-asgn-count">—</div><div class="stat-sub">Total</div></div>
+          <div class="stat-card"><div class="stat-label">Agent Status</div><div class="stat-value" id="dash-agent-status" style="font-size:1.1rem">—</div><div class="stat-sub">Server agents</div></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+          <div class="card">
+            <div class="card-header"><div class="card-title">Active Packages</div></div>
+            <table><thead><tr><th>Package</th><th>Route</th><th>Type</th></tr></thead>
+            <tbody id="dash-pkg-table"><tr class="loading-row"><td colspan="3"><div class="spinner"></div></td></tr></tbody></table>
+          </div>
+          <div class="card">
+            <div class="card-header"><div class="card-title">Recent Clients</div></div>
+            <table><thead><tr><th>Name</th><th>Tier</th><th>Packages</th></tr></thead>
+            <tbody id="dash-cli-table"><tr class="loading-row"><td colspan="3"><div class="spinner"></div></td></tr></tbody></table>
+          </div>
+        </div>
+      </div>
+
+      <!-- PACKAGES -->
+      <div class="view" id="view-packages">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Package Registry</div>
+            <div style="display:flex;gap:8px;">
+              <button class="btn btn-outline btn-sm" onclick="syncPackages()">↻ Sync</button>
+              <button class="btn btn-primary btn-sm" onclick="openAddPackageModal()">+ Register Package</button>
+            </div>
+          </div>
+          <table>
+            <thead><tr><th>Package</th><th>Route</th><th>Tier</th><th>Type</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody id="pkg-table"><tr class="loading-row"><td colspan="6"><div class="spinner"></div></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- CLIENTS -->
+      <div class="view" id="view-clients">
+        <div style="display:grid;grid-template-columns:1fr 340px;gap:16px;align-items:start;">
+          <div>
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title">Client Registry</div>
+                <button class="btn btn-primary btn-sm" onclick="openAddClientModal()">+ Add Client</button>
+              </div>
+              <table>
+                <thead><tr><th>Client</th><th>Tier</th><th>Status</th><th>Actions</th></tr></thead>
+                <tbody id="cli-table"><tr class="loading-row"><td colspan="4"><div class="spinner"></div></td></tr></tbody>
+              </table>
+            </div>
+          </div>
+          <div id="assign-panel" style="display:none;">
+            <div style="padding:14px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);">
+              <div style="font-size:.83rem;font-weight:700;" id="assign-client-name">Client</div>
+              <button class="btn btn-primary btn-sm" onclick="openBulkAssignModal()">+ Assign Package</button>
+            </div>
+            <div id="assign-list" style="padding:12px;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ASSIGNMENTS -->
+      <div class="view" id="view-assignments">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">All Package Assignments</div>
+            <button class="btn btn-primary btn-sm" onclick="openAddClientModal()">+ New Client</button>
+          </div>
+          <table>
+            <thead><tr><th>Client</th><th>Package</th><th>Access</th><th>Assigned</th><th>Actions</th></tr></thead>
+            <tbody id="asgn-table"><tr class="loading-row"><td colspan="5"><div class="spinner"></div></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ACCESS MANAGEMENT -->
+      <div class="view" id="view-access">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+          <div>
+            <h2 style="font-size:1rem;font-weight:800;margin-bottom:3px;">Access Management</h2>
+            <p style="font-size:.82rem;color:var(--muted);">Manage client accounts, team members, and review access requests.</p>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-secondary btn-sm" onclick="openAddTeamModal()">+ Add Team Member</button>
+            <button class="btn btn-primary btn-sm" onclick="openAddClientModal()">+ New Client</button>
+          </div>
+        </div>
+
+        <div class="am-tabs">
+          <button class="am-tab active" onclick="switchAmTab('requests')">Access Requests <span id="req-badge" style="background:rgba(232,82,26,.2);color:var(--o);padding:1px 7px;border-radius:20px;font-size:.68rem;margin-left:4px;">0</span></button>
+          <button class="am-tab" onclick="switchAmTab('clients')">Clients</button>
+          <button class="am-tab" onclick="switchAmTab('team')">Team Members</button>
+          <button class="am-tab" onclick="switchAmTab('users')">&#128100; Users</button>
+          <button class="am-tab" onclick="switchAmTab('enquiries')">&#9993; Enquiries <span id="enq-badge" style="background:#E8521A;color:#fff;font-size:.65rem;padding:1px 6px;border-radius:10px;margin-left:4px;"></span></button>
+          <button class="am-tab" onclick="switchAmTab('tickets')">&#127918; Support <span id="tkt-badge" style="background:#E8521A;color:#fff;font-size:.65rem;padding:1px 6px;border-radius:10px;margin-left:4px;"></span></button>
+          <button class="am-tab" onclick="switchAmTab('ai-governance')">⚡ AI Governance</button>
+          <button class="am-tab" onclick="switchAmTab('audit-trail')">📋 Audit Trail</button>
+          <button class="am-tab" onclick="switchAmTab('onboarding')">✅ Onboarding</button>
+        </div>
+
+        <!-- ACCESS REQUESTS -->
+        <div class="am-pane active" id="am-requests">
+          <div class="req-card" id="req-list">
+            <div class="loading-row" style="padding:32px;text-align:center;"><div class="spinner"></div></div>
+          </div>
+        </div>
+
+        <!-- CLIENT LIST -->
+        <div class="am-pane" id="am-clients">
+          <div class="card" style="margin-bottom:0;">
+            <table>
+              <thead><tr><th>Client / Organisation</th><th>Email</th><th>Tier</th><th>Packages</th><th>Status</th><th>Actions</th></tr></thead>
+              <tbody id="am-cli-table"><tr class="loading-row"><td colspan="6"><div class="spinner"></div></td></tr></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- TEAM MEMBERS -->
+        <div class="am-pane" id="am-team">
+          <div class="card" style="margin-bottom:0;">
+            <table>
+              <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Actions</th></tr></thead>
+              <tbody id="am-team-table">
+                <tr><td><div style="display:flex;align-items:center;gap:10px;"><div class="am-avatar team">A</div><div><div class="am-name">Admin</div><div class="am-meta">Platform owner</div></div></div></td><td style="color:var(--muted);font-size:.82rem;">admin@ralph-analytics.com</td><td><span class="badge badge-professional">Admin</span></td><td><span class="badge badge-active"><span class="badge-dot"></span>Active</span></td><td><button class="btn btn-outline btn-xs" disabled>Edit</button></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ─── USERS MANAGEMENT ─────────────────────────── -->
+        <div class="am-pane" id="am-users">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+            <div style="font-size:.82rem;color:var(--muted);" id="users-count">Loading users...</div>
+            <div style="display:flex;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap;">
+              <input id="user-search-input" type="text" placeholder="Search by name, email, org..." 
+                style="flex:1;min-width:200px;padding:9px 13px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:inherit;font-size:.84rem;"
+                oninput="debounceUserSearch()" />
+              <select id="user-role-filter" onchange="loadUsers(1)" 
+                style="padding:9px 13px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:inherit;font-size:.84rem;">
+                <option value="">All roles</option>
+                <option value="client">Clients</option>
+                <option value="admin">Admins</option>
+              </select>
+              <button class="btn btn-primary btn-sm" onclick="openNewUserModal()">+ New Client</button>
+            </div>
+            <div id="users-pagination" style="display:flex;align-items:center;gap:8px;margin-bottom:10px;font-size:.82rem;color:var(--muted);"></div>
+          </div>
+          <div class="card" style="margin-bottom:0;overflow-x:auto;">
+            <table style="width:100%;border-collapse:collapse;">
+              <thead><tr>
+                <th style="text-align:left;padding:10px 12px;font-size:.72rem;color:var(--muted);border-bottom:1px solid var(--border);">Name</th>
+                <th style="text-align:left;padding:10px 12px;font-size:.72rem;color:var(--muted);border-bottom:1px solid var(--border);">Email</th>
+                <th style="text-align:left;padding:10px 12px;font-size:.72rem;color:var(--muted);border-bottom:1px solid var(--border);">Organisation</th>
+                <th style="text-align:left;padding:10px 12px;font-size:.72rem;color:var(--muted);border-bottom:1px solid var(--border);">Role</th>
+                <th style="text-align:left;padding:10px 12px;font-size:.72rem;color:var(--muted);border-bottom:1px solid var(--border);">Packages</th>
+                <th style="text-align:left;padding:10px 12px;font-size:.72rem;color:var(--muted);border-bottom:1px solid var(--border);">Status</th>
+                <th style="text-align:left;padding:10px 12px;font-size:.72rem;color:var(--muted);border-bottom:1px solid var(--border);">Actions</th>
+              </tr></thead>
+              <tbody id="users-table-body"><tr><td colspan="7" style="text-align:center;padding:32px;color:var(--muted);">Loading...</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ─── ENQUIRIES ─────────────────────────────────── -->
+        <div class="am-pane" id="am-enquiries">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+            <div style="font-size:.82rem;color:var(--muted);" id="enq-count">Loading enquiries...</div>
+            <select id="enq-filter" onchange="loadEnquiries()" style="background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:6px 12px;border-radius:6px;font-size:.8rem;">
+              <option value="">All</option><option value="new">New</option><option value="in_progress">In Progress</option><option value="responded">Responded</option>
+            </select>
+          </div>
+          <div id="enq-list" style="display:flex;flex-direction:column;gap:10px;"></div>
+        </div>
+
+        <!-- ─── SUPPORT TICKETS ───────────────────────────── -->
+        <div class="am-pane" id="am-tickets">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+            <div style="font-size:.82rem;color:var(--muted);" id="tkt-count">Loading tickets...</div>
+            <select id="tkt-filter" onchange="loadTickets()" style="background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:6px 12px;border-radius:6px;font-size:.8rem;">
+              <option value="">All</option><option value="open">Open</option><option value="in_progress">In Progress</option><option value="resolved">Resolved</option>
+            </select>
+          </div>
+          <div id="tkt-list" style="display:flex;flex-direction:column;gap:10px;"></div>
+        </div>
+
+        <!-- ─── NEW USER MODAL ────────────────────────────── -->
+        <div id="new-user-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:9000;align-items:center;justify-content:center;">
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:32px;max-width:480px;width:90%;max-height:90vh;overflow-y:auto;">
+            <h3 style="font-size:1.1rem;font-weight:800;margin-bottom:20px;">Add New Client</h3>
+            <div id="new-user-msg" style="display:none;padding:10px 14px;border-radius:7px;font-size:.83rem;margin-bottom:14px;"></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+              <div><label style="font-size:.72rem;font-weight:700;color:var(--muted);display:block;margin-bottom:5px;">Full Name *</label>
+                <input type="text" id="nu-name" placeholder="Jane Smith" style="width:100%;padding:9px 12px;background:var(--bg);border:1px solid var(--border);border-radius:7px;color:var(--text);font-size:.85rem;"/></div>
+              <div><label style="font-size:.72rem;font-weight:700;color:var(--muted);display:block;margin-bottom:5px;">Email *</label>
+                <input type="email" id="nu-email" placeholder="jane@org.com" style="width:100%;padding:9px 12px;background:var(--bg);border:1px solid var(--border);border-radius:7px;color:var(--text);font-size:.85rem;"/></div>
+            </div>
+            <div style="margin-top:12px;"><label style="font-size:.72rem;font-weight:700;color:var(--muted);display:block;margin-bottom:5px;">Organisation</label>
+              <input type="text" id="nu-org" placeholder="Company name" style="width:100%;padding:9px 12px;background:var(--bg);border:1px solid var(--border);border-radius:7px;color:var(--text);font-size:.85rem;"/></div>
+            <div style="margin-top:12px;"><label style="font-size:.72rem;font-weight:700;color:var(--muted);display:block;margin-bottom:5px;">Packages (comma-separated slugs)</label>
+              <input type="text" id="nu-packages" placeholder="field-audit,standards,reports" style="width:100%;padding:9px 12px;background:var(--bg);border:1px solid var(--border);border-radius:7px;color:var(--text);font-size:.85rem;"/></div>
+            <div style="display:flex;gap:10px;margin-top:20px;">
+              <button onclick="submitNewUser()" style="flex:1;padding:11px;background:#E8521A;border:none;border-radius:8px;color:#fff;font-weight:700;cursor:pointer;">Create & Send Invite</button>
+              <button onclick="closeNewUserModal()" style="flex:1;padding:11px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-weight:600;cursor:pointer;">Cancel</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- AGENTS -->
+      <div class="view" id="view-agents">
+        <div class="stat-grid" id="agent-stats">
+          <div class="stat-card"><div class="stat-label">Agent</div><div class="stat-value" id="ag-status" style="font-size:1rem">—</div><div class="stat-sub">@ralph/server-agents</div></div>
+          <div class="stat-card"><div class="stat-label">Uptime</div><div class="stat-value" id="ag-uptime">—</div><div class="stat-sub">Seconds</div></div>
+          <div class="stat-card"><div class="stat-label">Orchestrator</div><div class="stat-value" id="orch-status-val" style="font-size:1rem">—</div><div class="stat-sub">@ralph/package-orchestrator</div></div>
+          <div class="stat-card"><div class="stat-label">Packages</div><div class="stat-value" id="orch-pkg-count">—</div><div class="stat-sub">Registered</div></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Orchestrator — Package Registry</div><button class="btn btn-outline btn-sm" onclick="loadAgents()">↻ Refresh</button></div>
+          <table><thead><tr><th>Package</th><th>Route</th><th>Tier</th><th>Status</th></tr></thead>
+          <tbody id="orch-pkg-table"><tr class="loading-row"><td colspan="4"><div class="spinner"></div></td></tr></tbody></table>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<!-- MODALS -->
+<div class="modal-overlay" id="modal-add-package">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">Register Package</div><button class="modal-close" onclick="closeModal('modal-add-package')">×</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label>Package Name</label><input id="mp-name" placeholder="@ralph/my-package"/></div>
+      <div class="form-row">
+        <div class="form-group"><label>Version</label><input id="mp-ver" placeholder="1.0.0"/></div>
+        <div class="form-group"><label>Route</label><input id="mp-route" placeholder="/my-package"/></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Type</label><select id="mp-type"><option>frontend</option><option>api</option><option>service</option><option>hybrid</option></select></div>
+        <div class="form-group"><label>Tier</label><select id="mp-tier"><option>free</option><option>professional</option><option>enterprise</option></select></div>
+      </div>
+      <div class="form-group"><label>Display Label</label><input id="mp-label" placeholder="My Package"/></div>
+      <div class="form-group"><label>Description</label><textarea id="mp-desc" rows="2" placeholder="What does this package do?"></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-add-package')">Cancel</button>
+      <button class="btn btn-primary" onclick="submitAddPackage()">Register</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-add-client">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">Add New Client</div><button class="modal-close" onclick="closeModal('modal-add-client')">×</button></div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group"><label>Client Name *</label><input id="mc-name" placeholder="Acme Organisation"/></div>
+        <div class="form-group"><label>Contact Email</label><input id="mc-email" type="email" placeholder="contact@acme.org"/></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Tier</label><select id="mc-tier"><option value="free">Free</option><option value="professional">Professional</option><option value="enterprise">Enterprise</option></select></div>
+        <div class="form-group"><label>Industry</label><input id="mc-industry" placeholder="NGO, Government, ESG…"/></div>
+      </div>
+      <div class="form-group"><label>Notes</label><textarea id="mc-notes" rows="2" placeholder="Any notes about this client..."></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-add-client')">Cancel</button>
+      <button class="btn btn-primary" onclick="submitAddClient()">Add Client</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-bulk-assign">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title" id="bulk-modal-title">Assign Packages</div><button class="modal-close" onclick="closeModal('modal-bulk-assign')">×</button></div>
+    <div class="modal-body">
+      <p style="font-size:.85rem;color:var(--muted);margin-bottom:16px;">Select packages to assign to this client.</p>
+      <div id="bulk-pkg-list"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-bulk-assign')">Cancel</button>
+      <button class="btn btn-primary" onclick="submitBulkAssign()">Save Assignments</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-add-team">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">Add Team Member</div><button class="modal-close" onclick="closeModal('modal-add-team')">×</button></div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group"><label>Full Name *</label><input id="mt-name" placeholder="Jane Smith"/></div>
+        <div class="form-group"><label>Email *</label><input id="mt-email" type="email" placeholder="jane@ralph-analytics.com"/></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Role</label><select id="mt-role"><option value="admin">Admin</option><option value="analyst">Analyst</option><option value="viewer">Viewer</option></select></div>
+        <div class="form-group"><label>Temporary Password</label><input id="mt-pass" type="password" placeholder="Min. 8 characters"/></div>
+      </div>
+      <div class="form-group"><label>Notes</label><input id="mt-notes" placeholder="Area of responsibility..."/></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-add-team')">Cancel</button>
+      <button class="btn btn-primary" onclick="submitAddTeam()">Add Member</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast-msg"></div>
+
+<script>
+'use strict';
+let AUTH_TOKEN=localStorage.getItem('ralph_admin_token')||'';
+let CURRENT_USER=null;
+let STATE={packages:[],clients:[],currentClientId:null,allPackages:[]};
+let currentView='dashboard';
+
+// API helpers
+async function api(method,path,body){
+  const opts={method,headers:{'Content-Type':'application/json','Authorization':`Bearer ${AUTH_TOKEN}`}};
+  if(body)opts.body=JSON.stringify(body);
+  const r=await fetch(path,opts);
+  const data=await r.json();
+  if(r.status===401){signOut();return null;}
+  return data;
+}
+const orch={
+  get:(p)=>api('GET',`/api/orchestrator${p}`),
+  post:(p,b)=>api('POST',`/api/orchestrator${p}`,b),
+  patch:(p,b)=>api('PATCH',`/api/orchestrator${p}`,b),
+  delete:(p)=>api('DELETE',`/api/orchestrator${p}`),
+};
+
+// Auth
+async function doLogin(){
+  const email=document.getElementById('li-email').value.trim();
+  const pass=document.getElementById('li-pass').value;
+  const r=await fetch('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password:pass})});
+  const data=await r.json();
+  if(!r.ok){document.getElementById('li-err').style.display='block';return;}
+  AUTH_TOKEN=data.token;CURRENT_USER=data.user;
+  localStorage.setItem('ralph_admin_token',AUTH_TOKEN);
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('app').classList.add('visible');
+  document.getElementById('sb-name').textContent=data.user.name;
+  document.getElementById('sb-avatar').textContent=data.user.name[0].toUpperCase();
+  loadCurrentView();
+}
+function signOut(){AUTH_TOKEN='';localStorage.removeItem('ralph_admin_token');location.reload();}
+
+window.addEventListener('DOMContentLoaded',async()=>{
+  // Event delegation for user action buttons
+  (function(){
+    var tb = document.getElementById('am-cli-table');
+    if(tb) tb.addEventListener('click', function(e) {
+      var o = e.target.closest('.btn-onboard');
+      if(o) viewOnboarding(o.dataset.p1, o.dataset.p2);
+      var d = e.target.closest('.btn-del-user');
+      if(d) deleteUser(d.dataset.p1, d.dataset.p2);
+    });
+  })();
+  // Event delegation for onboarding mark-complete buttons
+  (function(){
+    var tb = document.getElementById('onb-client-items');
+    if(tb) tb.addEventListener('click', function(e) {
+      var b = e.target.closest('.btn-mark-item');
+      if(b) markOnboardingItem(b.dataset.p1, b.dataset.p2);
+    });
+  })();
+  document.getElementById('li-pass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+  if(AUTH_TOKEN){
+    const r=await fetch('/api/auth/me',{headers:{'Authorization':`Bearer ${AUTH_TOKEN}`}});
+    if(r.ok){
+      const d=await r.json();CURRENT_USER=d.user;
+      document.getElementById('login-screen').style.display='none';
+      document.getElementById('app').classList.add('visible');
+      document.getElementById('sb-name').textContent=d.user.name;
+      document.getElementById('sb-avatar').textContent=d.user.name[0].toUpperCase();
+      loadCurrentView();
+    }
+  }
+});
+
+// Navigation
+function showView(name){
+  currentView=name;
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active'));
+  document.getElementById('view-'+name)?.classList.add('active');
+  document.querySelector(`.nav-item[onclick="showView('${name}')"]`)?.classList.add('active');
+  const titles={dashboard:'Dashboard',packages:'Package Registry',clients:'Client Registry',assignments:'Package Assignments',access:'Access Management',agents:'Agent Control'};
+  document.getElementById('topbar-title').textContent=titles[name]||name;
+  loadCurrentView();
+}
+function loadCurrentView(){
+  if(currentView==='dashboard')loadDashboard();
+  else if(currentView==='packages')loadPackages();
+  else if(currentView==='clients')loadClients();
+  else if(currentView==='assignments')loadAssignments();
+  else if(currentView==='access')loadAccess();
+  else if(currentView==='agents')loadAgents();
+}
+
+// Toast
+function toast(msg,type='success'){
+  const t=document.getElementById('toast-msg');
+  t.textContent=msg;t.className='toast '+type;t.style.display='block';
+  setTimeout(()=>{t.style.display='none';},4000);
+}
+
+// Modal helpers
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.modal-overlay.open').forEach(m=>m.classList.remove('open'));});
+
+// ── DASHBOARD ────────────────────────────────────────────────
+async function loadDashboard(){
+  try{
+    const [pkgRes,cliRes,healthRes]=await Promise.all([
+      orch.get('/packages'),orch.get('/clients'),
+      api('GET','/api/health')
+    ]);
+    const pkgs=pkgRes?.data||[];const clis=cliRes?.data||[];
+    document.getElementById('dash-pkg-count').textContent=pkgs.filter(p=>p.status==='active').length;
+    document.getElementById('dash-cli-count').textContent=clis.length;
+    let aCount=0;clis.forEach(c=>{aCount+=(c.packageCount||0);});
+    document.getElementById('dash-asgn-count').textContent=aCount;
+    const agSt=healthRes?.services?.agent?.status||'unknown';
+    const orchSt=healthRes?.services?.orchestrator?.status||'unknown';
+    document.getElementById('dash-agent-status').textContent=agSt==='ok'?'✓ Online':'✗ Offline';
+    document.getElementById('dash-agent-status').style.color=agSt==='ok'?'var(--success)':'var(--danger)';
+    const dot=document.getElementById('orch-dot');
+    if(orchSt==='ok'){dot.classList.remove('dot-err');dot.classList.add('dot-ok');}
+    else{dot.classList.add('dot-err');dot.classList.remove('dot-ok');}
+    document.getElementById('orch-status-label').textContent=orchSt==='ok'?'Orchestrator: Online':'Orchestrator: Offline';
+    // Tables
+    document.getElementById('dash-pkg-table').innerHTML=pkgs.slice(0,6).map(p=>`<tr><td><strong>${p.name}</strong></td><td><code style="font-size:.75rem;color:var(--muted)">${p.route}</code></td><td>${tierBadge(p.tier)}</td></tr>`).join('')||'<tr><td colspan="3" style="text-align:center;color:var(--dim);">No packages</td></tr>';
+    document.getElementById('dash-cli-table').innerHTML=clis.slice(0,6).map(c=>`<tr><td><strong>${c.name}</strong></td><td>${tierBadge(c.tier)}</td><td style="color:var(--muted)">${c.packageCount||0}</td></tr>`).join('')||'<tr><td colspan="3" style="text-align:center;color:var(--dim);">No clients</td></tr>';
+  }catch(e){console.error(e);}
+}
+
+// ── PACKAGES ─────────────────────────────────────────────────
+async function loadPackages(){
+  const res=await orch.get('/packages');
+  const pkgs=res?.data||[];STATE.allPackages=pkgs;
+  document.getElementById('pkg-table').innerHTML=pkgs.length?pkgs.map(p=>`
+    <tr>
+      <td><strong style="font-size:.82rem;">${p.name}</strong>${p.label?`<div style="font-size:.7rem;color:var(--muted)">${p.label}</div>`:''}</td>
+      <td><code style="font-size:.75rem;color:var(--muted)">${p.route}</code></td>
+      <td>${tierBadge(p.tier)}</td>
+      <td><span style="font-size:.75rem;color:var(--muted)">${p.type||'—'}</span></td>
+      <td>${p.status==='active'?'<span class="badge badge-active"><span class="badge-dot"></span>Active</span>':'<span class="badge badge-inactive">Inactive</span>'}</td>
+      <td>
+        <label class="toggle"><input type="checkbox" ${p.status==='active'?'checked':''} onchange="togglePkgStatus('${p.name}',this.checked)"/><span class="toggle-slider"></span></label>
+      </td>
+    </tr>`).join(''):'<tr><td colspan="6" style="text-align:center;color:var(--dim);padding:24px;">No packages registered</td></tr>';
+}
+async function togglePkgStatus(name,active){
+  await orch.patch(`/packages/${encodeURIComponent(name)}/status`,{status:active?'active':'inactive'});
+  toast(`${name} ${active?'activated':'deactivated'}`);
+  loadPackages();
+}
+async function syncPackages(){
+  toast('Syncing…');
+  await orch.post('/packages/sync');
+  toast('Sync complete');
+  loadPackages();
+}
+function openAddPackageModal(){openModal('modal-add-package');}
+async function submitAddPackage(){
+  const name=document.getElementById('mp-name').value.trim();
+  const route=document.getElementById('mp-route').value.trim();
+  if(!name||!route){toast('Name and route are required','error');return;}
+  const res=await orch.post('/packages/register',{
+    name,route,version:document.getElementById('mp-ver').value||'1.0.0',
+    type:document.getElementById('mp-type').value,
+    tier:document.getElementById('mp-tier').value,
+    label:document.getElementById('mp-label').value||undefined,
+    description:document.getElementById('mp-desc').value||undefined
+  });
+  if(res?.success){closeModal('modal-add-package');toast('Package registered');loadPackages();}
+  else toast(res?.error||'Failed to register','error');
+}
+
+// ── CLIENTS ──────────────────────────────────────────────────
+async function loadClients(){
+  const res=await orch.get('/clients');
+  const clis=res?.data||[];STATE.clients=clis;
+  document.getElementById('cli-table').innerHTML=clis.length?clis.map(c=>`
+    <tr>
+      <td><strong>${c.name}</strong>${c.email?`<div style="font-size:.72rem;color:var(--muted)">${c.email}</div>`:''}</td>
+      <td>${tierBadge(c.tier)}</td>
+      <td>${c.status==='active'?'<span class="badge badge-active"><span class="badge-dot"></span>Active</span>':'<span class="badge badge-inactive">Inactive</span>'}</td>
+      <td><button class="btn btn-secondary btn-xs" onclick="openAssignPanel('${c.id}','${c.name}')">Packages</button></td>
+    </tr>`).join(''):'<tr><td colspan="4" style="text-align:center;color:var(--dim);padding:24px;">No clients registered</td></tr>';
+}
+function openAddClientModal(){
+  document.getElementById('mc-name').value='';document.getElementById('mc-email').value='';
+  document.getElementById('mc-notes').value='';
+  openModal('modal-add-client');
+}
+async function submitAddClient(){
+  const name=document.getElementById('mc-name').value.trim();
+  if(!name){toast('Client name is required','error');return;}
+  const res=await orch.post('/clients',{
+    name,email:document.getElementById('mc-email').value||undefined,
+    tier:document.getElementById('mc-tier').value,
+    industry:document.getElementById('mc-industry').value||undefined,
+    notes:document.getElementById('mc-notes').value||undefined
+  });
+  if(res?.success){closeModal('modal-add-client');toast('Client added');loadClients();}
+  else toast(res?.error||'Failed to add client','error');
+}
+async function openAssignPanel(clientId,clientName){
+  STATE.currentClientId=clientId;
+  document.getElementById('assign-client-name').textContent=clientName;
+  document.getElementById('assign-panel').style.display='block';
+  const res=await orch.get(`/clients/${clientId}/packages`);
+  const assigned=res?.data||[];
+  document.getElementById('assign-list').innerHTML=assigned.length?assigned.map(a=>`
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border);">
+      <div><div style="font-size:.82rem;font-weight:600;">${a.packageName||a.package}</div><div style="font-size:.7rem;color:var(--muted)">${a.accessLevel||'full'}</div></div>
+      <button class="btn btn-danger btn-xs" onclick="revokeAssignment('${clientId}','${a.package||a.packageName}')">Revoke</button>
+    </div>`).join(''):'<div style="padding:16px;text-align:center;font-size:.82rem;color:var(--dim);">No packages assigned</div>';
+}
+async function revokeAssignment(clientId,pkg){
+  await orch.delete(`/clients/${clientId}/packages/${encodeURIComponent(pkg)}`);
+  toast('Access revoked');openAssignPanel(clientId,document.getElementById('assign-client-name').textContent);
+}
+function openBulkAssignModal(){
+  if(!STATE.currentClientId){toast('Select a client first','error');return;}
+  document.getElementById('bulk-modal-title').textContent=`Assign Packages — ${document.getElementById('assign-client-name').textContent}`;
+  const pkgs=STATE.allPackages||[];
+  document.getElementById('bulk-pkg-list').innerHTML=pkgs.length?pkgs.map(p=>`
+    <div style="display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid var(--border);">
+      <input type="checkbox" id="bp-${p.name}" value="${p.name}" style="width:16px;height:16px;cursor:pointer;accent-color:var(--o)"/>
+      <label for="bp-${p.name}" style="flex:1;cursor:pointer;">
+        <div style="font-size:.85rem;font-weight:600;">${p.name}</div>
+        <div style="font-size:.72rem;color:var(--muted)">${p.route} · ${p.tier}</div>
+      </label>
+      ${tierBadge(p.tier)}
+    </div>`).join(''):'<p style="color:var(--muted);text-align:center;padding:16px;">No packages available</p>';
+  openModal('modal-bulk-assign');
+}
+async function submitBulkAssign(){
+  const checked=[...document.querySelectorAll('#bulk-pkg-list input:checked')].map(i=>i.value);
+  if(!checked.length){toast('Select at least one package','error');return;}
+  for(const pkg of checked){
+    await orch.post(`/clients/${STATE.currentClientId}/packages`,{packageName:pkg,enabled:true,assignedBy:'admin@ralph-analytics.com'});
+  }
+  closeModal('modal-bulk-assign');toast(`${checked.length} package(s) assigned`);
+  openAssignPanel(STATE.currentClientId,document.getElementById('assign-client-name').textContent);
+}
+
+// ── ASSIGNMENTS ──────────────────────────────────────────────
+async function loadAssignments(){
+  const cliRes=await orch.get('/clients');const clis=cliRes?.data||[];
+  const rows=[];
+  for(const c of clis){
+    const aRes=await orch.get(`/clients/${c.id}/packages`);
+    const assigned=aRes?.data||[];
+    assigned.forEach(a=>rows.push({client:c.name,clientId:c.id,pkg:a.package||a.packageName,access:a.accessLevel||'full',date:a.assignedAt||'—'}));
+  }
+  document.getElementById('asgn-table').innerHTML=rows.length?rows.map(r=>`
+    <tr>
+      <td><strong>${r.client}</strong></td>
+      <td><code style="font-size:.75rem;color:var(--muted)">${r.pkg}</code></td>
+      <td><span class="badge badge-active">Full</span></td>
+      <td style="font-size:.75rem;color:var(--dim)">${r.date==='—'?'—':new Date(r.date).toLocaleDateString()}</td>
+      <td><button class="btn btn-danger btn-xs" onclick="revokeAssignment('${r.clientId}','${r.pkg}')">Revoke</button></td>
+    </tr>`).join(''):'<tr><td colspan="5" style="text-align:center;color:var(--dim);padding:24px;">No assignments yet</td></tr>';
+}
+
+// ── ACCESS MANAGEMENT ────────────────────────────────────────
+const ACCESS_REQUESTS_KEY='ralph_access_requests';
+function getRequests(){try{return JSON.parse(localStorage.getItem(ACCESS_REQUESTS_KEY)||'[]');}catch{return[];}}
+function saveRequests(reqs){localStorage.setItem(ACCESS_REQUESTS_KEY,JSON.stringify(reqs));}
+
+function switchAmTab(tab){
+  const allTabs=['requests','clients','team','users','enquiries','tickets'];
+  document.querySelectorAll('.am-tab').forEach((t,i)=>{t.classList.toggle('active',allTabs[i]===tab);});
+  document.querySelectorAll('.am-pane').forEach((p,i)=>{p.classList.toggle('active',allTabs[i]===tab);});
+  document.getElementById('am-'+tab).classList.add('active');
+  if(tab==='clients')loadAmClients();
+}
+
+async function loadAccess(){
+  loadAccessRequests();
+  loadAmClients();
+}
+
+function loadAccessRequests(){
+  const reqs=getRequests();
+  document.getElementById('req-badge').textContent=reqs.filter(r=>r.status==='pending').length;
+  document.getElementById('req-list').innerHTML=reqs.length?reqs.map((r,i)=>`
+    <div class="req-item">
+      <div class="req-info">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+          <div class="am-avatar">${r.name[0].toUpperCase()}</div>
+          <div>
+            <div class="req-name">${r.name}</div>
+            <div class="req-detail">${r.email}${r.org?' · '+r.org:''}${r.type?' · '+r.type:''}</div>
+          </div>
+          <span class="badge badge-${r.status}" style="margin-left:auto">${r.status}</span>
+        </div>
+        ${r.message?`<div class="req-msg">${r.message}</div>`:''}
+        <div style="font-size:.7rem;color:var(--dim);margin-top:6px;">${new Date(r.date).toLocaleDateString('en-ZA',{day:'numeric',month:'short',year:'numeric'})}</div>
+      </div>
+      ${r.status==='pending'?`
+      <div class="req-actions">
+        <button class="btn btn-secondary btn-sm" onclick="approveRequest(${i})">Approve</button>
+        <button class="btn btn-danger btn-sm" onclick="denyRequest(${i})">Deny</button>
+      </div>`:''}
+    </div>`).join(''):`
+    <div class="empty">
+      <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      <p>No access requests yet.<br/>Requests submitted via the website will appear here.</p>
+    </div>`;
+}
+function approveRequest(i){
+  const reqs=getRequests();reqs[i].status='approved';saveRequests(reqs);
+  toast(`Approved: ${reqs[i].name}`);loadAccessRequests();
+}
+function denyRequest(i){
+  const reqs=getRequests();reqs[i].status='denied';saveRequests(reqs);
+  toast(`Denied: ${reqs[i].name}`,'error');loadAccessRequests();
+}
+
+async function loadAmClients(){
+  const res=await orch.get('/clients');const clis=res?.data||[];
+  document.getElementById('am-cli-table').innerHTML=clis.length?clis.map(c=>`
+    <tr>
+      <td><div style="display:flex;align-items:center;gap:10px;"><div class="am-avatar">${c.name[0].toUpperCase()}</div><div><div class="am-name">${c.name}</div><div class="am-meta">${c.industry||'Client'}</div></div></div></td>
+      <td style="font-size:.8rem;color:var(--muted)">${c.email||'—'}</td>
+      <td>${tierBadge(c.tier)}</td>
+      <td style="color:var(--muted);font-size:.8rem">${c.packageCount||0} packages</td>
+      <td><span class="badge badge-active"><span class="badge-dot"></span>Active</span></td>
+      <td style="display:flex;gap:6px;justify-content:flex-end;"><button class="btn btn-secondary btn-xs" onclick="openAssignPanel('${c.id}','${c.name}');showView('clients')">Packages</button><button class="btn btn-danger btn-xs" onclick="removeClient('${c.id}')">Remove</button></td>
+    </tr>`).join(''):'<tr><td colspan="6" style="text-align:center;color:var(--dim);padding:24px;">No clients yet</td></tr>';
+}
+async function removeClient(id){if(!confirm('Remove this client and all their assignments?'))return;await orch.delete(`/clients/${id}`);toast('Client removed');loadAmClients();}
+
+function openAddTeamModal(){openModal('modal-add-team');}
+async function submitAddTeam(){
+  const name=document.getElementById('mt-name').value.trim();
+  const email=document.getElementById('mt-email').value.trim();
+  if(!name||!email){toast('Name and email are required','error');return;}
+  const tbody=document.getElementById('am-team-table');
+  const initials=name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+  const role=document.getElementById('mt-role').value;
+  tbody.insertAdjacentHTML('beforeend',`<tr><td><div style="display:flex;align-items:center;gap:10px;"><div class="am-avatar team">${initials}</div><div><div class="am-name">${name}</div><div class="am-meta">${document.getElementById('mt-notes').value||'Team member'}</div></div></div></td><td style="color:var(--muted);font-size:.82rem;">${email}</td><td><span class="badge badge-${role==='admin'?'professional':'free'}">${role.charAt(0).toUpperCase()+role.slice(1)}</span></td><td><span class="badge badge-pending"><span class="badge-dot"></span>Invited</span></td><td><button class="btn btn-danger btn-xs">Remove</button></td></tr>`);
+  closeModal('modal-add-team');toast(`Invitation sent to ${name}`);
+}
+
+// ── AGENTS ───────────────────────────────────────────────────
+async function loadAgents(){
+  try{
+    const h=await api('GET','/api/health');
+    const agSt=h?.services?.agent?.status||'unknown';
+    const orchSt=h?.services?.orchestrator?.status||'unknown';
+    document.getElementById('ag-status').textContent=agSt==='ok'?'✓ Online':'✗ Offline';
+    document.getElementById('ag-status').style.color=agSt==='ok'?'var(--success)':'var(--danger)';
+    document.getElementById('ag-uptime').textContent=h?.uptime?Math.round(h.uptime):'—';
+    document.getElementById('orch-status-val').textContent=orchSt==='ok'?'✓ Online':'✗ Offline';
+    document.getElementById('orch-status-val').style.color=orchSt==='ok'?'var(--success)':'var(--danger)';
+    const pkgRes=await orch.get('/packages');
+    const pkgs=pkgRes?.data||[];
+    document.getElementById('orch-pkg-count').textContent=pkgs.length;
+    document.getElementById('orch-pkg-table').innerHTML=pkgs.map(p=>`<tr><td><strong style="font-size:.82rem;">${p.name}</strong></td><td><code style="font-size:.75rem;color:var(--muted)">${p.route}</code></td><td>${tierBadge(p.tier)}</td><td>${p.status==='active'?'<span class="badge badge-active"><span class="badge-dot"></span>Active</span>':'<span class="badge badge-inactive">Inactive</span>'}</td></tr>`).join('')||'<tr><td colspan="4" style="text-align:center;color:var(--dim)">No packages</td></tr>';
+  }catch(e){console.error(e);}
+}
+
+// Helpers
+function tierBadge(tier){
+  const map={free:'badge-free',professional:'badge-professional',enterprise:'badge-enterprise'};
+  return `<span class="badge ${map[tier]||'badge-inactive'}">${tier||'—'}</span>`;
+}
+
+// Expose access request intake (called from landing page /api/send-enquiry response)
+window.addAccessRequest=function(req){
+  const reqs=getRequests();
+  reqs.unshift({...req,status:'pending',date:new Date().toISOString()});
+  saveRequests(reqs);
+};
+
+// ── SPRINT 1: Users, Enquiries, Support Tickets ──────────────
+async function loadUsers() {
+  const token = localStorage.getItem('ralph_admin_token') || '';
+  if (!token) return;
+  try {
+    const res = await fetch('/api/admin/users', { headers: { 'Authorization': 'Bearer ' + token } });
+    const data = await res.json();
+    const users = data.users || [];
+    document.getElementById('users-count').textContent = `${users.length} user${users.length!==1?'s':''}`;
+    const tbody = document.getElementById('users-table-body');
+    if (!users.length) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--muted);">No users yet.</td></tr>'; return; }
+    tbody.innerHTML = users.map(u => {
+      const pkgs = Array.isArray(u.packages) ? u.packages.join(', ') : (u.packages||'—');
+      const statusCol = u.status==='active' ? '#4ade80' : '#ef4444';
+      return `<tr style="border-bottom:1px solid var(--border);">
+        <td style="padding:10px 12px;font-size:.83rem;font-weight:600;">${u.name}</td>
+        <td style="padding:10px 12px;font-size:.82rem;color:var(--muted);">${u.email}</td>
+        <td style="padding:10px 12px;font-size:.82rem;color:var(--muted);">${u.org||'—'}</td>
+        <td style="padding:10px 12px;"><span style="font-size:.72rem;font-weight:700;padding:2px 8px;border-radius:12px;background:${u.role==='admin'?'rgba(232,82,26,.15)':'rgba(59,130,246,.15)'};color:${u.role==='admin'?'#E8521A':'#60a5fa'};">${u.role}</span></td>
+        <td style="padding:10px 12px;font-size:.75rem;color:var(--muted);max-width:180px;overflow:hidden;text-overflow:ellipsis;">${pkgs||'—'}</td>
+        <td style="padding:10px 12px;"><span style="font-size:.72rem;font-weight:700;color:${statusCol};">${u.status}</span></td>
+        <td style="padding:10px 12px;">
+          ${u.role!=='admin' ? `<button onclick="deleteUser('${u.id}','${u.email}')" style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#ef4444;padding:4px 10px;border-radius:5px;font-size:.72rem;font-weight:700;cursor:pointer;">Remove</button>` : '<span style="color:var(--muted);font-size:.72rem;">Protected</span>'}
+        </td>
+      </tr>`;
+    }).join('');
+  } catch(e) { console.error('loadUsers:', e); }
+}
+
+async function deleteUser(id, email) {
+  if (!confirm(`Remove user ${email}? This cannot be undone.`)) return;
+  const token = localStorage.getItem('ralph_admin_token') || '';
+  try {
+    const res = await fetch('/api/admin/users/' + id, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + token } });
+    if (res.ok) { showToast('User removed'); loadUsers(); }
+    else { const d = await res.json(); showToast(d.error || 'Error', 'error'); }
+  } catch(e) { showToast('Network error', 'error'); }
+}
+
+function openNewUserModal() {
+  document.getElementById('nu-name').value = '';
+  document.getElementById('nu-email').value = '';
+  document.getElementById('nu-org').value = '';
+  document.getElementById('nu-packages').value = '';
+  document.getElementById('new-user-msg').style.display = 'none';
+  document.getElementById('new-user-modal').style.display = 'flex';
+}
+function closeNewUserModal() { document.getElementById('new-user-modal').style.display = 'none'; }
+
+async function submitNewUser() {
+  const token = localStorage.getItem('ralph_admin_token') || '';
+  const name  = document.getElementById('nu-name').value.trim();
+  const email = document.getElementById('nu-email').value.trim();
+  const org   = document.getElementById('nu-org').value.trim();
+  const pkgRaw = document.getElementById('nu-packages').value.trim();
+  const packages = pkgRaw ? pkgRaw.split(',').map(p=>p.trim()).filter(Boolean) : [];
+  const msgEl = document.getElementById('new-user-msg');
+  if (!name || !email) { msgEl.textContent='Name and email are required.'; msgEl.style.cssText='display:block;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#ef4444;padding:10px 14px;border-radius:7px;font-size:.83rem;margin-bottom:14px;'; return; }
+  try {
+    const res = await fetch('/api/admin/users', { method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, org, packages, role: 'client', send_invite: true }) });
+    const data = await res.json();
+    if (res.ok) {
+      msgEl.textContent = `✅ ${name} created. Login invite sent to ${email}.`;
+      msgEl.style.cssText = 'display:block;background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.2);color:#4ade80;padding:10px 14px;border-radius:7px;font-size:.83rem;margin-bottom:14px;';
+      setTimeout(() => { closeNewUserModal(); loadUsers(); }, 2000);
+    } else {
+      msgEl.textContent = data.error || 'Failed to create user.';
+      msgEl.style.cssText = 'display:block;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#ef4444;padding:10px 14px;border-radius:7px;font-size:.83rem;margin-bottom:14px;';
+    }
+  } catch(e) { msgEl.textContent='Network error.'; msgEl.style.display='block'; }
+}
+
+async function loadEnquiries() {
+  const token = localStorage.getItem('ralph_admin_token') || '';
+  const filter = document.getElementById('enq-filter')?.value || '';
+  try {
+    const res = await fetch('/api/admin/enquiries', { headers: { 'Authorization': 'Bearer ' + token } });
+    const data = await res.json();
+    let enqs = data.enquiries || [];
+    if (filter) enqs = enqs.filter(e => e.status === filter);
+    document.getElementById('enq-count').textContent = `${enqs.length} enquir${enqs.length!==1?'ies':'y'}`;
+    const badge = document.getElementById('enq-badge');
+    const newCount = (data.enquiries||[]).filter(e=>e.status==='new').length;
+    if (badge) badge.textContent = newCount > 0 ? newCount : '';
+    const list = document.getElementById('enq-list');
+    if (!enqs.length) { list.innerHTML = '<div style="text-align:center;padding:32px;color:var(--muted);">No enquiries yet.</div>'; return; }
+    list.innerHTML = enqs.map(e => `
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;gap:12px;">
+          <div>
+            <span style="font-weight:700;font-size:.9rem;">${e.name}</span>
+            <span style="color:var(--muted);font-size:.8rem;margin-left:8px;">${e.organisation||''}</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+            <span style="font-size:.7rem;font-weight:700;padding:2px 8px;border-radius:10px;background:${e.status==='new'?'rgba(232,82,26,.15)':e.status==='responded'?'rgba(74,222,128,.12)':'rgba(245,158,11,.12)'};color:${e.status==='new'?'#E8521A':e.status==='responded'?'#4ade80':'#f59e0b'};">${e.status||'new'}</span>
+            <select onchange="updateEnquiry(${e.id}, this.value)" style="background:var(--bg);border:1px solid var(--border);color:var(--text);padding:4px 8px;border-radius:5px;font-size:.72rem;">
+              <option value="new" ${e.status==='new'?'selected':''}>New</option>
+              <option value="in_progress" ${e.status==='in_progress'?'selected':''}>In Progress</option>
+              <option value="responded" ${e.status==='responded'?'selected':''}>Responded</option>
+            </select>
+          </div>
+        </div>
+        <div style="font-size:.8rem;color:var(--muted);margin-bottom:6px;">${e.email}${e.phone?' · '+e.phone:''} · <strong style="color:var(--text);">${e.service||''}</strong></div>
+        <div style="font-size:.83rem;color:var(--text);line-height:1.6;">${(e.message||'').slice(0,200)}${(e.message||'').length>200?'…':''}</div>
+        <div style="font-size:.7rem;color:var(--muted);margin-top:8px;">${new Date(e.createdAt||e.created_at||'').toLocaleString()}</div>
+      </div>`).join('');
+  } catch(e) { console.error('loadEnquiries:', e); }
+}
+
+async function updateEnquiry(id, status) {
+  const token = localStorage.getItem('ralph_admin_token') || '';
+  await fetch('/api/admin/enquiries/' + id, { method: 'PATCH',
+    headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ status }) });
+  loadEnquiries();
+}
+
+async function loadTickets() {
+  const token = localStorage.getItem('ralph_admin_token') || '';
+  const filter = document.getElementById('tkt-filter')?.value || '';
+  try {
+    const res = await fetch('/api/admin/tickets', { headers: { 'Authorization': 'Bearer ' + token } });
+    const data = await res.json();
+    let tkts = data.tickets || [];
+    if (filter) tkts = tkts.filter(t => t.status === filter);
+    document.getElementById('tkt-count').textContent = `${tkts.length} ticket${tkts.length!==1?'s':''}`;
+    const badge = document.getElementById('tkt-badge');
+    const openCount = (data.tickets||[]).filter(t=>t.status==='open').length;
+    if (badge) badge.textContent = openCount > 0 ? openCount : '';
+    const list = document.getElementById('tkt-list');
+    if (!tkts.length) { list.innerHTML = '<div style="text-align:center;padding:32px;color:var(--muted);">No support tickets yet.</div>'; return; }
+    const priorityColor = { urgent:'#ef4444', high:'#f59e0b', medium:'#60a5fa', low:'#8b8fa8' };
+    list.innerHTML = tkts.map(t => `
+      <div style="background:var(--bg2);border:1px solid var(--border);border-left:3px solid ${priorityColor[t.priority]||'#8b8fa8'};border-radius:10px;padding:16px;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;gap:12px;">
+          <div>
+            <span style="font-weight:700;font-size:.9rem;">${t.subject}</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+            <span style="font-size:.7rem;font-weight:700;padding:2px 8px;border-radius:10px;background:rgba(245,158,11,.12);color:${priorityColor[t.priority]||'#8b8fa8'};">${t.priority}</span>
+            <select onchange="updateTicket('${t.id}',this.value)" style="background:var(--bg);border:1px solid var(--border);color:var(--text);padding:4px 8px;border-radius:5px;font-size:.72rem;">
+              <option value="open" ${t.status==='open'?'selected':''}>Open</option>
+              <option value="in_progress" ${t.status==='in_progress'?'selected':''}>In Progress</option>
+              <option value="resolved" ${t.status==='resolved'?'selected':''}>Resolved</option>
+              <option value="closed" ${t.status==='closed'?'selected':''}>Closed</option>
+            </select>
+          </div>
+        </div>
+        <div style="font-size:.8rem;color:var(--muted);margin-bottom:6px;">From: ${t.user_email||'—'}</div>
+        <div style="font-size:.83rem;color:var(--text);line-height:1.6;">${(t.message||'').slice(0,200)}${(t.message||'').length>200?'…':''}</div>
+        <div style="font-size:.7rem;color:var(--muted);margin-top:8px;">${new Date(t.created_at||'').toLocaleString()}</div>
+      </div>`).join('');
+  } catch(e) { console.error('loadTickets:', e); }
+}
+
+async function updateTicket(id, status) {
+  const token = localStorage.getItem('ralph_admin_token') || '';
+  await fetch('/api/admin/tickets/' + id, { method: 'PATCH',
+    headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ status }) });
+  loadTickets();
+}
+
+// Extend switchAmTab to load data on switch
+const _origSwitch = switchAmTab;
+function switchAmTab(tab) {
+  _origSwitch(tab);
+  if (tab === 'users')      loadUsers();
+  if (tab === 'enquiries')  loadEnquiries();
+  if (tab === 'tickets')    loadTickets();
+}
+
+function showToast(msg, type='success') {
+  const t = document.createElement('div');
+  t.style.cssText = `position:fixed;bottom:24px;right:24px;padding:12px 20px;border-radius:9px;font-size:.85rem;font-weight:700;z-index:9999;background:${type==='error'?'#ef4444':'#4ade80'};color:#fff;box-shadow:0 8px 24px rgba(0,0,0,.4);`;
+  t.textContent = msg; document.body.appendChild(t);
+  setTimeout(()=>t.remove(), 3000);
+}
+
+// Load badges on page load
+// Sprint5: deferred load handled by auth flow
+
+
+
+async function loadAiGovernance() {
+  const ADMIN_KEY = localStorage.getItem('ralph_admin_token') || '';
+  const headers = {'X-Admin-Key': ADMIN_KEY};
+  // Flags
+  try {
+    const r = await fetch('/api/admin/ai-review-flags', {headers});
+    const d = await r.json();
+    const flags = d.flags || [];
+    document.getElementById('ai-flags-count').textContent = flags.filter(f=>f.status==='pending_review').length;
+    const fl = document.getElementById('ai-flags-list');
+    if (!flags.length) { fl.innerHTML='<p style="color:var(--muted);font-size:.85rem;padding:8px 0;">No flags submitted yet.</p>'; }
+    else {
+      fl.innerHTML = flags.slice(0,10).map(f=>`
+        <div style="padding:10px 14px;border:1px solid var(--border);border-radius:8px;margin-bottom:8px;font-size:.83rem;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+            <strong>${f.reason||''}</strong>
+            <span style="color:${f.status==='pending_review'?'#f59e0b':'#4ade80'};font-weight:700;font-size:.75rem;">${f.status}</span>
+          </div>
+          <div style="color:var(--muted);font-size:.78rem;">${f.context||''}</div>
+          <div style="color:var(--muted);font-size:.72rem;margin-top:4px;">${new Date(f.ts).toLocaleString()} · ref: ${f.ai_output_ref||'—'}</div>
+        </div>`).join('');
+    }
+  } catch(e) { document.getElementById('ai-flags-list').innerHTML='<p style="color:var(--muted);font-size:.85rem;">Unable to load flags.</p>'; }
+  // Incidents
+  try {
+    const r2 = await fetch('/api/admin/ai-incidents', {headers});
+    const d2 = await r2.json();
+    const incidents = d2.incidents || [];
+    document.getElementById('ai-incidents-count').textContent = incidents.filter(i=>i.status==='open').length;
+    const il = document.getElementById('ai-incidents-list');
+    if (!incidents.length) { il.innerHTML='<p style="color:var(--muted);font-size:.85rem;padding:8px 0;">No incidents logged. ✓</p>'; }
+    else {
+      const sev={critical:'#ef4444',high:'#f97316',medium:'#f59e0b',low:'#60a5fa'};
+      il.innerHTML = incidents.slice(0,10).map(i=>`
+        <div style="padding:10px 14px;border:1px solid var(--border);border-radius:8px;margin-bottom:8px;font-size:.83rem;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+            <strong style="color:${sev[i.severity]||'#e8eaf0'};">● ${i.type||''}</strong>
+            <span style="color:${i.status==='open'?'#ef4444':'#4ade80'};font-weight:700;font-size:.75rem;">${i.status}</span>
+          </div>
+          <div style="color:var(--muted);font-size:.78rem;">${i.description}</div>
+          <div style="color:var(--muted);font-size:.72rem;margin-top:4px;">${new Date(i.ts).toLocaleString()} · severity: ${i.severity}</div>
+        </div>`).join('');
+    }
+  } catch(e) {}
+  // AI log count
+  try {
+    const r3 = await fetch('/api/admin/ai-log-count', {headers});
+    const d3 = await r3.json();
+    document.getElementById('ai-log-count').textContent = d3.count || '0';
+  } catch(e) { document.getElementById('ai-log-count').textContent = 'N/A'; }
+}
+
+
+// ── Sprint 5: Users search + pagination ───────────────────────────────────
+let userSearchTimeout;
+function debounceUserSearch() {
+  clearTimeout(userSearchTimeout);
+  userSearchTimeout = setTimeout(() => loadUsers(1), 400);
+}
+
+async function loadUsers(page) {
+  page = page || 1;
+  const search = document.getElementById('user-search-input')?.value || '';
+  const role   = document.getElementById('user-role-filter')?.value || '';
+  const limit  = 20;
+  try {
+    const r = await apiFetch('/api/admin/users?search=' + encodeURIComponent(search) + '&role=' + role + '&page=' + page + '&limit=' + limit);
+    const d = await r.json();
+    if (!d.success) return;
+    
+    // Pagination info
+    const pag = document.getElementById('users-pagination');
+    if (pag) {
+      pag.innerHTML = '<span>Showing ' + ((page-1)*limit+1) + '–' + Math.min(page*limit, d.total) + ' of <strong>' + d.total + '</strong> users</span>' +
+        (page > 1 ? '<button onclick="loadUsers(' + (page-1) + ')" style="margin-left:8px;padding:3px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:5px;cursor:pointer;font-size:.78rem;">← Prev</button>' : '') +
+        (page < d.pages ? '<button onclick="loadUsers(' + (page+1) + ')" style="margin-left:4px;padding:3px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:5px;cursor:pointer;font-size:.78rem;">Next →</button>' : '') +
+        '<span style="margin-left:8px;color:var(--muted);">Page ' + page + '/' + (d.pages||1) + '</span>';
+    }
+    
+    const tbody = document.getElementById('users-table-body');
+    if (!tbody) return;
+    if (!d.users || !d.users.length) {
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:32px;color:var(--muted);">No users found' + (search ? ' matching "' + search + '"' : '') + '</td></tr>';
+      return;
+    }
+    tbody.innerHTML = d.users.map(u => {
+      const pkgs = typeof u.packages === 'string' ? JSON.parse(u.packages || '[]') : u.packages || [];
+      const statusCol = u.status === 'active' ? '#16A34A' : '#D97706';
+      return '<tr>' +
+        '<td style="padding:10px 12px;"><strong style="font-size:.84rem;">' + (u.name||'—') + '</strong><br/><span style="font-size:.75rem;color:var(--muted);">' + (u.org||'') + '</span></td>' +
+        '<td style="padding:10px 12px;font-size:.82rem;">' + u.email + '</td>' +
+        '<td style="padding:10px 12px;"><span style="font-size:.74rem;font-weight:700;padding:2px 8px;border-radius:4px;background:' + (u.role==='admin'?'rgba(29,78,216,.1)':'rgba(232,82,26,.1)') + ';color:' + (u.role==='admin'?'#1D4ED8':'#E8521A') + ';">' + u.role + '</span></td>' +
+        '<td style="padding:10px 12px;font-size:.82rem;">' + pkgs.length + ' pkg' + (pkgs.length!==1?'s':'') + '</td>' +
+        '<td style="padding:10px 12px;"><span style="color:' + statusCol + ';font-weight:700;font-size:.78rem;">' + (u.status||'active') + '</span></td>' +
+        '<td style="padding:10px 12px;font-size:.78rem;color:var(--muted);">' + (u.first_login_at ? new Date(u.first_login_at).toLocaleDateString() : 'Never') + '</td>' +
+        '<td style="padding:10px 12px;display:flex;gap:6px;">' +
+          '<button data-p1="' + u.id + '" data-p2="' + u.email + '" class="btn-onboard" style="font-size:.74rem;padding:4px 8px;background:rgba(22,163,74,.08);border:1px solid rgba(22,163,74,.2);border-radius:5px;color:#16A34A;cursor:pointer;">Onboard</button>' +
+          (u.role!=='admin' ? '<button data-p1="' + u.id + '" data-p2="' + u.email + '" class="btn-del-user" style="font-size:.74rem;padding:4px 8px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:5px;color:#EF4444;cursor:pointer;">Delete</button>' : '') +
+        '</td>' +
+      '</tr>';
+    }).join('');
+  } catch(e) { console.error('loadUsers error:', e); }
+}
+
+// ── Sprint 5: Audit Trail ──────────────────────────────────────────────────
+async function loadAuditLog(page) {
+  page = page || 1;
+  const action = document.getElementById('audit-action-filter')?.value || '';
+  try {
+    const r = await apiFetch('/api/admin/audit-log?page=' + page + '&limit=50' + (action ? '&action=' + action : ''));
+    const d = await r.json();
+    if (!d.success) return;
+    const tbody = document.getElementById('audit-table-body');
+    const pag   = document.getElementById('audit-pagination');
+    if (pag) pag.textContent = d.total + ' entries' + (action ? ' filtered by ' + action : '');
+    if (!d.rows || !d.rows.length) {
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:32px;color:var(--muted);">No audit log entries yet. Actions will appear here as admins manage users.</td></tr>';
+      return;
+    }
+    const actionColors = { CREATE_USER:'#16A34A', DELETE_USER:'#EF4444', UPDATE_USER:'#D97706', UPDATE_ONBOARDING:'#1D4ED8' };
+    tbody.innerHTML = d.rows.map(r => {
+      const t = new Date(r.created_at);
+      const ts = t.toLocaleDateString() + ' ' + t.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+      const col = actionColors[r.action] || 'var(--muted)';
+      return '<tr style="border-bottom:1px solid var(--border);">' +
+        '<td style="padding:9px 12px;font-size:.78rem;color:var(--muted);white-space:nowrap;">' + ts + '</td>' +
+        '<td style="padding:9px 12px;font-size:.82rem;">' + (r.admin_email||'—') + '</td>' +
+        '<td style="padding:9px 12px;"><span style="font-size:.73rem;font-weight:700;padding:2px 8px;border-radius:4px;background:' + col + '22;color:' + col + ';">' + r.action + '</span></td>' +
+        '<td style="padding:9px 12px;font-size:.78rem;color:var(--muted);">' + (r.target_email || r.target_id || '—') + '</td>' +
+        '<td style="padding:9px 12px;font-size:.78rem;">' + (r.detail||'—') + '</td>' +
+      '</tr>';
+    }).join('');
+  } catch(e) {
+    document.getElementById('audit-table-body').innerHTML = '<tr><td colspan="5" style="text-align:center;padding:32px;color:var(--muted);">Audit log requires MySQL — configure DB_HOST to enable.</td></tr>';
+  }
+}
+
+// ── Sprint 5: Onboarding Checklist ────────────────────────────────────────
+function viewOnboarding(clientId, email) {
+  // Switch to onboarding tab and select this client
+  switchAmTab('onboarding');
+  const sel = document.getElementById('onboarding-client-select');
+  if (sel) {
+    // If option not there yet, add it
+    if (![...sel.options].find(o => o.value === clientId)) {
+      const opt = document.createElement('option');
+      opt.value = clientId; opt.text = email;
+      sel.add(opt);
+    }
+    sel.value = clientId;
+    loadOnboardingChecklist(clientId);
+  }
+}
+
+async function loadOnboardingChecklist(clientId) {
+  if (!clientId) return;
+  const cl = document.getElementById('onboarding-checklist');
+  const em = document.getElementById('onboarding-empty');
+  if (cl) cl.style.display = 'none';
+  if (em) em.style.display = 'block';
+  try {
+    const r = await apiFetch('/api/admin/onboarding/' + clientId);
+    const d = await r.json();
+    if (!d.success) { if (em) em.textContent = 'Client not found.'; return; }
+    if (em) em.style.display = 'none';
+    if (cl) cl.style.display = 'block';
+    document.getElementById('onboarding-client-name').textContent = d.client.name + ' — ' + d.client.email;
+    const pct = d.completion_pct;
+    const barColor = pct === 100 ? '#16A34A' : pct >= 50 ? '#D97706' : '#EF4444';
+    document.getElementById('onboarding-progress-bar').innerHTML =
+      '<div style="background:var(--bg2);border-radius:8px;overflow:hidden;height:8px;margin-bottom:8px;">' +
+        '<div style="height:100%;width:' + pct + '%;background:' + barColor + ';transition:width .4s;"></div>' +
+      '</div>' +
+      '<span style="font-size:.82rem;font-weight:700;color:' + barColor + ';">' + pct + '% complete</span>';
+    document.getElementById('onboarding-items').innerHTML = d.checklist.map(item => {
+      const done = item.done;
+      return '<div style="display:flex;align-items:center;gap:12px;padding:12px 16px;border:1px solid var(--border);border-radius:8px;margin-bottom:8px;background:' + (done ? 'rgba(22,163,74,.04)' : 'var(--bg)') + ';">' +
+        '<div style="width:22px;height:22px;border-radius:50%;background:' + (done ? '#16A34A' : 'var(--bg2)') + ';border:2px solid ' + (done ? '#16A34A' : 'var(--border)') + ';display:flex;align-items:center;justify-content:center;flex-shrink:0;">' +
+          (done ? '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="#fff" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>' : '') +
+        '</div>' +
+        '<span style="flex:1;font-size:.87rem;' + (done ? 'color:var(--text);' : 'color:var(--muted);') + '">' + item.label + '</span>' +
+        (!done && (item.id === 'psa' || item.id === 'welcome') ?
+          '<button data-p1="' + clientId + '" data-p2="' + item.id + '" class="btn-mark-item" style="font-size:.74rem;padding:4px 10px;background:rgba(232,82,26,.08);border:1px solid rgba(232,82,26,.2);border-radius:5px;color:#E8521A;cursor:pointer;">Mark done</button>'
+          : '') +
+      '</div>';
+    }).join('');
+  } catch(e) {
+    if (em) { em.style.display = 'block'; em.textContent = 'Could not load checklist: ' + e.message; }
+  }
+}
+
+async function markOnboardingItem(clientId, itemId) {
+  const payload = {};
+  if (itemId === 'psa') payload.psa_signed = true;
+  if (itemId === 'welcome') payload.welcome_sent = true;
+  try {
+    await apiFetch('/api/admin/onboarding/' + clientId, { method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) });
+    loadOnboardingChecklist(clientId);
+  } catch(e) { alert('Update failed: ' + e.message); }
+}
+
+// ── Extend switchAmTab to load new panes ──────────────────────────────────
+// Sprint5: extend switchAmTab for new panes
+const _s5PrevSwitch = switchAmTab;
+switchAmTab = function(tab) {
+  _s5PrevSwitch(tab);
+  if (tab === 'audit-trail')  loadAuditLog(1);
+  if (tab === 'onboarding')   populateOnboardingClientSelect();
+};
+
+async function populateOnboardingClientSelect() {
+  const sel = document.getElementById('onboarding-client-select');
+  if (!sel || sel.options.length > 1) return;
+  try {
+    const r = await apiFetch('/api/admin/users?role=client&limit=100');
+    const d = await r.json();
+    if (d.users) {
+      d.users.forEach(u => {
+        const opt = document.createElement('option');
+        opt.value = u.id; opt.text = u.name + ' (' + u.email + ')';
+        sel.add(opt);
+      });
+    }
+  } catch(e) {}
+}
+
+</script>
+
+<script>
+// Standalone Login Handler
+document.addEventListener('DOMContentLoaded', function() {
+  var btn = document.getElementById('signin-btn');
+  var passField = document.getElementById('li-pass');
+  var emailField = document.getElementById('li-email');
+  var errEl = document.getElementById('li-err');
+  function triggerLogin() {
+    if(errEl) errEl.style.display = 'none';
+    var email = emailField ? emailField.value.trim() : '';
+    var pass = passField ? passField.value : '';
+    if (!email || !pass) {
+      if(errEl){ errEl.textContent='Please enter your email and password.'; errEl.style.display='block'; }
+      return;
+    }
+    fetch(window.location.origin + '/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email, password: pass }),
+      credentials: 'same-origin'
+    })
+    .then(function(r){ return r.json().then(function(d){ return {ok:r.ok,data:d}; }); })
+    .then(function(res){
+      if(!res.ok){
+        if(errEl){ errEl.textContent=res.data.error||'Invalid credentials.'; errEl.style.display='block'; }
+        return;
+      }
+      if(res.data.user.role!=='admin'){
+        if(errEl){ errEl.textContent='Access denied — admin accounts only.'; errEl.style.display='block'; }
+        return;
+      }
+      localStorage.setItem('ralph_admin_token', res.data.token);
+      var loginScreen=document.getElementById('login-screen');
+      if(loginScreen) loginScreen.style.display='none';
+      var appEl=document.getElementById('app');
+      if(appEl){ appEl.classList.add('visible'); appEl.style.cssText='display:flex!important;opacity:1!important;'; }
+      var sbName=document.getElementById('sb-name');
+      if(sbName) sbName.textContent=res.data.user.name||res.data.user.email;
+      var sbAvatar=document.getElementById('sb-avatar');
+      if(sbAvatar) sbAvatar.textContent=(res.data.user.name||res.data.user.email)[0].toUpperCase();
+      try{ if(typeof loadDashboard==='function') loadDashboard(); }catch(e){}
+    })
+    .catch(function(err){
+      if(errEl){ errEl.textContent='Connection error: '+(err.message||'unknown'); errEl.style.display='block'; }
+    });
+  }
+  if(btn) btn.addEventListener('click', triggerLogin);
+  if(passField) passField.addEventListener('keydown', function(e){ if(e.key==='Enter') triggerLogin(); });
+});
+</script>
+
+</body>
+</html>

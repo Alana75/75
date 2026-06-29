@@ -1,0 +1,21 @@
+{
+  "name": "@ralph/analytics-app",
+  "version": "1.0.0",
+  "description": "Ralph Analytics — M&E SaaS Platform",
+  "scripts": {
+    "dev":     "node api/server.js",
+    "build":   "echo 'Static build — no compile step needed'",
+    "start":   "NODE_ENV=production node api/server.js",
+    "lint":    "echo 'no lint configured'"
+  },
+  "dependencies": {
+    "express":        "^4.19.2",
+    "jsonwebtoken":   "^9.0.2",
+    "bcryptjs":       "^2.4.3",
+    "dotenv":         "^16.4.5",
+    "cors":           "^2.8.5",
+    "helmet":         "^7.1.0",
+    "axios":          "^1.7.2"
+  },
+  "engines": { "node": ">=18" }
+}

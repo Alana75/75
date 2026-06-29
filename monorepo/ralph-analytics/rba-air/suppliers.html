@@ -1,0 +1,335 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Supplier Declarations · Ralph Analytics</title>
+<link rel="icon" href="/public/icons/favicon.png">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0d1117;--surface:#161b22;--surface2:#1c2230;--border:#21262d;--orange:#e8510a;--orange-dim:#b8400a;--text:#e6edf3;--muted:#8b949e;--green:#2ea043;--red:#da3633;--amber:#d29922;--blue:#388bfd;--sidebar:240px}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;font-size:14px;line-height:1.5;min-height:100vh;display:flex;flex-direction:column}
+a{color:inherit;text-decoration:none}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);height:52px;display:flex;align-items:center;padding:0 20px;gap:12px;position:sticky;top:0;z-index:100;flex-shrink:0}
+.logo-pill{background:var(--orange);color:#fff;font-weight:800;font-size:13px;padding:5px 10px;border-radius:6px;letter-spacing:.5px}
+.site-title{font-weight:700;font-size:15px}
+.sep{color:var(--border);margin:0 2px}
+.bread{color:var(--muted);font-size:13px}
+.topbar .right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.badge-rba{background:rgba(232,81,10,.15);border:1px solid rgba(232,81,10,.35);color:var(--orange);font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;letter-spacing:.5px}
+.btn{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s}
+.btn:hover{border-color:var(--orange);color:var(--orange)}
+.btn-primary{background:var(--orange);border:1px solid var(--orange);color:#fff;padding:8px 18px;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;transition:all .15s}
+.btn-primary:hover{background:var(--orange-dim)}
+.btn-danger{background:rgba(218,54,51,.15);border:1px solid rgba(218,54,51,.3);color:var(--red);padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer}
+.layout{display:flex;flex:1;min-height:0;overflow:hidden}
+.sidebar{width:var(--sidebar);background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto}
+.sidebar-top{padding:14px 16px 10px;border-bottom:1px solid var(--border);margin-bottom:6px}
+.mod-label{font-size:10px;font-weight:700;color:var(--orange);letter-spacing:1px;text-transform:uppercase}
+.mod-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 16px;cursor:pointer;color:var(--muted);font-size:13px;font-weight:500;border-left:3px solid transparent;transition:all .15s}
+.nav-item:hover{background:rgba(255,255,255,.04);color:var(--text)}
+.nav-item.active{background:rgba(232,81,10,.1);color:var(--orange);border-left-color:var(--orange);font-weight:600}
+.nav-item .ico{width:18px;text-align:center;font-size:15px;flex-shrink:0}
+.nav-divider{height:1px;background:var(--border);margin:6px 12px}
+.main{flex:1;overflow-y:auto;padding:28px 32px}
+.page-header{margin-bottom:24px}
+.page-header h1{font-size:21px;font-weight:700;margin-bottom:4px}
+.page-header p{color:var(--muted);font-size:13px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:16px}
+.card-title{font-size:15px;font-weight:700;margin-bottom:4px}
+.card-sub{font-size:12px;color:var(--muted);margin-bottom:14px}
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:20px}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px}
+.stat .lbl{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+.stat .val{font-size:28px;font-weight:800;line-height:1}
+.stat .sub{font-size:11px;color:var(--muted);margin-top:5px}
+.stat.green .val{color:var(--green)}.stat.amber .val{color:var(--amber)}.stat.red .val{color:var(--red)}.stat.blue .val{color:var(--blue)}.stat.orange .val{color:var(--orange)}
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{text-align:left;padding:10px 12px;border-bottom:1px solid var(--border);color:var(--muted);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
+.tbl td{padding:11px 12px;border-bottom:1px solid rgba(33,38,45,.6);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:rgba(255,255,255,.025)}
+.badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:5px;font-size:11px;font-weight:700}
+.badge.green{background:rgba(46,160,67,.12);color:var(--green);border:1px solid rgba(46,160,67,.3)}
+.badge.amber{background:rgba(210,153,34,.12);color:var(--amber);border:1px solid rgba(210,153,34,.25)}
+.badge.red{background:rgba(218,54,51,.12);color:var(--red);border:1px solid rgba(218,54,51,.25)}
+.badge.blue{background:rgba(56,139,253,.12);color:var(--blue);border:1px solid rgba(56,139,253,.25)}
+.badge.orange{background:rgba(232,81,10,.12);color:var(--orange);border:1px solid rgba(232,81,10,.25)}
+.badge.grey{background:rgba(139,148,158,.1);color:var(--muted);border:1px solid rgba(139,148,158,.2)}
+.badge.critical{background:rgba(218,54,51,.15);color:#f87171;border:1px solid rgba(218,54,51,.35)}
+.badge.major{background:rgba(210,153,34,.15);color:var(--amber);border:1px solid rgba(210,153,34,.3)}
+.badge.minor{background:rgba(56,139,253,.12);color:var(--blue);border:1px solid rgba(56,139,253,.25)}
+.clause{font-size:11px;color:var(--orange);font-family:monospace;background:rgba(232,81,10,.08);padding:2px 6px;border-radius:3px}
+.form-group{margin-bottom:16px}
+.form-label{display:block;font-size:11px;font-weight:700;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px}
+.req{color:var(--orange)}
+.fi,.fs,.ft{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:7px;color:var(--text);padding:10px 13px;font-size:13px;font-family:inherit;outline:none;transition:border-color .15s}
+.fi:focus,.fs:focus,.ft:focus{border-color:var(--orange)}
+.ft{resize:vertical;min-height:80px}
+.fs option{background:var(--surface2)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.form-row-4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px}
+.pb{height:6px;background:rgba(255,255,255,.08);border-radius:3px;overflow:hidden;margin-top:6px}
+.pf{height:100%;border-radius:3px}.pf.green{background:var(--green)}.pf.amber{background:var(--amber)}.pf.red{background:var(--red)}.pf.orange{background:var(--orange)}
+#toast{position:fixed;bottom:24px;right:22px;background:var(--surface);border:1px solid var(--border);color:var(--text);padding:12px 20px;border-radius:8px;font-size:13px;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,.5);z-index:9999;opacity:0;transform:translateY(10px);transition:all .25s;pointer-events:none}
+#toast.show{opacity:1;transform:translateY(0)}#toast.success{border-color:var(--green);color:var(--green)}#toast.error{border-color:var(--red);color:var(--red)}
+.tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:20px;gap:0}
+.tab-btn{padding:9px 16px;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;border:none;border-bottom:2px solid transparent;margin-bottom:-1px;background:none;transition:all .15s}
+.tab-btn:hover{color:var(--text)}.tab-btn.active{color:var(--orange);border-bottom-color:var(--orange)}
+.tab-pane{display:none}.tab-pane.active{display:block}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;width:660px;max-width:94vw;max-height:88vh;overflow-y:auto}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.modal-title{font-size:16px;font-weight:700}
+.modal-close{background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;line-height:1}
+.modal-close:hover{color:var(--text)}
+.info-box{background:rgba(232,81,10,.06);border:1px solid rgba(232,81,10,.2);border-radius:8px;padding:14px 16px;font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:16px}
+.info-box strong{color:var(--orange)}
+</style>
+</head><body>
+<div class="topbar"><div class="logo-pill">RA</div><span class="site-title">Ralph Analytics</span><span class="sep">›</span><a href="/rba/air" class="bread">RBA AIR Portal</a><span class="sep">›</span><span class="bread" style="color:var(--text)">Supplier Declarations</span><div class="right"><span class="badge-rba">PILLAR E</span><button class="btn" onclick="window.location='/client'">← Client Portal</button></div></div>
+<div class="layout">
+<div class="sidebar"><div class="sidebar-top"><div class="mod-label">RBA AIR Module</div><div class="mod-sub">Pillar E · AI Responsibility</div></div><a href="/rba/air" class="nav-item"><span class="ico">⬡</span>Overview</a><a href="/rba/air/field-audit" class="nav-item"><span class="ico">📋</span>Field Audit</a><a href="/rba/air/risk" class="nav-item"><span class="ico">⚠️</span>AI Risk Assessment</a><a href="/rba/air/inventory" class="nav-item"><span class="ico">📦</span>AI Inventory</a><a href="/rba/air/suppliers" class="nav-item active"><span class="ico">🤝</span>Supplier Declarations</a><a href="/rba/air/training" class="nav-item"><span class="ico">🎓</span>Training & Maturity</a><div class="nav-divider"></div><a href="/client" class="nav-item"><span class="ico">←</span>Client Portal</a></div>
+<div class="main">
+<div class="page-header">
+  <h1>Supplier Declarations</h1>
+  <p>Annual Tier-1 AI declarations & sub-tier flow-down — <span class="clause">AIR-9.1</span> · <span class="clause">AIR-9.2</span> · <span class="clause">EU AI Act Art.25 & Art.28</span></p>
+</div>
+
+<div class="info-box">
+  All <strong>Tier-1 suppliers deploying AI systems</strong> relevant to this engagement must submit a completed Supplier AI Declaration annually. Supplier contracts must include <strong>AI responsibility clauses</strong> requiring equivalent standards to flow down to sub-tier suppliers. <span class="clause">AIR-9.1</span> · <span class="clause">OECD Due Diligence Guidance</span>
+</div>
+
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+  <div class="stats-row" style="flex:1;margin-bottom:0;margin-right:16px">
+    <div class="stat"><div class="lbl">Total Suppliers</div><div class="val" id="sd-total">0</div></div>
+    <div class="stat green"><div class="lbl">Declarations Received</div><div class="val" id="sd-received">0</div></div>
+    <div class="stat amber"><div class="lbl">Pending</div><div class="val" id="sd-pending">0</div></div>
+    <div class="stat red"><div class="lbl">Overdue</div><div class="val" id="sd-overdue">0</div></div>
+    <div class="stat blue"><div class="lbl">Compliance Rate</div><div class="val" id="sd-rate">—</div></div>
+  </div>
+  <button class="btn-primary" onclick="openSuppModal()">+ Add Declaration</button>
+</div>
+
+<div class="tabs" id="sup-tabs">
+  <button class="tab-btn active" data-tab="tab-declarations">Declaration Tracker</button>
+  <button class="tab-btn" data-tab="tab-form">Declaration Form Template</button>
+  <button class="tab-btn" data-tab="tab-clauses">Contract AI Clauses</button>
+</div>
+
+<div class="tab-pane active" id="tab-declarations">
+  <div class="card" style="padding:0;overflow:hidden">
+    <table class="tbl">
+      <thead><tr><th>Supplier</th><th>Country</th><th>Tier</th><th>AI Systems Declared</th><th>Highest Risk Tier</th><th>Status</th><th>Period</th><th>Date Received</th><th></th></tr></thead>
+      <tbody id="sup-tbody"><tr><td colspan="9" style="text-align:center;color:var(--muted);padding:32px">No supplier declarations recorded. Click <strong>+ Add Declaration</strong> to begin.</td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<div class="tab-pane" id="tab-form">
+  <div class="card">
+    <div class="card-title">Supplier AI Declaration Form</div>
+    <div class="card-sub">Send this template to all relevant Tier-1 suppliers annually — <span class="clause">AIR-9.1</span> · <span class="clause">EU AI Act Art.25 & Art.28</span></div>
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:20px;margin-top:16px;font-size:13px;line-height:1.8">
+      <div style="font-weight:800;font-size:15px;margin-bottom:4px">SUPPLIER AI DECLARATION — RBA AIR MODULE</div>
+      <div style="color:var(--muted);margin-bottom:18px">Clause AIR-9.1 · To be completed annually by all Tier-1 suppliers deploying AI systems</div>
+
+      <div style="font-weight:700;color:var(--orange);text-transform:uppercase;font-size:11px;letter-spacing:1px;margin-bottom:10px">Section 1 — Supplier Identification</div>
+      <div class="form-row" style="margin-bottom:10px">
+        <div class="form-group"><label class="form-label">Organisation Name</label><input class="fi" placeholder="Legal entity name"></div>
+        <div class="form-group"><label class="form-label">Country of Primary Operation</label><input class="fi" placeholder="Country"></div>
+      </div>
+      <div class="form-row" style="margin-bottom:10px">
+        <div class="form-group"><label class="form-label">Contact Name & Title</label><input class="fi" placeholder="Full name and job title"></div>
+        <div class="form-group"><label class="form-label">Contact Email</label><input class="fi" placeholder="email@supplier.com"></div>
+      </div>
+      <div class="form-row" style="margin-bottom:18px">
+        <div class="form-group"><label class="form-label">Relationship to Ralph Analytics</label><select class="fs"><option>Tier-1 Direct Supplier</option><option>Tier-2 Sub-supplier</option><option>Contractor</option></select></div>
+        <div class="form-group"><label class="form-label">Declaration Period</label><input class="fi" placeholder="e.g. January – December 2026"></div>
+      </div>
+
+      <div style="font-weight:700;color:var(--orange);text-transform:uppercase;font-size:11px;letter-spacing:1px;margin-bottom:10px">Section 2 — AI System Disclosure</div>
+      <div class="card" style="background:rgba(255,255,255,.02);border-color:rgba(255,255,255,.06);padding:12px;margin-bottom:16px">
+        <div style="font-size:12px;color:var(--muted);margin-bottom:10px">Declare each AI system deployed that is relevant to your engagement with Ralph Analytics:</div>
+        <table class="tbl" style="font-size:12px">
+          <thead><tr><th>AI System Name / Purpose</th><th>Description of AI Functionality</th><th>EU AI Act Risk Tier</th><th>Controls in Place</th><th>AI Governance Contact</th></tr></thead>
+          <tbody>
+            <tr><td style="color:var(--muted)">[System name]</td><td style="color:var(--muted)">[What it does, inputs and outputs]</td><td style="color:var(--muted)">[Tier]</td><td style="color:var(--muted)">[Policy ✓/✗ · Risk Assessment ✓/✗ · Bias Testing ✓/✗ · Human Oversight ✓/✗]</td><td style="color:var(--muted)">[Name & email]</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div style="font-weight:700;color:var(--orange);text-transform:uppercase;font-size:11px;letter-spacing:1px;margin-bottom:10px">Section 3 — Compliance Attestations</div>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">
+        <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer"><input type="checkbox" style="margin-top:2px;accent-color:var(--orange)"><span>Our organisation has adopted a formal <strong>AI Ethics Policy</strong> approved at executive level</span></label>
+        <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer"><input type="checkbox" style="margin-top:2px;accent-color:var(--orange)"><span>All AI systems listed above have been <strong>risk-classified</strong> per the EU AI Act framework</span></label>
+        <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer"><input type="checkbox" style="margin-top:2px;accent-color:var(--orange)"><span><strong>Bias testing</strong> has been completed for all AI systems affecting individuals</span></label>
+        <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer"><input type="checkbox" style="margin-top:2px;accent-color:var(--orange)"><span><strong>Human oversight</strong> mechanisms are in place for all High Risk AI systems</span></label>
+        <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer"><input type="checkbox" style="margin-top:2px;accent-color:var(--orange)"><span>We accept that our AI governance standards <strong>flow down</strong> to our own sub-tier suppliers</span></label>
+        <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer"><input type="checkbox" style="margin-top:2px;accent-color:var(--orange)"><span>We agree to notify Ralph Analytics within <strong>30 days</strong> of any material AI system change, incident, or regulatory finding</span></label>
+      </div>
+
+      <div style="font-weight:700;color:var(--orange);text-transform:uppercase;font-size:11px;letter-spacing:1px;margin-bottom:10px">Section 4 — Authorised Signatory</div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Signatory Name & Title</label><input class="fi" placeholder="Full name and title (must be C-suite or equivalent)"></div>
+        <div class="form-group"><label class="form-label">Date</label><input type="date" class="fi"></div>
+      </div>
+      <div style="margin-top:14px;padding:12px;background:rgba(232,81,10,.06);border:1px solid rgba(232,81,10,.2);border-radius:6px;font-size:12px;color:var(--muted)">
+        By signing this declaration, the organisation confirms that all information provided is accurate and complete, and that the organisation accepts the AI responsibility obligations set out in the RBA Code of Conduct Pillar E (AIR) and the EU AI Act.
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="tab-pane" id="tab-clauses">
+  <div class="card">
+    <div class="card-title">Contract AI Responsibility Clauses</div>
+    <div class="card-sub">Mandatory clauses for all supplier contracts — <span class="clause">AIR-9.2</span> · <span class="clause">EU AI Act Art.25</span> · <span class="clause">OECD Due Diligence Guidance</span></div>
+    <div style="display:flex;flex-direction:column;gap:14px;margin-top:16px">
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px">
+        <div style="font-weight:700;font-size:13px;margin-bottom:6px;color:var(--orange)">Clause 1 — AI System Disclosure</div>
+        <div style="font-size:13px;line-height:1.8;color:var(--muted)">
+          The Supplier shall disclose to Ralph Analytics all AI systems deployed in connection with this engagement, including system purpose, risk tier classification, and governance controls in place, within 30 days of contract execution and annually thereafter by submission of a completed Supplier AI Declaration.
+        </div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px">
+        <div style="font-weight:700;font-size:13px;margin-bottom:6px;color:var(--orange)">Clause 2 — Minimum AI Governance Standards</div>
+        <div style="font-size:13px;line-height:1.8;color:var(--muted)">
+          The Supplier shall maintain AI governance standards no less stringent than those required by the RBA Code of Conduct Pillar E (AIR), including: a formal AI Ethics Policy approved at executive level; risk classification of all AI systems per the EU AI Act framework; bias testing for AI systems affecting individuals; and human oversight mechanisms for all High Risk AI systems.
+        </div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px">
+        <div style="font-weight:700;font-size:13px;margin-bottom:6px;color:var(--orange)">Clause 3 — Sub-Tier Flow-Down</div>
+        <div style="font-size:13px;line-height:1.8;color:var(--muted)">
+          The Supplier shall require equivalent AI responsibility standards to be met by its own sub-tier suppliers and contractors deploying AI systems in connection with this engagement, and shall maintain records of sub-tier AI declarations available for review upon request by Ralph Analytics.
+        </div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px">
+        <div style="font-weight:700;font-size:13px;margin-bottom:6px;color:var(--orange)">Clause 4 — Incident Notification</div>
+        <div style="font-size:13px;line-height:1.8;color:var(--muted)">
+          The Supplier shall notify Ralph Analytics within 30 calendar days of any material AI system change, confirmed AI bias or discriminatory outcome incident, regulatory finding or enforcement action, or deployment of a new AI system that would materially affect this engagement.
+        </div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px">
+        <div style="font-weight:700;font-size:13px;margin-bottom:6px;color:var(--orange)">Clause 5 — Audit Rights</div>
+        <div style="font-size:13px;line-height:1.8;color:var(--muted)">
+          Ralph Analytics reserves the right to conduct or commission an audit of the Supplier's AI governance practices, including review of AI inventory registers, risk assessments, bias test results, and training records, with reasonable notice not less than 30 days, no more than once per calendar year unless a material incident has occurred.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add Declaration Modal -->
+<div class="modal-overlay" id="sup-modal">
+<div class="modal">
+  <div class="modal-header">
+    <div class="modal-title">Record Supplier AI Declaration</div>
+    <button class="modal-close" onclick="closeSuppModal()">×</button>
+  </div>
+  <div class="form-row"><div class="form-group"><label class="form-label">Supplier / Organisation Name <span class="req">*</span></label><input class="fi" id="s-name" placeholder="Legal entity name"></div><div class="form-group"><label class="form-label">Country of Operation <span class="req">*</span></label><input class="fi" id="s-country" placeholder="Country"></div></div>
+  <div class="form-row"><div class="form-group"><label class="form-label">Supplier Contact Name <span class="req">*</span></label><input class="fi" id="s-contact" placeholder="Full name and title"></div><div class="form-group"><label class="form-label">Contact Email</label><input class="fi" id="s-email" placeholder="email@supplier.com"></div></div>
+  <div class="form-row-3">
+    <div class="form-group"><label class="form-label">Supplier Tier <span class="req">*</span></label><select class="fs" id="s-tier"><option value="">-- Select --</option><option>Tier-1 Direct</option><option>Tier-2 Sub-supplier</option><option>Contractor</option></select></div>
+    <div class="form-group"><label class="form-label">Declaration Period</label><input class="fi" id="s-period" placeholder="e.g. Jan–Dec 2026"></div>
+    <div class="form-group"><label class="form-label">Date Received <span class="req">*</span></label><input type="date" class="fi" id="s-date"></div>
+  </div>
+  <div class="form-row">
+    <div class="form-group"><label class="form-label">Number of AI Systems Declared</label><input type="number" class="fi" id="s-syscount" min="0" placeholder="0"></div>
+    <div class="form-group"><label class="form-label">Highest AI Risk Tier Declared</label><select class="fs" id="s-risktier"><option value="">-- None declared --</option><option value="unacceptable">Unacceptable Risk</option><option value="high">High Risk</option><option value="limited">Limited Risk</option><option value="minimal">Minimal Risk</option></select></div>
+  </div>
+  <div class="form-group"><label class="form-label">Attestations Confirmed</label>
+    <div style="display:flex;flex-direction:column;gap:6px;margin-top:4px">
+      <label style="display:flex;gap:8px;font-size:12px;cursor:pointer"><input type="checkbox" id="s-a1" style="accent-color:var(--orange)"><span>AI Ethics Policy in place</span></label>
+      <label style="display:flex;gap:8px;font-size:12px;cursor:pointer"><input type="checkbox" id="s-a2" style="accent-color:var(--orange)"><span>AI systems risk-classified per EU AI Act</span></label>
+      <label style="display:flex;gap:8px;font-size:12px;cursor:pointer"><input type="checkbox" id="s-a3" style="accent-color:var(--orange)"><span>Bias testing completed for people-facing AI</span></label>
+      <label style="display:flex;gap:8px;font-size:12px;cursor:pointer"><input type="checkbox" id="s-a4" style="accent-color:var(--orange)"><span>Human oversight in place for High Risk AI</span></label>
+      <label style="display:flex;gap:8px;font-size:12px;cursor:pointer"><input type="checkbox" id="s-a5" style="accent-color:var(--orange)"><span>Sub-tier flow-down accepted</span></label>
+    </div>
+  </div>
+  <div class="form-group"><label class="form-label">Status <span class="req">*</span></label><select class="fs" id="s-status"><option value="">-- Select --</option><option value="received">Declaration Received & Accepted</option><option value="pending">Pending — Awaiting Submission</option><option value="incomplete">Incomplete — Follow-up Required</option><option value="overdue">Overdue — Escalation Required</option></select></div>
+  <div class="form-group"><label class="form-label">Notes</label><textarea class="ft" id="s-notes" placeholder="Any follow-up actions, concerns, or notes" style="min-height:55px"></textarea></div>
+  <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:20px">
+    <button class="btn" onclick="closeSuppModal()">Cancel</button>
+    <button class="btn-primary" onclick="saveSupplier()">Save Declaration</button>
+  </div>
+</div>
+</div>
+</div>
+</div>
+<div id="toast"></div>
+<script>
+const AUTH_TOKEN=localStorage.getItem('ralph_client_token');
+if(!AUTH_TOKEN){window.location.href='/client';}
+function apiFetch(url,opts={}){
+  opts.headers=Object.assign({'Content-Type':'application/json','Authorization':'Bearer '+AUTH_TOKEN},opts.headers||{});
+  return fetch(window.location.origin+url,opts);
+}
+function toast(msg,type){const t=document.getElementById('toast');t.textContent=msg;t.className='show '+(type||'success');setTimeout(()=>t.className='',3000)}
+function tabs(container){
+  document.querySelectorAll(container+' .tab-btn').forEach(b=>{
+    b.addEventListener('click',()=>{
+      const id=b.dataset.tab;
+      document.querySelectorAll(container+' .tab-btn').forEach(x=>x.classList.remove('active'));
+      document.querySelectorAll(container+' .tab-pane').forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+      document.getElementById(id).classList.add('active');
+    });
+  });
+}
+
+let suppliers = JSON.parse(localStorage.getItem('rba_suppliers')||'[]');
+function statusBadge(s){return{received:'<span class="badge green">Received</span>',pending:'<span class="badge amber">Pending</span>',incomplete:'<span class="badge red">Incomplete</span>',overdue:'<span class="badge critical">Overdue</span>'}[s]||'<span class="badge grey">'+s+'</span>';}
+function riskBadge(t){return{unacceptable:'<span class="badge critical">Unacceptable</span>',high:'<span class="badge major">High Risk</span>',limited:'<span class="badge blue">Limited</span>',minimal:'<span class="badge green">Minimal</span>'}[t]||'<span class="badge grey">None declared</span>';}
+function renderSuppliers(){
+  const total=suppliers.length,received=suppliers.filter(s=>s.status==='received').length,pending=suppliers.filter(s=>s.status==='pending').length,overdue=suppliers.filter(s=>s.status==='overdue').length;
+  document.getElementById('sd-total').textContent=total;
+  document.getElementById('sd-received').textContent=received;
+  document.getElementById('sd-pending').textContent=pending;
+  document.getElementById('sd-overdue').textContent=overdue;
+  document.getElementById('sd-rate').textContent=total?Math.round((received/total)*100)+'%':'—';
+  const tbody=document.getElementById('sup-tbody');
+  if(!suppliers.length){tbody.innerHTML='<tr><td colspan="9" style="text-align:center;color:var(--muted);padding:32px">No supplier declarations recorded. Click <strong>+ Add Declaration</strong> to begin.</td></tr>';return;}
+  tbody.innerHTML=suppliers.map((s,i)=>`<tr>
+    <td style="font-weight:600">${s.name}</td>
+    <td style="color:var(--muted)">${s.country}</td>
+    <td><span class="badge grey">${s.tier}</span></td>
+    <td style="text-align:center;font-weight:700">${s.syscount||'0'}</td>
+    <td>${riskBadge(s.risktier)}</td>
+    <td>${statusBadge(s.status)}</td>
+    <td style="color:var(--muted);font-size:12px">${s.period||'—'}</td>
+    <td style="color:var(--muted);font-size:12px">${s.date||'—'}</td>
+    <td><button class="btn" style="padding:4px 10px;font-size:11px" onclick="deleteSupplier(${i})">×</button></td>
+  </tr>`).join('');
+}
+function openSuppModal(){document.getElementById('sup-modal').classList.add('open');}
+function closeSuppModal(){document.getElementById('sup-modal').classList.remove('open');}
+function saveSupplier(){
+  const name=document.getElementById('s-name').value.trim();
+  const country=document.getElementById('s-country').value.trim();
+  const contact=document.getElementById('s-contact').value.trim();
+  const tier=document.getElementById('s-tier').value;
+  const status=document.getElementById('s-status').value;
+  const date=document.getElementById('s-date').value;
+  if(!name||!country||!contact||!tier||!status||!date){toast('Please fill in all required fields','error');return;}
+  suppliers.unshift({name,country,contact,email:document.getElementById('s-email').value,tier,status,date,period:document.getElementById('s-period').value,syscount:document.getElementById('s-syscount').value,risktier:document.getElementById('s-risktier').value,notes:document.getElementById('s-notes').value,attestations:[document.getElementById('s-a1').checked,document.getElementById('s-a2').checked,document.getElementById('s-a3').checked,document.getElementById('s-a4').checked,document.getElementById('s-a5').checked]});
+  localStorage.setItem('rba_suppliers',JSON.stringify(suppliers));
+  renderSuppliers();closeSuppModal();toast('Supplier declaration saved','success');
+  ['s-name','s-country','s-contact','s-email','s-period','s-date','s-notes'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('s-tier').value='';document.getElementById('s-status').value='';document.getElementById('s-risktier').value='';
+  ['s-a1','s-a2','s-a3','s-a4','s-a5'].forEach(id=>document.getElementById(id).checked=false);
+}
+function deleteSupplier(i){if(!confirm('Remove this supplier declaration?'))return;suppliers.splice(i,1);localStorage.setItem('rba_suppliers',JSON.stringify(suppliers));renderSuppliers();toast('Declaration removed');}
+// Tab handling
+document.querySelectorAll('#sup-tabs .tab-btn').forEach(b=>{
+  b.addEventListener('click',()=>{
+    const id=b.dataset.tab;
+    document.querySelectorAll('#sup-tabs .tab-btn').forEach(x=>x.classList.remove('active'));
+    document.querySelectorAll('.tab-pane').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    document.getElementById(id).classList.add('active');
+  });
+});
+renderSuppliers();
+</script>
+</body></html>

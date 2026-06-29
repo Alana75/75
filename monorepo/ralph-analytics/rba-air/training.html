@@ -1,0 +1,384 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Training & Maturity · Ralph Analytics</title>
+<link rel="icon" href="/public/icons/favicon.png">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0d1117;--surface:#161b22;--surface2:#1c2230;--border:#21262d;--orange:#e8510a;--orange-dim:#b8400a;--text:#e6edf3;--muted:#8b949e;--green:#2ea043;--red:#da3633;--amber:#d29922;--blue:#388bfd;--sidebar:240px}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;font-size:14px;line-height:1.5;min-height:100vh;display:flex;flex-direction:column}
+a{color:inherit;text-decoration:none}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);height:52px;display:flex;align-items:center;padding:0 20px;gap:12px;position:sticky;top:0;z-index:100;flex-shrink:0}
+.logo-pill{background:var(--orange);color:#fff;font-weight:800;font-size:13px;padding:5px 10px;border-radius:6px;letter-spacing:.5px}
+.site-title{font-weight:700;font-size:15px}
+.sep{color:var(--border);margin:0 2px}
+.bread{color:var(--muted);font-size:13px}
+.topbar .right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.badge-rba{background:rgba(232,81,10,.15);border:1px solid rgba(232,81,10,.35);color:var(--orange);font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;letter-spacing:.5px}
+.btn{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s}
+.btn:hover{border-color:var(--orange);color:var(--orange)}
+.btn-primary{background:var(--orange);border:1px solid var(--orange);color:#fff;padding:8px 18px;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;transition:all .15s}
+.btn-primary:hover{background:var(--orange-dim)}
+.btn-danger{background:rgba(218,54,51,.15);border:1px solid rgba(218,54,51,.3);color:var(--red);padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer}
+.layout{display:flex;flex:1;min-height:0;overflow:hidden}
+.sidebar{width:var(--sidebar);background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto}
+.sidebar-top{padding:14px 16px 10px;border-bottom:1px solid var(--border);margin-bottom:6px}
+.mod-label{font-size:10px;font-weight:700;color:var(--orange);letter-spacing:1px;text-transform:uppercase}
+.mod-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 16px;cursor:pointer;color:var(--muted);font-size:13px;font-weight:500;border-left:3px solid transparent;transition:all .15s}
+.nav-item:hover{background:rgba(255,255,255,.04);color:var(--text)}
+.nav-item.active{background:rgba(232,81,10,.1);color:var(--orange);border-left-color:var(--orange);font-weight:600}
+.nav-item .ico{width:18px;text-align:center;font-size:15px;flex-shrink:0}
+.nav-divider{height:1px;background:var(--border);margin:6px 12px}
+.main{flex:1;overflow-y:auto;padding:28px 32px}
+.page-header{margin-bottom:24px}
+.page-header h1{font-size:21px;font-weight:700;margin-bottom:4px}
+.page-header p{color:var(--muted);font-size:13px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:16px}
+.card-title{font-size:15px;font-weight:700;margin-bottom:4px}
+.card-sub{font-size:12px;color:var(--muted);margin-bottom:14px}
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:20px}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px}
+.stat .lbl{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+.stat .val{font-size:28px;font-weight:800;line-height:1}
+.stat .sub{font-size:11px;color:var(--muted);margin-top:5px}
+.stat.green .val{color:var(--green)}.stat.amber .val{color:var(--amber)}.stat.red .val{color:var(--red)}.stat.blue .val{color:var(--blue)}.stat.orange .val{color:var(--orange)}
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{text-align:left;padding:10px 12px;border-bottom:1px solid var(--border);color:var(--muted);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
+.tbl td{padding:11px 12px;border-bottom:1px solid rgba(33,38,45,.6);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:rgba(255,255,255,.025)}
+.badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:5px;font-size:11px;font-weight:700}
+.badge.green{background:rgba(46,160,67,.12);color:var(--green);border:1px solid rgba(46,160,67,.3)}
+.badge.amber{background:rgba(210,153,34,.12);color:var(--amber);border:1px solid rgba(210,153,34,.25)}
+.badge.red{background:rgba(218,54,51,.12);color:var(--red);border:1px solid rgba(218,54,51,.25)}
+.badge.blue{background:rgba(56,139,253,.12);color:var(--blue);border:1px solid rgba(56,139,253,.25)}
+.badge.orange{background:rgba(232,81,10,.12);color:var(--orange);border:1px solid rgba(232,81,10,.25)}
+.badge.grey{background:rgba(139,148,158,.1);color:var(--muted);border:1px solid rgba(139,148,158,.2)}
+.badge.critical{background:rgba(218,54,51,.15);color:#f87171;border:1px solid rgba(218,54,51,.35)}
+.badge.major{background:rgba(210,153,34,.15);color:var(--amber);border:1px solid rgba(210,153,34,.3)}
+.badge.minor{background:rgba(56,139,253,.12);color:var(--blue);border:1px solid rgba(56,139,253,.25)}
+.clause{font-size:11px;color:var(--orange);font-family:monospace;background:rgba(232,81,10,.08);padding:2px 6px;border-radius:3px}
+.form-group{margin-bottom:16px}
+.form-label{display:block;font-size:11px;font-weight:700;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px}
+.req{color:var(--orange)}
+.fi,.fs,.ft{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:7px;color:var(--text);padding:10px 13px;font-size:13px;font-family:inherit;outline:none;transition:border-color .15s}
+.fi:focus,.fs:focus,.ft:focus{border-color:var(--orange)}
+.ft{resize:vertical;min-height:80px}
+.fs option{background:var(--surface2)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.form-row-4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px}
+.pb{height:6px;background:rgba(255,255,255,.08);border-radius:3px;overflow:hidden;margin-top:6px}
+.pf{height:100%;border-radius:3px}.pf.green{background:var(--green)}.pf.amber{background:var(--amber)}.pf.red{background:var(--red)}.pf.orange{background:var(--orange)}
+#toast{position:fixed;bottom:24px;right:22px;background:var(--surface);border:1px solid var(--border);color:var(--text);padding:12px 20px;border-radius:8px;font-size:13px;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,.5);z-index:9999;opacity:0;transform:translateY(10px);transition:all .25s;pointer-events:none}
+#toast.show{opacity:1;transform:translateY(0)}#toast.success{border-color:var(--green);color:var(--green)}#toast.error{border-color:var(--red);color:var(--red)}
+.tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:20px;gap:0}
+.tab-btn{padding:9px 16px;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;border:none;border-bottom:2px solid transparent;margin-bottom:-1px;background:none;transition:all .15s}
+.tab-btn:hover{color:var(--text)}.tab-btn.active{color:var(--orange);border-bottom-color:var(--orange)}
+.tab-pane{display:none}.tab-pane.active{display:block}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;width:660px;max-width:94vw;max-height:88vh;overflow-y:auto}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.modal-title{font-size:16px;font-weight:700}
+.modal-close{background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;line-height:1}
+.modal-close:hover{color:var(--text)}
+.info-box{background:rgba(232,81,10,.06);border:1px solid rgba(232,81,10,.2);border-radius:8px;padding:14px 16px;font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:16px}
+.info-box strong{color:var(--orange)}
+</style>
+</head><body>
+<div class="topbar"><div class="logo-pill">RA</div><span class="site-title">Ralph Analytics</span><span class="sep">›</span><a href="/rba/air" class="bread">RBA AIR Portal</a><span class="sep">›</span><span class="bread" style="color:var(--text)">Training & Maturity</span><div class="right"><span class="badge-rba">PILLAR E</span><button class="btn" onclick="window.location='/client'">← Client Portal</button></div></div>
+<div class="layout">
+<div class="sidebar"><div class="sidebar-top"><div class="mod-label">RBA AIR Module</div><div class="mod-sub">Pillar E · AI Responsibility</div></div><a href="/rba/air" class="nav-item"><span class="ico">⬡</span>Overview</a><a href="/rba/air/field-audit" class="nav-item"><span class="ico">📋</span>Field Audit</a><a href="/rba/air/risk" class="nav-item"><span class="ico">⚠️</span>AI Risk Assessment</a><a href="/rba/air/inventory" class="nav-item"><span class="ico">📦</span>AI Inventory</a><a href="/rba/air/suppliers" class="nav-item"><span class="ico">🤝</span>Supplier Declarations</a><a href="/rba/air/training" class="nav-item active"><span class="ico">🎓</span>Training & Maturity</a><div class="nav-divider"></div><a href="/client" class="nav-item"><span class="ico">←</span>Client Portal</a></div>
+<div class="main">
+<div class="page-header">
+  <h1>Training & Maturity</h1>
+  <p>Training framework, 5-level maturity model & KPI dashboard — <span class="clause">AIR-1.2</span> · <span class="clause">ISO 42001 Cl.7.2</span> · <span class="clause">RBA Management Systems</span></p>
+</div>
+
+<div class="tabs" id="train-tabs">
+  <button class="tab-btn active" data-tab="tab-maturity">Maturity Assessment</button>
+  <button class="tab-btn" data-tab="tab-training">Training Framework</button>
+  <button class="tab-btn" data-tab="tab-kpis">KPI Dashboard</button>
+</div>
+
+<!-- MATURITY TAB -->
+<div class="tab-pane active" id="tab-maturity">
+  <div class="info-box" style="margin-bottom:20px">
+    Select your organisation's current <strong>AI Governance Maturity Level</strong>. The maturity model defines 5 levels from Initial/Ad Hoc to Optimised/Predictive. Use the diagnostic criteria below to identify where you are and what actions will progress you to the next level.
+  </div>
+
+  <div class="card" style="margin-bottom:16px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div><div class="card-title">Current Maturity Level</div><div class="card-sub">Select your level to see required actions</div></div>
+      <div id="mat-selected-badge" style="font-size:22px;font-weight:900;padding:8px 20px;background:var(--surface2);border:1px solid var(--border);border-radius:10px">Level 2</div>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:20px">
+      <div class="mat-btn" data-level="1" onclick="selectLevel(1)" style="flex:1;padding:14px 8px;border-radius:8px;border:2px solid rgba(218,54,51,.3);background:rgba(218,54,51,.05);text-align:center;cursor:pointer;transition:all .2s">
+        <div style="font-size:24px;font-weight:900;color:var(--red)">1</div>
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--red);margin-top:4px">Initial</div>
+      </div>
+      <div class="mat-btn active-mat" data-level="2" onclick="selectLevel(2)" style="flex:1;padding:14px 8px;border-radius:8px;border:2px solid var(--orange);background:rgba(232,81,10,.12);text-align:center;cursor:pointer;transition:all .2s">
+        <div style="font-size:24px;font-weight:900;color:var(--orange)">2</div>
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--orange);margin-top:4px">Developing</div>
+      </div>
+      <div class="mat-btn" data-level="3" onclick="selectLevel(3)" style="flex:1;padding:14px 8px;border-radius:8px;border:2px solid rgba(56,139,253,.3);background:rgba(56,139,253,.05);text-align:center;cursor:pointer;transition:all .2s">
+        <div style="font-size:24px;font-weight:900;color:var(--blue)">3</div>
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--blue);margin-top:4px">Defined</div>
+      </div>
+      <div class="mat-btn" data-level="4" onclick="selectLevel(4)" style="flex:1;padding:14px 8px;border-radius:8px;border:2px solid rgba(46,160,67,.3);background:rgba(46,160,67,.05);text-align:center;cursor:pointer;transition:all .2s">
+        <div style="font-size:24px;font-weight:900;color:var(--green)">4</div>
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--green);margin-top:4px">Managed</div>
+      </div>
+      <div class="mat-btn" data-level="5" onclick="selectLevel(5)" style="flex:1;padding:14px 8px;border-radius:8px;border:2px solid rgba(56,139,253,.3);background:rgba(56,139,253,.05);text-align:center;cursor:pointer;transition:all .2s">
+        <div style="font-size:24px;font-weight:900;color:var(--blue)">5</div>
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--blue);margin-top:4px">Optimised</div>
+      </div>
+    </div>
+
+    <div id="mat-detail"></div>
+  </div>
+</div>
+
+<!-- TRAINING TAB -->
+<div class="tab-pane" id="tab-training">
+  <div class="info-box">
+    Mandatory AI training must be completed by all target cohorts annually. Training requirements are tiered by audience — from <strong>Executive Leadership</strong> to <strong>Technical Teams</strong>. Log completion below and track against targets.
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:14px">
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+        <div><div class="card-title" style="font-size:14px">👔 Executive Leadership</div><div class="card-sub">Annual briefing · 2-hour executive briefing + 1-hour board presentation · Assessment: Named attestation</div></div>
+        <div style="text-align:right"><div style="font-size:22px;font-weight:800" id="exec-pct">0%</div><div style="font-size:11px;color:var(--muted)">completion</div></div>
+      </div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:10px;line-height:1.7"><strong style="color:var(--text)">Modules:</strong> AI governance accountability · Legal exposure under EU AI Act · Board-level AI risk appetite · Regulatory liability for AI failures · AI ethics decision-making framework · Sign-off obligations (policy, AIAs, High Risk AI)</div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <input type="number" class="fi" id="exec-done" placeholder="Completed" min="0" style="width:100px" oninput="updatePct('exec')">
+        <span style="color:var(--muted);font-size:13px">of</span>
+        <input type="number" class="fi" id="exec-total" placeholder="Total" min="0" style="width:100px" oninput="updatePct('exec')">
+        <span style="color:var(--muted);font-size:13px">executives · Target: 100%</span>
+        <button class="btn" style="margin-left:auto;padding:5px 12px;font-size:12px" onclick="saveTraining('exec')">Save</button>
+      </div>
+      <div class="pb" style="margin-top:10px"><div class="pf green" id="exec-bar" style="width:0%"></div></div>
+    </div>
+
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+        <div><div class="card-title" style="font-size:14px">👥 Managers & Supervisors</div><div class="card-sub">Annual workshop · 4-hour workshop + 2-hour eLearning · Assessment: Scored quiz minimum 80%</div></div>
+        <div style="text-align:right"><div style="font-size:22px;font-weight:800" id="mgr-pct">0%</div><div style="font-size:11px;color:var(--muted)">completion</div></div>
+      </div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:10px;line-height:1.7"><strong style="color:var(--text)">Modules:</strong> AI risk identification and escalation · Human oversight responsibilities · Worker disclosure requirements · Bias recognition and reporting · AI incident identification and reporting</div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <input type="number" class="fi" id="mgr-done" placeholder="Completed" min="0" style="width:100px" oninput="updatePct('mgr')">
+        <span style="color:var(--muted);font-size:13px">of</span>
+        <input type="number" class="fi" id="mgr-total" placeholder="Total" min="0" style="width:100px" oninput="updatePct('mgr')">
+        <span style="color:var(--muted);font-size:13px">managers · Target: 100%</span>
+        <button class="btn" style="margin-left:auto;padding:5px 12px;font-size:12px" onclick="saveTraining('mgr')">Save</button>
+      </div>
+      <div class="pb" style="margin-top:10px"><div class="pf amber" id="mgr-bar" style="width:0%"></div></div>
+    </div>
+
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+        <div><div class="card-title" style="font-size:14px">🏭 Operational Staff (AI-adjacent)</div><div class="card-sub">Annual · 1.5-hour eLearning + onboarding module · Assessment: Completion confirmation + brief quiz</div></div>
+        <div style="text-align:right"><div style="font-size:22px;font-weight:800" id="ops-pct">0%</div><div style="font-size:11px;color:var(--muted)">completion</div></div>
+      </div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:10px;line-height:1.7"><strong style="color:var(--text)">Modules:</strong> AI acceptable use policy · Incident identification and reporting · Worker rights regarding AI · Data handling obligations when interacting with AI · What to do if AI output seems wrong or biased</div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <input type="number" class="fi" id="ops-done" placeholder="Completed" min="0" style="width:100px" oninput="updatePct('ops')">
+        <span style="color:var(--muted);font-size:13px">of</span>
+        <input type="number" class="fi" id="ops-total" placeholder="Total" min="0" style="width:100px" oninput="updatePct('ops')">
+        <span style="color:var(--muted);font-size:13px">staff · Target: 95%</span>
+        <button class="btn" style="margin-left:auto;padding:5px 12px;font-size:12px" onclick="saveTraining('ops')">Save</button>
+      </div>
+      <div class="pb" style="margin-top:10px"><div class="pf green" id="ops-bar" style="width:0%"></div></div>
+    </div>
+
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+        <div><div class="card-title" style="font-size:14px">⚙️ Technical Teams (AI Developers & Engineers)</div><div class="card-sub">Annual · 8-hour technical workshop + hands-on labs · Assessment: Technical certification preferred</div></div>
+        <div style="text-align:right"><div style="font-size:22px;font-weight:800" id="tech-pct">0%</div><div style="font-size:11px;color:var(--muted)">completion</div></div>
+      </div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:10px;line-height:1.7"><strong style="color:var(--text)">Modules:</strong> Secure AI design (privacy-by-design, security-by-design) · Bias testing methodology (SHAP, LIME, Fairlearn) · Model validation and performance benchmarking · AI audit log implementation · Adversarial robustness testing · EU AI Act technical requirements for High Risk AI · ISO 42001 Lead Implementer certification recommended</div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <input type="number" class="fi" id="tech-done" placeholder="Completed" min="0" style="width:100px" oninput="updatePct('tech')">
+        <span style="color:var(--muted);font-size:13px">of</span>
+        <input type="number" class="fi" id="tech-total" placeholder="Total" min="0" style="width:100px" oninput="updatePct('tech')">
+        <span style="color:var(--muted);font-size:13px">engineers · Target: 100%</span>
+        <button class="btn" style="margin-left:auto;padding:5px 12px;font-size:12px" onclick="saveTraining('tech')">Save</button>
+      </div>
+      <div class="pb" style="margin-top:10px"><div class="pf orange" id="tech-bar" style="width:0%"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- KPI TAB -->
+<div class="tab-pane" id="tab-kpis">
+  <div class="info-box">
+    Track the <strong>9 AI Governance KPIs</strong> defined in the RBA AIR Module. Enter current performance values below. All KPIs should be reported at minimum annually, with high-priority KPIs tracked quarterly.
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px" id="kpi-grid">
+    <!-- rendered by JS -->
+  </div>
+</div>
+</div>
+</div>
+<div id="toast"></div>
+<script>
+const AUTH_TOKEN=localStorage.getItem('ralph_client_token');
+if(!AUTH_TOKEN){window.location.href='/client';}
+function apiFetch(url,opts={}){
+  opts.headers=Object.assign({'Content-Type':'application/json','Authorization':'Bearer '+AUTH_TOKEN},opts.headers||{});
+  return fetch(window.location.origin+url,opts);
+}
+function toast(msg,type){const t=document.getElementById('toast');t.textContent=msg;t.className='show '+(type||'success');setTimeout(()=>t.className='',3000)}
+function tabs(container){
+  document.querySelectorAll(container+' .tab-btn').forEach(b=>{
+    b.addEventListener('click',()=>{
+      const id=b.dataset.tab;
+      document.querySelectorAll(container+' .tab-btn').forEach(x=>x.classList.remove('active'));
+      document.querySelectorAll(container+' .tab-pane').forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+      document.getElementById(id).classList.add('active');
+    });
+  });
+}
+
+const MAT_DATA = {
+  1:{name:'Initial / Ad Hoc',col:'var(--red)',bg:'rgba(218,54,51,.08)',bc:'rgba(218,54,51,.25)',
+    desc:'No formal AI governance exists. AI use may be occurring without organisational awareness, risk assessment, or controls. Significant compliance and liability exposure.',
+    chars:['No AI inventory','No AI Ethics Policy','AI systems unclassified and uncontrolled','No training or awareness','No incident management','Significant EU AI Act and employment law exposure'],
+    actions:['Commission immediate AI discovery audit','Develop and approve AI Ethics Policy within 30 days','Create initial AI inventory within 60 days','Brief executive team on legal exposure under EU AI Act','Establish named AI governance accountability (named individual)']},
+  2:{name:'Developing',col:'var(--orange)',bg:'rgba(232,81,10,.08)',bc:'rgba(232,81,10,.25)',
+    desc:'Basic policies exist but implementation is inconsistent. AI governance awareness is growing but controls are partial and unenforced. Regulatory exposure remains significant.',
+    chars:['AI Policy exists but not fully communicated','Partial AI inventory (some systems missing)','Ad hoc risk assessments, no consistent methodology','Some training conducted but not systematic','No supplier AI governance programme'],
+    actions:['Complete AI inventory across all business units','Roll out AI policy communication to all staff','Implement EU AI Act risk classification for all systems','Establish AI incident reporting procedure','Issue initial Supplier AI Declaration requests to Tier-1 suppliers']},
+  3:{name:'Defined / Risk-Based',col:'var(--blue)',bg:'rgba(56,139,253,.08)',bc:'rgba(56,139,253,.25)',
+    desc:'Systematic, risk-based AI governance. Controls are documented, consistently applied, and evidenced. Organisation is approaching VAP audit readiness for the AIR pillar.',
+    chars:['Full AI inventory maintained and reviewed semi-annually','All AI systems risk-classified per EU AI Act','Impact Assessments completed for High Risk AI','Bias testing conducted and documented','Human oversight implemented and tested','Supplier declarations collected for Tier-1'],
+    actions:['Conduct internal AIR audit using VAP Protocol','Address all Major and Critical VAP findings','Formalise AI Governance Committee with quarterly cadence','Implement audit logging for all High Risk AI','Extend supplier AI governance programme to sub-tier suppliers']},
+  4:{name:'Managed / Integrated',col:'var(--green)',bg:'rgba(46,160,67,.08)',bc:'rgba(46,160,67,.25)',
+    desc:'AI governance is integrated into business operations. KPIs are tracked and reported. Organisation is VAP audit-ready and actively managing AI risk as a strategic business priority.',
+    chars:['AI Governance Committee active — quarterly meetings, minutes retained','KPIs monitored and reported to board','Annual re-assessments completed on schedule','Supplier AI compliance actively managed','External VAP audit completed with no Critical findings','Lessons learned from incidents applied systematically'],
+    actions:['Pursue ISO 42001 AI Management System certification','Integrate AI KPIs into board-level ESG and risk reporting','Expand supplier compliance programme to sub-tier suppliers','Benchmark AI governance against RBA peer members','Engage proactively with regulators on AI policy']},
+  5:{name:'Optimised / Predictive',col:'var(--blue)',bg:'rgba(56,139,253,.08)',bc:'rgba(56,139,253,.25)',
+    desc:'AI governance is continuous, data-driven, and predictive. The organisation is an industry leader in responsible AI. Governance is embedded in culture, not just process.',
+    chars:['Predictive AI risk monitoring (real-time dashboards)','AI transparency report published annually','Industry thought leadership in responsible AI','Regulatory pre-engagement as a trusted voice','Supply chain AI governance fully cascaded','Continuous improvement culture — AI ethics is a competitive advantage'],
+    actions:['Contribute to RBA AI working groups and standards development','Publish annual AI transparency and governance report','Mentor supply chain partners on AI governance','Engage regulators proactively to shape AI policy','Share responsible AI case studies with the RBA community']}
+};
+
+let currentLevel = parseInt(localStorage.getItem('rba_maturity')||'2');
+
+function selectLevel(n){
+  currentLevel=n;
+  localStorage.setItem('rba_maturity',n);
+  document.querySelectorAll('.mat-btn').forEach(b=>{
+    const lv=parseInt(b.dataset.level);
+    const d=MAT_DATA[lv];
+    b.style.border=lv===n?'2px solid var(--orange)':'2px solid '+d.col.replace('var(--','rgba(').replace(')',',.3)');
+    b.style.background=lv===n?'rgba(232,81,10,.12)':d.bg;
+  });
+  document.getElementById('mat-selected-badge').textContent='Level '+n;
+  renderMatDetail(n);
+  toast('Maturity level set to Level '+n+' — '+MAT_DATA[n].name,'success');
+}
+
+function renderMatDetail(n){
+  const d=MAT_DATA[n];
+  document.getElementById('mat-detail').innerHTML=`
+    <div style="background:${d.bg};border:1px solid ${d.bc};border-radius:10px;padding:18px">
+      <div style="font-weight:800;font-size:15px;color:${d.col};margin-bottom:6px">Level ${n} — ${d.name}</div>
+      <div style="font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:16px">${d.desc}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div>
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:10px">Typical Characteristics</div>
+          <ul style="list-style:none;display:flex;flex-direction:column;gap:7px">
+            ${d.chars.map(c=>`<li style="display:flex;gap:8px;font-size:12px;color:var(--muted)"><span style="color:${d.col};flex-shrink:0">•</span>${c}</li>`).join('')}
+          </ul>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:10px">Priority Actions to Progress</div>
+          <ul style="list-style:none;display:flex;flex-direction:column;gap:7px">
+            ${d.actions.map((a,i)=>`<li style="display:flex;gap:8px;font-size:12px"><span style="color:var(--orange);font-weight:700;flex-shrink:0">${i+1}.</span><span style="color:var(--muted)">${a}</span></li>`).join('')}
+          </ul>
+        </div>
+      </div>
+    </div>`;
+}
+
+// Training
+const cohorts=['exec','mgr','ops','tech'];
+const savedTraining=JSON.parse(localStorage.getItem('rba_training')||'{}');
+cohorts.forEach(c=>{
+  if(savedTraining[c]){
+    document.getElementById(c+'-done').value=savedTraining[c].done||'';
+    document.getElementById(c+'-total').value=savedTraining[c].total||'';
+    updatePct(c);
+  }
+});
+function updatePct(c){
+  const done=parseInt(document.getElementById(c+'-done').value)||0;
+  const total=parseInt(document.getElementById(c+'-total').value)||0;
+  const pct=total>0?Math.min(100,Math.round((done/total)*100)):0;
+  document.getElementById(c+'-pct').textContent=pct+'%';
+  document.getElementById(c+'-bar').style.width=pct+'%';
+  const col=pct>=95?'green':pct>=60?'amber':pct>0?'orange':'red';
+  document.getElementById(c+'-bar').className='pf '+col;
+}
+function saveTraining(c){
+  const done=document.getElementById(c+'-done').value;
+  const total=document.getElementById(c+'-total').value;
+  savedTraining[c]={done,total};
+  localStorage.setItem('rba_training',JSON.stringify(savedTraining));
+  toast('Training data saved','success');
+}
+
+// KPIs
+const KPI_DATA=[
+  {name:'AI Inventory Completeness',unit:'%',target:'100%',freq:'Semi-annually',desc:'Percentage of known AI systems fully documented in the AI inventory register'},
+  {name:'AI Systems Risk-Assessed',unit:'%',target:'100% within 90 days',freq:'Quarterly',desc:'Percentage of AI systems with a completed and current risk classification'},
+  {name:'High Risk AI Controls Compliant',unit:'%',target:'100%',freq:'Quarterly',desc:'Percentage of High Risk AI systems with all mandatory AIR controls evidenced'},
+  {name:'Bias Incidents (Critical)',unit:'count',target:'0',freq:'Monthly',desc:'Number of confirmed critical AI bias or discriminatory outcome incidents'},
+  {name:'VAP Audit — Critical Findings',unit:'count',target:'0',freq:'Per audit cycle',desc:'Number of Critical VAP audit findings per audit cycle'},
+  {name:'Supplier AI Compliance Rate',unit:'%',target:'95%+',freq:'Annual',desc:'Percentage of Tier-1 suppliers with a completed and reviewed AI Declaration'},
+  {name:'Human Oversight Test Coverage',unit:'%',target:'100%',freq:'Annual',desc:'Percentage of High Risk AI systems with tested human override capability'},
+  {name:'Staff AI Training Completion',unit:'%',target:'95%+',freq:'Annual',desc:'Percentage of target staff cohort completing mandatory AI training'},
+  {name:'AI Incident MTTR',unit:'days',target:'<30 days',freq:'Monthly',desc:'Mean time from AI incident identification to verified remediation and closure'},
+];
+const savedKPIs=JSON.parse(localStorage.getItem('rba_kpis')||'{}');
+function renderKPIs(){
+  document.getElementById('kpi-grid').innerHTML=KPI_DATA.map((k,i)=>{
+    const val=savedKPIs[i]||'';
+    return `<div class="card" style="padding:16px">
+      <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">${k.name}</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:10px;line-height:1.5">${k.desc}</div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <input class="fi" style="flex:1" placeholder="Current value (${k.unit})" value="${val}" onchange="saveKPI(${i},this.value)" id="kpi-${i}">
+        <span style="font-size:11px;color:var(--muted);white-space:nowrap">${k.unit}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:11px">
+        <span style="color:var(--muted)">Target: <strong style="color:var(--green)">${k.target}</strong></span>
+        <span style="color:var(--muted)">${k.freq}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+function saveKPI(i,val){savedKPIs[i]=val;localStorage.setItem('rba_kpis',JSON.stringify(savedKPIs));toast('KPI saved','success');}
+
+// Tabs
+document.querySelectorAll('#train-tabs .tab-btn').forEach(b=>{
+  b.addEventListener('click',()=>{
+    const id=b.dataset.tab;
+    document.querySelectorAll('#train-tabs .tab-btn').forEach(x=>x.classList.remove('active'));
+    document.querySelectorAll('#train-tabs ~ .tab-pane').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    document.getElementById(id).classList.add('active');
+  });
+});
+
+// Init
+selectLevel(currentLevel);
+renderKPIs();
+</script>
+</body></html>

@@ -1,0 +1,250 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Supply Chain — Ralph Analytics</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+:root{--bg:#0d1117;--bg2:#161b22;--bg3:#1c2333;--bdr:#2a2d3e;--text:#e8eaf0;--muted:#8b8fa8;--o:#E8521A;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+.topbar{background:var(--bg2);border-bottom:1px solid var(--bdr);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.logo{width:30px;height:30px;border-radius:7px;background:var(--o);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.75rem;color:#fff;}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;font-size:.8rem;font-weight:700;cursor:pointer;border:none;font-family:inherit;text-decoration:none;}
+.btn-back{background:transparent;color:var(--muted);border:1px solid var(--bdr);}
+.btn-primary{background:var(--o);color:#fff;}
+.live-badge{display:flex;align-items:center;gap:6px;background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.2);border-radius:20px;padding:4px 12px;font-size:.72rem;font-weight:700;color:#4ade80;}
+.live-dot{width:7px;height:7px;border-radius:50%;background:#4ade80;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.main{max-width:1200px;margin:0 auto;padding:28px 24px;}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px;}
+.stat-card{background:var(--bg2);border:1px solid var(--bdr);border-radius:12px;padding:18px;}
+.stat-val{font-size:1.8rem;font-weight:900;line-height:1;margin-bottom:4px;}
+.stat-label{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);}
+.stat-delta{font-size:.71rem;margin-top:5px;color:#4ade80;}
+.card{background:var(--bg2);border:1px solid var(--bdr);border-radius:12px;padding:22px;margin-bottom:16px;}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.card-title{font-size:.82rem;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);}
+table{width:100%;border-collapse:collapse;}
+th{text-align:left;padding:10px 14px;font-size:.7rem;font-weight:800;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--bdr);}
+td{padding:11px 14px;font-size:.83rem;border-bottom:1px solid rgba(42,45,62,.5);}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(255,255,255,.015);}
+.badge{display:inline-flex;font-size:.7rem;font-weight:700;padding:3px 9px;border-radius:12px;}
+.b-red{background:rgba(239,68,68,.12);color:#ef4444;}
+.b-amber{background:rgba(245,158,11,.12);color:#f59e0b;}
+.b-green{background:rgba(74,222,128,.12);color:#4ade80;}
+.b-blue{background:rgba(96,165,250,.12);color:#60a5fa;}
+.b-purple{background:rgba(139,92,246,.12);color:#a78bfa;}
+.score-bar{height:8px;background:var(--bg3);border-radius:4px;overflow:hidden;display:inline-block;width:80px;vertical-align:middle;margin-right:6px;}
+.score-fill{height:100%;border-radius:4px;}
+.tier-badge{display:inline-flex;font-size:.68rem;font-weight:800;padding:2px 8px;border-radius:10px;border:1px solid;}
+.tier1{background:rgba(232,82,26,.1);border-color:rgba(232,82,26,.3);color:var(--o);}
+.tier2{background:rgba(96,165,250,.1);border-color:rgba(96,165,250,.3);color:#60a5fa;}
+.tier3{background:rgba(139,143,168,.08);border-color:rgba(139,143,168,.2);color:var(--muted);}
+.tabs{display:flex;gap:2px;background:var(--bg3);border-radius:10px;padding:4px;margin-bottom:20px;}
+.tab{padding:7px 16px;border-radius:7px;font-size:.8rem;font-weight:700;cursor:pointer;color:var(--muted);background:none;border:none;font-family:inherit;}
+.tab.active{background:var(--bg2);color:var(--text);border:1px solid var(--bdr);}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1000;align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--bg2);border:1px solid var(--bdr);border-radius:16px;padding:28px;max-width:540px;width:90%;max-height:90vh;overflow-y:auto;}
+.form-group{margin-bottom:14px;}
+.form-label{display:block;font-size:.73rem;font-weight:700;color:var(--muted);text-transform:uppercase;margin-bottom:6px;}
+.form-input{width:100%;padding:10px 13px;background:var(--bg);border:1px solid var(--bdr);border-radius:8px;color:var(--text);font-size:.85rem;font-family:inherit;outline:none;}
+.form-input:focus{border-color:var(--o);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+</style></head><body>
+
+<div class="topbar">
+  <div style="display:flex;align-items:center;gap:12px;">
+    <a href="/client"><div class="logo">R</div></a>
+    <span style="font-weight:800;font-size:.88rem;">Ralph Analytics</span>
+    <span style="color:var(--bdr);margin:0 4px;">/</span>
+    <span style="font-size:.82rem;color:var(--muted);">Supply Chain Vetting &amp; Monitoring</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <div class="live-badge"><div class="live-dot"></div>Live</div>
+    <a href="/client" class="btn btn-back">← Dashboard</a>
+    <button class="btn btn-primary" onclick="document.getElementById('add-supplier-modal').classList.add('open')">+ Add Supplier</button>
+  </div>
+</div>
+
+<div class="main">
+  <div style="margin-bottom:24px;">
+    <h1 style="font-size:1.5rem;font-weight:900;margin-bottom:6px;">Supply Chain Intelligence</h1>
+    <p style="font-size:.87rem;color:var(--muted);">RBA · SMETA · SA8000 · Multi-tier supplier visibility, ESG scoring &amp; continuous monitoring</p>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-val" style="color:var(--o);">47</div><div class="stat-label">Total Suppliers</div><div class="stat-delta">↑ 5 added this quarter</div></div>
+    <div class="stat-card"><div class="stat-val" style="color:#ef4444;">6</div><div class="stat-label">High-Risk Suppliers</div><div class="stat-delta" style="color:#ef4444;">↑ 1 escalated</div></div>
+    <div class="stat-card"><div class="stat-val" style="color:#4ade80;">89%</div><div class="stat-label">Tier 1 Compliance</div><div class="stat-delta">↑ 3% this period</div></div>
+    <div class="stat-card"><div class="stat-val" style="color:#f59e0b;">63%</div><div class="stat-label">Tier 2 Compliance</div><div class="stat-delta" style="color:#ef4444;">↓ 4% — 14 pending</div></div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab(this,'suppliers')">Supplier Directory</button>
+    <button class="tab" onclick="switchTab(this,'esg')">ESG Scores</button>
+    <button class="tab" onclick="switchTab(this,'monitoring')">Live Monitoring</button>
+  </div>
+
+  <!-- Supplier Directory -->
+  <div id="tab-suppliers">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Supplier Register</span>
+        <div style="display:flex;gap:8px;">
+          <select id="tier-filter" onchange="filterSuppliers()" style="background:var(--bg3);border:1px solid var(--bdr);color:var(--text);padding:6px 10px;border-radius:7px;font-size:.78rem;">
+            <option value="">All Tiers</option><option value="1">Tier 1</option><option value="2">Tier 2</option><option value="3">Tier 3</option>
+          </select>
+          <select id="risk-filter-sc" onchange="filterSuppliers()" style="background:var(--bg3);border:1px solid var(--bdr);color:var(--text);padding:6px 10px;border-radius:7px;font-size:.78rem;">
+            <option value="">All Risk Levels</option><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option>
+          </select>
+        </div>
+      </div>
+      <div style="overflow-x:auto;">
+        <table>
+          <thead><tr><th>Supplier</th><th>Country</th><th>Tier</th><th>Standard</th><th>Compliance Score</th><th>ESG Score</th><th>Risk Level</th><th>Last Audit</th><th>Status</th></tr></thead>
+          <tbody id="supplier-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ESG Scores -->
+  <div id="tab-esg" style="display:none;">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+      <div class="card">
+        <div class="card-header"><span class="card-title">ESG Score Distribution</span></div>
+        <div id="esg-bars"></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title">ESG Dimension Breakdown</span></div>
+        <div style="display:flex;flex-direction:column;gap:14px;">
+          <div><div style="display:flex;justify-content:space-between;font-size:.82rem;margin-bottom:6px;"><span>Environment</span><span style="color:#4ade80;">76%</span></div>
+            <div style="height:8px;background:var(--bg3);border-radius:4px;overflow:hidden;"><div style="width:76%;height:100%;background:#4ade80;border-radius:4px;"></div></div></div>
+          <div><div style="display:flex;justify-content:space-between;font-size:.82rem;margin-bottom:6px;"><span>Social</span><span style="color:#f59e0b;">62%</span></div>
+            <div style="height:8px;background:var(--bg3);border-radius:4px;overflow:hidden;"><div style="width:62%;height:100%;background:#f59e0b;border-radius:4px;"></div></div></div>
+          <div><div style="display:flex;justify-content:space-between;font-size:.82rem;margin-bottom:6px;"><span>Governance</span><span style="color:#60a5fa;">81%</span></div>
+            <div style="height:8px;background:var(--bg3);border-radius:4px;overflow:hidden;"><div style="width:81%;height:100%;background:#60a5fa;border-radius:4px;"></div></div></div>
+          <div><div style="display:flex;justify-content:space-between;font-size:.82rem;margin-bottom:6px;"><span>Labour Standards</span><span style="color:#ef4444;">55%</span></div>
+            <div style="height:8px;background:var(--bg3);border-radius:4px;overflow:hidden;"><div style="width:55%;height:100%;background:#ef4444;border-radius:4px;"></div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Live Monitoring -->
+  <div id="tab-monitoring" style="display:none;">
+    <div class="card">
+      <div class="card-header"><span class="card-title">Active Alerts &amp; Monitoring Events</span></div>
+      <div style="display:flex;flex-direction:column;gap:10px;" id="alert-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Add Supplier Modal -->
+<div class="modal-overlay" id="add-supplier-modal">
+  <div class="modal">
+    <div style="font-size:1.05rem;font-weight:800;margin-bottom:18px;">Add New Supplier</div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Supplier Name</label><input type="text" class="form-input" id="s-name" placeholder="Company name"/></div>
+      <div class="form-group"><label class="form-label">Country</label><input type="text" class="form-input" id="s-country" placeholder="e.g. China"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Tier</label>
+        <select class="form-input" id="s-tier"><option value="1">Tier 1 — Direct</option><option value="2">Tier 2 — Sub-supplier</option><option value="3">Tier 3 — Raw material</option></select></div>
+      <div class="form-group"><label class="form-label">Standard</label>
+        <select class="form-input" id="s-std"><option>RBA COC</option><option>SMETA 4P</option><option>SMETA 2P</option><option>SA8000</option><option>ISO 14001</option><option>GRI</option></select></div>
+    </div>
+    <div class="form-group"><label class="form-label">Contact Email</label><input type="email" class="form-input" id="s-email" placeholder="contact@supplier.com"/></div>
+    <div style="display:flex;gap:10px;margin-top:18px;">
+      <button class="btn btn-primary" style="flex:1;justify-content:center;" onclick="addSupplier()">Add Supplier</button>
+      <button class="btn btn-back" style="flex:1;justify-content:center;" onclick="document.getElementById('add-supplier-modal').classList.remove('open')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var suppliers=[
+  {name:'Shenzhen Precision Mfg',country:'China',tier:1,std:'RBA COC',comp:91,esg:88,risk:'low',audit:'2026-04-12',status:'Approved'},
+  {name:'Jakarta Textile Co.',country:'Indonesia',tier:2,std:'SMETA 4P',comp:74,esg:62,risk:'medium',audit:'2026-03-18',status:'Under Review'},
+  {name:'Dhaka Garment Works',country:'Bangladesh',tier:1,std:'SA8000',comp:61,esg:48,risk:'high',audit:'2026-02-28',status:'CAP Required'},
+  {name:'Chennai Components Ltd',country:'India',tier:2,std:'RBA COC',comp:78,esg:71,risk:'medium',audit:'2026-04-01',status:'Approved'},
+  {name:'Nairobi Distribution Hub',country:'Kenya',tier:1,std:'ISO 9001',comp:83,esg:79,risk:'low',audit:'2026-04-20',status:'Approved'},
+  {name:'Ho Chi Minh Plastics',country:'Vietnam',tier:3,std:'RBA COC',comp:52,esg:44,risk:'high',audit:'2025-12-10',status:'Suspended'},
+  {name:'Lagos Packaging Co.',country:'Nigeria',tier:2,std:'ISO 14001',comp:69,esg:66,risk:'medium',audit:'2026-03-05',status:'Under Review'},
+  {name:'Cairo Electronics',country:'Egypt',tier:2,std:'RBA COC',comp:81,esg:75,risk:'low',audit:'2026-01-14',status:'Approved'},
+  {name:'Manila Assembly Works',country:'Philippines',tier:1,std:'SMETA 2P',comp:85,esg:80,risk:'low',audit:'2026-04-08',status:'Approved'},
+  {name:'Karachi Textiles',country:'Pakistan',tier:2,std:'SA8000',comp:58,esg:51,risk:'high',audit:'2026-01-30',status:'CAP Required'},
+];
+function scoreColor(s){return s>=80?'#4ade80':s>=65?'#f59e0b':'#ef4444';}
+function renderSuppliers(data){
+  document.getElementById('supplier-tbody').innerHTML=data.map(function(s){
+    var rc={high:'b-red',medium:'b-amber',low:'b-green'}[s.risk]||'b-gray';
+    var sc={Approved:'b-green','CAP Required':'b-red','Under Review':'b-amber',Suspended:'b-red'}[s.status]||'b-gray';
+    return '<tr><td style="font-weight:600;">'+s.name+'</td><td style="color:var(--muted);">'+s.country+'</td>'
+      +'<td><span class="tier-badge tier'+s.tier+'">T'+s.tier+'</span></td>'
+      +'<td style="font-size:.78rem;">'+s.std+'</td>'
+      +'<td><span style="font-weight:700;color:'+scoreColor(s.comp)+';">'+s.comp+'%</span></td>'
+      +'<td><span style="font-weight:700;color:'+scoreColor(s.esg)+';">'+s.esg+'%</span></td>'
+      +'<td><span class="badge '+rc+'">'+s.risk+'</span></td>'
+      +'<td style="font-size:.78rem;color:var(--muted);">'+s.audit+'</td>'
+      +'<td><span class="badge '+sc+'">'+s.status+'</span></td></tr>';
+  }).join('');
+}
+function filterSuppliers(){
+  var t=document.getElementById('tier-filter').value;
+  var r=document.getElementById('risk-filter-sc').value;
+  var d=suppliers.filter(function(s){
+    return (!t||String(s.tier)===t)&&(!r||s.risk===r);
+  });
+  renderSuppliers(d);
+}
+function addSupplier(){
+  var n=document.getElementById('s-name').value.trim();if(!n)return;
+  suppliers.unshift({name:n,country:document.getElementById('s-country').value||'Unknown',
+    tier:parseInt(document.getElementById('s-tier').value),
+    std:document.getElementById('s-std').value,comp:0,esg:0,risk:'medium',audit:'Pending',status:'Pending'});
+  renderSuppliers(suppliers);document.getElementById('add-supplier-modal').classList.remove('open');
+}
+function switchTab(el,tab){
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
+  el.classList.add('active');
+  ['suppliers','esg','monitoring'].forEach(function(t){
+    document.getElementById('tab-'+t).style.display=t===tab?'block':'none';
+  });
+}
+// ESG distribution bars
+var esgBars=document.getElementById('esg-bars');
+if(esgBars){
+  var buckets={excellent:0,good:0,fair:0,poor:0};
+  suppliers.forEach(function(s){if(s.esg>=80)buckets.excellent++;else if(s.esg>=65)buckets.good++;else if(s.esg>=50)buckets.fair++;else buckets.poor++;});
+  esgBars.innerHTML=['excellent','good','fair','poor'].map(function(k){
+    var pct=Math.round((buckets[k]/suppliers.length)*100);
+    var col={excellent:'#4ade80',good:'#a3e635',fair:'#f59e0b',poor:'#ef4444'}[k];
+    return '<div style="margin-bottom:12px;"><div style="display:flex;justify-content:space-between;font-size:.8rem;margin-bottom:5px;text-transform:capitalize;">'
+      +'<span>'+k+'</span><span style="color:'+col+';">'+buckets[k]+' suppliers ('+pct+'%)</span></div>'
+      +'<div style="height:10px;background:var(--bg3);border-radius:5px;overflow:hidden;">'
+      +'<div style="width:'+pct+'%;height:100%;background:'+col+';border-radius:5px;"></div></div></div>';
+  }).join('');
+}
+// Alerts
+var alerts=[
+  {type:'critical',title:'Dhaka Garment Works — SA8000 Violation',msg:'Child labour indicator flagged. Immediate audit required.',time:'2h ago'},
+  {type:'high',title:'Ho Chi Minh Plastics — Overdue Assessment',msg:'Last audit 6 months ago. Escalation triggered.',time:'1d ago'},
+  {type:'medium',title:'Karachi Textiles — CAP Deadline Approaching',msg:'3 corrective actions due in 7 days.',time:'3h ago'},
+  {type:'low',title:'Jakarta Textile Co. — Review In Progress',msg:'SMETA 4P audit scheduled for next month.',time:'5h ago'},
+];
+var alertList=document.getElementById('alert-list');
+if(alertList){
+  var cols={critical:'#ef4444',high:'#f59e0b',medium:'#60a5fa',low:'#4ade80'};
+  alertList.innerHTML=alerts.map(function(a){
+    return '<div style="background:var(--bg3);border:1px solid var(--bdr);border-left:3px solid '+cols[a.type]+';border-radius:9px;padding:14px;">'
+      +'<div style="display:flex;justify-content:space-between;margin-bottom:5px;">'
+      +'<span style="font-weight:700;font-size:.86rem;">'+a.title+'</span>'
+      +'<span style="font-size:.72rem;color:var(--muted);">'+a.time+'</span></div>'
+      +'<span style="font-size:.82rem;color:var(--muted);">'+a.msg+'</span></div>';
+  }).join('');
+}
+document.getElementById('add-supplier-modal').addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');});
+renderSuppliers(suppliers);
+</script></body></html>
