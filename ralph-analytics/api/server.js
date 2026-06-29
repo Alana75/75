@@ -827,6 +827,7 @@ app.get('/rba/air/risk',     (_req, res) => { res.setHeader('Cache-Control','no-
 app.get('/rba/air/inventory',(_req, res) => { res.setHeader('Cache-Control','no-store,no-cache,must-revalidate'); res.sendFile(path.join(STATIC,'rba-air/inventory.html')); });
 app.get('/rba/air/suppliers',(_req, res) => { res.setHeader('Cache-Control','no-store,no-cache,must-revalidate'); res.sendFile(path.join(STATIC,'rba-air/suppliers.html')); });
 app.get('/rba/air/training', (_req, res) => { res.setHeader('Cache-Control','no-store,no-cache,must-revalidate'); res.sendFile(path.join(STATIC,'rba-air/training.html')); });
+app.get('/rba/air/maturity', (_req, res) => { res.setHeader('Cache-Control','no-store,no-cache,must-revalidate'); res.sendFile(path.join(STATIC,'rba-air/maturity.html')); });
 
 
 // ── POPIA S72 / GDPR Art.44 — Prompt Hygiene ─────────────────
@@ -1154,6 +1155,27 @@ app.get('/api/admin/db-status', requireAdmin, async (req, res) => {
 
 // ── RBA AIR Training & KPI API ──────────────────────────────────
 const trainingStore = {}; // In-memory store (use DB in production)
+app.get('/api/rba/training/progress', requireAuth, (req, res) => {
+  const key = req.user.email;
+  res.json((trainingStore[key] && trainingStore[key].progress) || {});
+});
+app.post('/api/rba/training/progress', requireAuth, (req, res) => {
+  const key = req.user.email;
+  if (!trainingStore[key]) trainingStore[key] = {};
+  trainingStore[key].progress = req.body;
+  res.json({ ok: true });
+});
+app.get('/api/rba/training/maturity', requireAuth, (req, res) => {
+  const key = req.user.email;
+  res.json((trainingStore[key] && trainingStore[key].maturityData) || {});
+});
+app.post('/api/rba/training/maturityData', requireAuth, (req, res) => {
+  const key = req.user.email;
+  if (!trainingStore[key]) trainingStore[key] = {};
+  trainingStore[key].maturityData = req.body;
+  res.json({ ok: true });
+});
+
 
 app.get('/api/rba/training/data', requireAuth, (req, res) => {
   const key = req.user?.id || 'default';
