@@ -85,5 +85,11 @@ module.exports = {
       cwd:    '/home/1638322.cloudwaysapps.com/amxhnzbwdx/public_html/monorepo',
       env: { NODE_ENV: 'production', PORT: '3100' },
     },
+      {
+      name: 'ralph-te-vetting',
+      script: './ralph-analytics/packages/te-vetting/index.js',
+      cwd:    '/home/1638322.cloudwaysapps.com/amxhnzbwdx/public_html/monorepo',
+      env: { NODE_ENV: 'production', PORT: '3120' },
+    },
   ],
 };

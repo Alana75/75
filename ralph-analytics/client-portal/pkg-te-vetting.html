@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Textile Exchange Vetting | Ralph Analytics</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+  :root{--bg:#0f1117;--surface:#181c27;--card:#1e2330;--border:#2a2f40;--accent:#E8521A;--accent2:#10b981;--accent3:#3b82f6;--text:#e8eaf0;--muted:#8b8fa8;--warn:#f59e0b;--danger:#ef4444;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;}
+  .topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 2rem;height:60px;display:flex;align-items:center;justify-content:space-between;}
+  .logo{font-weight:800;font-size:1.1rem;color:var(--accent);}
+  .badge{background:rgba(16,185,129,.15);color:#10b981;border:1px solid rgba(16,185,129,.3);border-radius:20px;padding:3px 12px;font-size:.72rem;font-weight:600;letter-spacing:.05em;}
+  .layout{display:grid;grid-template-columns:240px 1fr;min-height:calc(100vh - 60px);}
+  .sidebar{background:var(--surface);border-right:1px solid var(--border);padding:1.5rem 1rem;}
+  .sidebar h3{font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin:.5rem 0 .5rem .5rem;}
+  .nav-item{display:flex;align-items:center;gap:.6rem;padding:.6rem .75rem;border-radius:8px;cursor:pointer;color:var(--muted);font-size:.85rem;transition:all .2s;border:none;background:none;width:100%;text-align:left;}
+  .nav-item:hover{background:rgba(255,255,255,.05);color:var(--text);}
+  .nav-item.active{background:rgba(232,82,26,.12);color:var(--accent);font-weight:600;}
+  .main{padding:2rem;overflow-y:auto;}
+  .page{display:none;} .page.active{display:block;}
+  .page-title{font-size:1.5rem;font-weight:700;margin-bottom:.4rem;}
+  .page-sub{color:var(--muted);font-size:.9rem;margin-bottom:2rem;}
+  .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin-bottom:2rem;}
+  .stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.2rem;}
+  .stat-label{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.4rem;}
+  .stat-val{font-size:1.8rem;font-weight:800;line-height:1;}
+  .stat-sub{font-size:.72rem;color:var(--muted);margin-top:.3rem;}
+  .green{color:#10b981;} .amber{color:#f59e0b;} .red{color:#ef4444;} .blue{color:#3b82f6;}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:1.5rem;}
+  .card-header{padding:1rem 1.2rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+  .card-title{font-weight:700;font-size:.95rem;}
+  .card-body{padding:1.2rem;}
+  table{width:100%;border-collapse:collapse;font-size:.85rem;}
+  th{text-align:left;padding:.7rem 1rem;background:rgba(255,255,255,.03);color:var(--muted);font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);}
+  td{padding:.75rem 1rem;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:middle;}
+  tr:hover td{background:rgba(255,255,255,.02);}
+  .pill{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:600;}
+  .pill-green{background:rgba(16,185,129,.15);color:#10b981;border:1px solid rgba(16,185,129,.25);}
+  .pill-amber{background:rgba(245,158,11,.15);color:#f59e0b;border:1px solid rgba(245,158,11,.25);}
+  .pill-red{background:rgba(239,68,68,.15);color:#ef4444;border:1px solid rgba(239,68,68,.25);}
+  .pill-blue{background:rgba(59,130,246,.15);color:#3b82f6;border:1px solid rgba(59,130,246,.25);}
+  .pill-gray{background:rgba(139,143,168,.15);color:var(--muted);border:1px solid rgba(139,143,168,.2);}
+  .risk-bar{height:6px;border-radius:3px;background:var(--border);}
+  .risk-fill{height:100%;border-radius:3px;transition:width .5s;}
+  .btn{padding:.55rem 1.2rem;border-radius:8px;font-size:.82rem;font-weight:600;cursor:pointer;border:none;transition:all .2s;}
+  .btn-primary{background:var(--accent);color:#fff;} .btn-primary:hover{background:#d4450f;}
+  .btn-outline{background:transparent;border:1px solid var(--border);color:var(--text);} .btn-outline:hover{border-color:var(--accent);color:var(--accent);}
+  .btn-sm{padding:.35rem .8rem;font-size:.76rem;}
+  .btn-green{background:rgba(16,185,129,.15);color:#10b981;border:1px solid rgba(16,185,129,.3);}
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+  .form-group{margin-bottom:1rem;}
+  .form-group label{display:block;font-size:.78rem;color:var(--muted);margin-bottom:.4rem;font-weight:500;}
+  .form-group input,.form-group select,.form-group textarea{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.6rem .9rem;color:var(--text);font-size:.85rem;font-family:'Inter',sans-serif;}
+  .form-group input:focus,.form-group select:focus{outline:none;border-color:var(--accent);}
+  .alert{padding:1rem 1.2rem;border-radius:10px;margin-bottom:1rem;font-size:.85rem;}
+  .alert-red{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);color:#fca5a5;}
+  .alert-amber{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);color:#fcd34d;}
+  .alert-green{background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.25);color:#6ee7b7;}
+  .progress-wrap{background:var(--border);border-radius:4px;height:8px;overflow:hidden;margin-top:.3rem;}
+  .progress-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,#10b981,#3b82f6);}
+  .check-row{display:flex;align-items:center;justify-content:space-between;padding:.6rem 0;border-bottom:1px solid rgba(255,255,255,.04);}
+  .check-label{font-size:.84rem;color:var(--muted);}
+  .check-icon{font-size:1rem;}
+  .score-ring{width:90px;height:90px;position:relative;display:flex;align-items:center;justify-content:center;}
+  .score-ring svg{position:absolute;top:0;left:0;transform:rotate(-90deg);}
+  .score-num{font-size:1.3rem;font-weight:800;z-index:1;}
+  .tabs{display:flex;gap:.5rem;margin-bottom:1.5rem;border-bottom:1px solid var(--border);padding-bottom:0;}
+  .tab-btn{padding:.6rem 1rem;border:none;background:none;color:var(--muted);font-size:.82rem;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;font-family:'Inter',sans-serif;}
+  .tab-btn.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:600;}
+  .tab-content{display:none;} .tab-content.active{display:block;}
+  @media(max-width:768px){.layout{grid-template-columns:1fr;}.form-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo">⬡ Textile Exchange Vetting System</div>
+  <div style="display:flex;align-items:center;gap:1rem;">
+    <span class="badge">Standards Transition Monitor</span>
+    <button class="btn btn-outline btn-sm" onclick="window.location.href='/client'">← Portal</button>
+  </div>
+</div>
+
+<div class="layout">
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <h3>Navigation</h3>
+    <button class="nav-item active" onclick="showPage('dashboard',this)">📊 Dashboard</button>
+    <button class="nav-item" onclick="showPage('intake',this)">➕ Member Intake</button>
+    <button class="nav-item" onclick="showPage('members',this)">👥 Member Registry</button>
+    <button class="nav-item" onclick="showPage('assessment',this)">🔍 Assessment Engine</button>
+    <button class="nav-item" onclick="showPage('monitoring',this)">📡 Live Monitoring</button>
+    <button class="nav-item" onclick="showPage('standards',this)">📋 Standards Matrix</button>
+    <button class="nav-item" onclick="showPage('reports',this)">📄 Reports</button>
+    <h3 style="margin-top:1.5rem;">Standards</h3>
+    <div style="padding:.5rem .75rem;font-size:.75rem;color:var(--muted);line-height:1.7;">
+      TE Organic<br/>TE Recycled<br/>TE Preferred<br/>ZDHC MRSL<br/>Bluesign<br/>POPIA · GDPR
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main">
+
+    <!-- ── DASHBOARD ── -->
+    <div class="page active" id="page-dashboard">
+      <div class="page-title">Portfolio Dashboard</div>
+      <div class="page-sub">Textile Exchange Standards Transition — Real-time compliance intelligence</div>
+
+      <div class="stat-grid" id="portfolio-stats">
+        <div class="stat"><div class="stat-label">Total Members</div><div class="stat-val blue" id="s-total">—</div><div class="stat-sub">Under management</div></div>
+        <div class="stat"><div class="stat-label">Compliant</div><div class="stat-val green" id="s-compliant">—</div><div class="stat-sub">Fully certified</div></div>
+        <div class="stat"><div class="stat-label">In Transition</div><div class="stat-val amber" id="s-transition">—</div><div class="stat-sub">Active progress</div></div>
+        <div class="stat"><div class="stat-label">Non-Compliant</div><div class="stat-val red" id="s-noncompliant">—</div><div class="stat-sub">Requires action</div></div>
+        <div class="stat"><div class="stat-label">Compliance Rate</div><div class="stat-val green" id="s-rate">—</div><div class="stat-sub">Portfolio average</div></div>
+        <div class="stat"><div class="stat-label">Avg Risk Score</div><div class="stat-val amber" id="s-avgrisk">—</div><div class="stat-sub">0 = safe, 100 = critical</div></div>
+      </div>
+
+      <div id="alerts-section"></div>
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">High-Risk Members</span>
+          <button class="btn btn-outline btn-sm" onclick="loadPortfolio()">↻ Refresh</button>
+        </div>
+        <div class="card-body" id="high-risk-list" style="color:var(--muted);font-size:.85rem;">Loading...</div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><span class="card-title">Standards Coverage — TE Framework</span></div>
+        <div class="card-body">
+          <div class="check-row"><span class="check-label">Textile Exchange Organic (OCS/GOTS)</span><span class="check-icon">✅</span></div>
+          <div class="check-row"><span class="check-label">TE Recycled Content Standard (RCS/GRS)</span><span class="check-icon">✅</span></div>
+          <div class="check-row"><span class="check-label">TE Preferred Fibre Standards</span><span class="check-icon">✅</span></div>
+          <div class="check-row"><span class="check-label">ZDHC Manufacturing Restricted Substances List</span><span class="check-icon">✅</span></div>
+          <div class="check-row"><span class="check-label">Bluesign System Partner Requirements</span><span class="check-icon">✅</span></div>
+          <div class="check-row"><span class="check-label">POPIA Data Privacy Overlay</span><span class="check-icon">✅</span></div>
+          <div class="check-row"><span class="check-label">GDPR Data Protection Requirements</span><span class="check-icon">✅</span></div>
+          <div class="check-row"><span class="check-label">EU Supply Chain Due Diligence (CSDDD)</span><span class="check-icon">🔄</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── INTAKE ── -->
+    <div class="page" id="page-intake">
+      <div class="page-title">Member Intake & Classification</div>
+      <div class="page-sub">Register a new Textile Exchange member for vetting and standards transition monitoring</div>
+
+      <div class="card">
+        <div class="card-header"><span class="card-title">Company Information</span></div>
+        <div class="card-body">
+          <div class="form-grid">
+            <div class="form-group"><label>Company Name *</label><input id="f-company" placeholder="e.g. Sustainable Fibres Ltd"/></div>
+            <div class="form-group"><label>Country / Region *</label><input id="f-country" placeholder="e.g. Bangladesh"/></div>
+            <div class="form-group"><label>Geography Risk Level</label>
+              <select id="f-geo">
+                <option value="low">Low — Western Europe, North America, ANZ</option>
+                <option value="medium" selected>Medium — Eastern Europe, South America</option>
+                <option value="high">High — South/SE Asia, North Africa</option>
+                <option value="critical">Critical — High-risk geographies (OFAC, conflict zones)</option>
+              </select>
+            </div>
+            <div class="form-group"><label>Operations Type</label>
+              <select id="f-ops">
+                <option value="brand">Brand / Retailer</option>
+                <option value="manufacturer">Manufacturer</option>
+                <option value="supplier">Raw Material Supplier</option>
+                <option value="certifier">Certification Body</option>
+              </select>
+            </div>
+            <div class="form-group"><label>Supply Chain Depth (Tiers)</label>
+              <select id="f-scd">
+                <option value="1">1 — Direct</option>
+                <option value="2">2 — One removed</option>
+                <option value="3" selected>3 — Multi-tier</option>
+                <option value="4">4 — Complex</option>
+                <option value="5">5 — Highly complex</option>
+              </select>
+            </div>
+            <div class="form-group"><label>Current Certification Status</label>
+              <select id="f-cert">
+                <option value="certified">Certified — Active TE Standard(s)</option>
+                <option value="transitioning" selected>Transitioning — In progress</option>
+                <option value="non-compliant">Non-Compliant — No certification</option>
+                <option value="unknown">Unknown — Pending verification</option>
+              </select>
+            </div>
+            <div class="form-group"><label>Transition Progress (%)</label><input id="f-progress" type="number" min="0" max="100" placeholder="0–100" value="35"/></div>
+            <div class="form-group"><label>Certification Expiry Date</label><input id="f-expiry" type="date"/></div>
+          </div>
+
+          <div style="border-top:1px solid var(--border);padding-top:1rem;margin-top:1rem;">
+            <div style="font-size:.8rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.8rem;">Evidence & Documentation</div>
+            <div class="form-grid">
+              <div class="form-group"><label>Documentation Completeness (%)</label><input id="f-docs" type="number" min="0" max="100" value="60"/></div>
+              <div class="form-group"><label>Has Formal Transition Plan?</label>
+                <select id="f-transplan"><option value="1">Yes</option><option value="0" selected>No</option></select>
+              </div>
+              <div class="form-group"><label>Organic Cert (OCS/GOTS)</label>
+                <select id="f-organic"><option value="1">Yes</option><option value="0" selected>No</option></select>
+              </div>
+              <div class="form-group"><label>Recycled Content Cert (RCS/GRS)</label>
+                <select id="f-recycled"><option value="1">Yes</option><option value="0" selected>No</option></select>
+              </div>
+              <div class="form-group"><label>Traceability System</label>
+                <select id="f-trace"><option value="1">Yes — documented</option><option value="0" selected>No</option></select>
+              </div>
+              <div class="form-group"><label>Third-Party Audit Report</label>
+                <select id="f-audit"><option value="1">Yes — current</option><option value="0" selected>No</option></select>
+              </div>
+              <div class="form-group"><label>Chemical Policy (ZDHC/Bluesign)</label>
+                <select id="f-chem"><option value="1">Yes</option><option value="0" selected>No</option></select>
+              </div>
+              <div class="form-group"><label>Worker Grievance Mechanism</label>
+                <select id="f-grieve"><option value="1">Yes</option><option value="0" selected>No</option></select>
+              </div>
+              <div class="form-group"><label>Data Privacy Policy (POPIA/GDPR)</label>
+                <select id="f-privacy"><option value="1">Yes</option><option value="0" selected>No</option></select>
+              </div>
+              <div class="form-group"><label>Contact Email</label><input id="f-email" type="email" placeholder="compliance@company.com"/></div>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:.8rem;margin-top:.5rem;">
+            <button class="btn btn-primary" onclick="submitIntake()">Register Member & Run Assessment</button>
+            <button class="btn btn-outline" onclick="clearForm()">Clear Form</button>
+          </div>
+          <div id="intake-result" style="margin-top:1rem;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── MEMBERS ── -->
+    <div class="page" id="page-members">
+      <div class="page-title">Member Registry</div>
+      <div class="page-sub">All registered Textile Exchange members and their compliance status</div>
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Registered Members</span>
+          <button class="btn btn-outline btn-sm" onclick="loadMembers()">↻ Refresh</button>
+        </div>
+        <div class="card-body" style="padding:0;">
+          <table>
+            <thead><tr><th>Company</th><th>Geography</th><th>Cert Status</th><th>Compliance</th><th>Risk Score</th><th>Last Assessed</th><th>Action</th></tr></thead>
+            <tbody id="members-tbody"><tr><td colspan="7" style="text-align:center;color:var(--muted);padding:2rem;">No members registered yet</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── ASSESSMENT ── -->
+    <div class="page" id="page-assessment">
+      <div class="page-title">Assessment Engine</div>
+      <div class="page-sub">Run or review individual member compliance assessments</div>
+      <div id="assessment-content">
+        <div class="alert alert-amber">Select a member from the Member Registry and click "Assess" to run a full standards transition assessment.</div>
+      </div>
+    </div>
+
+    <!-- ── MONITORING ── -->
+    <div class="page" id="page-monitoring">
+      <div class="page-title">Live Monitoring & Alerts</div>
+      <div class="page-sub">Real-time alerts for overdue transitions, expiring certifications, and risk changes</div>
+      <div id="monitoring-content">
+        <button class="btn btn-primary" onclick="loadAlerts()" style="margin-bottom:1.5rem;">↻ Refresh Alerts</button>
+        <div id="alerts-list"><div class="alert alert-amber">Click refresh to load current alerts.</div></div>
+      </div>
+    </div>
+
+    <!-- ── STANDARDS MATRIX ── -->
+    <div class="page" id="page-standards">
+      <div class="page-title">Standards Matrix</div>
+      <div class="page-sub">Textile Exchange framework — standards, timelines, and compliance requirements</div>
+      <div class="card">
+        <div class="card-header"><span class="card-title">TE Standards Transition Framework</span></div>
+        <div class="card-body" style="padding:0;">
+          <table>
+            <thead><tr><th>Standard</th><th>Type</th><th>Transition Timeline</th><th>Key Requirements</th><th>Regulatory Link</th></tr></thead>
+            <tbody>
+              <tr><td><strong>TE Organic Content Standard (OCS)</strong></td><td><span class="pill pill-green">Organic</span></td><td>12 months</td><td>Chain of custody, blending rules, input verification</td><td>POPIA / GDPR</td></tr>
+              <tr><td><strong>Global Organic Textile Standard (GOTS)</strong></td><td><span class="pill pill-green">Organic</span></td><td>18 months</td><td>Full supply chain certification, wastewater standards</td><td>EU CSDDD</td></tr>
+              <tr><td><strong>Recycled Content Standard (RCS)</strong></td><td><span class="pill pill-blue">Recycled</span></td><td>12 months</td><td>Input material verification, mass balance</td><td>—</td></tr>
+              <tr><td><strong>Global Recycled Standard (GRS)</strong></td><td><span class="pill pill-blue">Recycled</span></td><td>18 months</td><td>Full social & environmental criteria + recycled content</td><td>EU CSDDD</td></tr>
+              <tr><td><strong>TE Preferred Fibre Standards</strong></td><td><span class="pill pill-amber">Preferred</span></td><td>24 months</td><td>Fibre-specific criteria, sourcing benchmarks</td><td>—</td></tr>
+              <tr><td><strong>ZDHC MRSL</strong></td><td><span class="pill pill-red">Chemical</span></td><td>6 months</td><td>Restricted substance list, wastewater discharge limits</td><td>REACH (EU)</td></tr>
+              <tr><td><strong>Bluesign System</strong></td><td><span class="pill pill-red">Chemical</span></td><td>12 months</td><td>Resource productivity, consumer safety, water/air/energy</td><td>REACH (EU)</td></tr>
+              <tr><td><strong>POPIA Compliance</strong></td><td><span class="pill pill-gray">Data</span></td><td>Immediate</td><td>Personal data processing, information officer registration</td><td>South Africa</td></tr>
+              <tr><td><strong>GDPR Compliance</strong></td><td><span class="pill pill-gray">Data</span></td><td>Immediate</td><td>Data subject rights, DPA agreements, lawful processing basis</td><td>EU</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── REPORTS ── -->
+    <div class="page" id="page-reports">
+      <div class="page-title">Reports & Export</div>
+      <div class="page-sub">Generate compliance reports for individual members or full portfolio</div>
+      <div class="card">
+        <div class="card-header"><span class="card-title">Report Actions</span></div>
+        <div class="card-body" style="display:flex;flex-direction:column;gap:.8rem;">
+          <button class="btn btn-primary" onclick="exportPortfolioReport()">⬇ Export Portfolio Report (JSON)</button>
+          <button class="btn btn-outline" onclick="exportAuditLog()">⬇ Export Audit Log</button>
+          <button class="btn btn-outline" onclick="exportHighRiskReport()">⬇ High-Risk Members Report</button>
+        </div>
+      </div>
+      <div id="report-output"></div>
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /layout -->
+
+<script>
+const API = window.location.origin;
+
+function showPage(id, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  if (el) el.classList.add('active');
+  if (id === 'dashboard') loadPortfolio();
+  if (id === 'members')   loadMembers();
+  if (id === 'monitoring') loadAlerts();
+}
+
+async function api(path, method='GET', body=null) {
+  const opts = { method, headers: { 'Content-Type': 'application/json' } };
+  if (body) opts.body = JSON.stringify(body);
+  const r = await fetch(API + path, opts);
+  return r.json();
+}
+
+async function loadPortfolio() {
+  const d = await api('/te/api/portfolio');
+  if (!d.success) return;
+  const p = d.data;
+  document.getElementById('s-total').textContent       = p.totalMembers;
+  document.getElementById('s-compliant').textContent   = p.compliant;
+  document.getElementById('s-transition').textContent  = p.inTransition;
+  document.getElementById('s-noncompliant').textContent= p.nonCompliant;
+  document.getElementById('s-rate').textContent        = p.complianceRate + '%';
+  document.getElementById('s-avgrisk').textContent     = p.avgRiskScore;
+
+  const hl = document.getElementById('high-risk-list');
+  if (!p.highRiskMembers.length) {
+    hl.innerHTML = '<p style="color:var(--muted)">No high-risk members currently flagged.</p>';
+  } else {
+    hl.innerHTML = p.highRiskMembers.map(m =>
+      `<div style="display:flex;justify-content:space-between;align-items:center;padding:.6rem 0;border-bottom:1px solid var(--border);">
+        <span style="font-weight:600;">${m.company}</span>
+        <span class="pill pill-red">Risk: ${m.score}</span>
+      </div>`
+    ).join('');
+  }
+}
+
+async function loadMembers() {
+  const d = await api('/te/api/members');
+  if (!d.success) return;
+  const tbody = document.getElementById('members-tbody');
+  if (!d.data.length) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:2rem;">No members registered yet — use Member Intake to add.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = d.data.map(m => {
+    const sc = m.riskScore;
+    const pill = m.complianceStatus==='Compliant' ? 'pill-green' : m.complianceStatus==='In Transition' ? 'pill-amber' : m.complianceStatus==='Non-Compliant' ? 'pill-red' : 'pill-gray';
+    const rColor = sc===null ? 'var(--muted)' : sc < 35 ? '#10b981' : sc < 65 ? '#f59e0b' : '#ef4444';
+    return `<tr>
+      <td><strong>${m.companyName||'—'}</strong></td>
+      <td>${m.geography||'—'}</td>
+      <td><span class="pill ${m.certStatus==='certified'?'pill-green':m.certStatus==='transitioning'?'pill-amber':'pill-red'}">${m.certStatus||'—'}</span></td>
+      <td><span class="pill ${pill}">${m.complianceStatus}</span></td>
+      <td><span style="color:${rColor};font-weight:700;">${sc !== null ? sc : '—'}</span></td>
+      <td style="color:var(--muted);font-size:.78rem;">${m.lastAssessed ? new Date(m.lastAssessed).toLocaleDateString() : 'Not assessed'}</td>
+      <td><button class="btn btn-outline btn-sm" onclick="assessMember('${m.id}')">Assess</button></td>
+    </tr>`;
+  }).join('');
+}
+
+async function assessMember(id) {
+  showPage('assessment', document.querySelector('.nav-item:nth-child(4)'));
+  const ac = document.getElementById('assessment-content');
+  ac.innerHTML = '<p style="color:var(--muted)">Running assessment...</p>';
+  const d = await api('/te/api/members/' + id + '/assess');
+  if (!d.success) { ac.innerHTML = '<div class="alert alert-red">Assessment failed.</div>'; return; }
+  const r = d.data;
+  const scoreColor = r.riskScore < 35 ? '#10b981' : r.riskScore < 65 ? '#f59e0b' : '#ef4444';
+  const pill = r.complianceStatus==='Compliant'?'pill-green':r.complianceStatus==='In Transition'?'pill-amber':'pill-red';
+  const confPill = r.confidence==='High'?'pill-green':r.confidence==='Medium'?'pill-amber':'pill-red';
+  ac.innerHTML = `
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Assessment — ${r.companyName}</span>
+        <span style="font-size:.78rem;color:var(--muted)">${new Date(r.assessedAt).toLocaleString()}</span>
+      </div>
+      <div class="card-body">
+        <div style="display:grid;grid-template-columns:auto 1fr;gap:2rem;margin-bottom:1.5rem;align-items:center;">
+          <div style="text-align:center;">
+            <div style="font-size:3rem;font-weight:800;color:${scoreColor};">${r.riskScore}</div>
+            <div style="font-size:.72rem;color:var(--muted);text-transform:uppercase;">Risk Score</div>
+          </div>
+          <div>
+            <div style="margin-bottom:.5rem;"><span class="pill ${pill}">${r.complianceStatus}</span> <span class="pill ${confPill}" style="margin-left:.5rem;">Confidence: ${r.confidence}</span></div>
+            <div style="font-size:.84rem;color:${r.escalationStatus.includes('Escalated')?'#ef4444':'#10b981'};margin-top:.4rem;">
+              ${r.escalationStatus.includes('Escalated') ? '⚠ ' : '✓ '}${r.escalationStatus}
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:1.2rem;">
+          <div style="font-size:.78rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.6rem;">Identified Gaps (${r.gaps.length})</div>
+          ${r.gaps.length ? r.gaps.map(g=>`<div class="alert alert-red" style="margin-bottom:.4rem;padding:.5rem .8rem;">${g}</div>`).join('') : '<div class="alert alert-green">No gaps identified.</div>'}
+        </div>
+        <div style="margin-bottom:1.2rem;">
+          <div style="font-size:.78rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.6rem;">Required Actions (${r.recommendedActions.length})</div>
+          ${r.recommendedActions.map(a=>`<div style="display:flex;gap:.8rem;align-items:flex-start;padding:.5rem 0;border-bottom:1px solid var(--border);">
+            <span class="pill ${a.priority==='Critical'?'pill-red':a.priority==='High'?'pill-amber':'pill-blue'}">${a.priority}</span>
+            <span style="font-size:.84rem;">${a.action}</span>
+          </div>`).join('')}
+        </div>
+        <div>
+          <div style="font-size:.78rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.6rem;">Standards Checked</div>
+          <div style="display:flex;flex-wrap:wrap;gap:.4rem;">
+            ${r.standardsChecked.map(s=>`<span class="pill pill-gray">${s}</span>`).join('')}
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
+async function loadAlerts() {
+  const d = await api('/te/api/monitoring/alerts');
+  const el = document.getElementById('alerts-list');
+  if (!d.success) { el.innerHTML = '<div class="alert alert-red">Failed to load alerts.</div>'; return; }
+  if (!d.alerts.length) { el.innerHTML = '<div class="alert alert-green">No active alerts — all members within normal parameters.</div>'; return; }
+  el.innerHTML = d.alerts.map(a => `
+    <div class="alert ${a.severity==='Critical'?'alert-red':'alert-amber'}" style="display:flex;justify-content:space-between;align-items:center;">
+      <div><strong>${a.company}</strong><br/><span style="font-size:.82rem;">${a.alert}</span></div>
+      <span class="pill ${a.severity==='Critical'?'pill-red':'pill-amber'}">${a.severity}</span>
+    </div>`).join('');
+}
+
+async function submitIntake() {
+  const el = document.getElementById('intake-result');
+  el.innerHTML = '<p style="color:var(--muted)">Processing...</p>';
+
+  const payload = {
+    companyName:        document.getElementById('f-company').value,
+    country:            document.getElementById('f-country').value,
+    geography:          document.getElementById('f-geo').value,
+    operationsType:     document.getElementById('f-ops').value,
+    supplyChainDepth:   Number(document.getElementById('f-scd').value),
+    certStatus:         document.getElementById('f-cert').value,
+    transitionProgress: Number(document.getElementById('f-progress').value),
+    certExpiry:         document.getElementById('f-expiry').value,
+    docCompleteness:    Number(document.getElementById('f-docs').value),
+    transitionPlan:     document.getElementById('f-transplan').value === '1',
+    organicCert:        document.getElementById('f-organic').value === '1',
+    recycledCert:       document.getElementById('f-recycled').value === '1',
+    traceabilitySystem: document.getElementById('f-trace').value === '1',
+    auditReport:        document.getElementById('f-audit').value === '1',
+    chemicalPolicy:     document.getElementById('f-chem').value === '1',
+    grievanceMechanism: document.getElementById('f-grieve').value === '1',
+    dataPrivacyPolicy:  document.getElementById('f-privacy').value === '1',
+    contactEmail:       document.getElementById('f-email').value
+  };
+
+  if (!payload.companyName) { el.innerHTML = '<div class="alert alert-red">Company name is required.</div>'; return; }
+
+  const reg = await api('/te/api/members', 'POST', payload);
+  if (!reg.success) { el.innerHTML = '<div class="alert alert-red">Registration failed.</div>'; return; }
+
+  const assess = await api('/te/api/members/' + reg.id + '/assess');
+  if (assess.success) {
+    const r = assess.data;
+    const scoreColor = r.riskScore < 35 ? '#10b981' : r.riskScore < 65 ? '#f59e0b' : '#ef4444';
+    el.innerHTML = `<div class="alert alert-green">
+      <strong>✓ Member registered and assessed</strong><br/>
+      <span style="font-size:.85rem;">Status: <strong>${r.complianceStatus}</strong> | Risk Score: <strong style="color:${scoreColor}">${r.riskScore}</strong> | ${r.escalationStatus.includes('Escalated') ? '⚠ Escalated' : '✓ No escalation'}</span>
+    </div>`;
+  } else {
+    el.innerHTML = '<div class="alert alert-green">✓ Member registered. Go to Member Registry to run assessment.</div>';
+  }
+}
+
+function clearForm() {
+  ['f-company','f-country','f-progress','f-expiry','f-docs','f-email'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('intake-result').innerHTML = '';
+}
+
+async function exportPortfolioReport() {
+  const [portfolio, members] = await Promise.all([api('/te/api/portfolio'), api('/te/api/members')]);
+  const report = { generated: new Date().toISOString(), portfolio: portfolio.data, members: members.data };
+  const blob = new Blob([JSON.stringify(report, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = 'te_portfolio_report.json'; a.click();
+}
+
+async function exportAuditLog() {
+  const d = await api('/te/api/audit-log');
+  const blob = new Blob([JSON.stringify(d.log, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = 'te_audit_log.json'; a.click();
+}
+
+async function exportHighRiskReport() {
+  const d = await api('/te/api/portfolio');
+  const blob = new Blob([JSON.stringify(d.data.highRiskMembers, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = 'te_highrisk_report.json'; a.click();
+}
+
+// Initial load
+loadPortfolio();
+</script>
+</body>
+</html>

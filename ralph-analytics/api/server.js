@@ -1162,6 +1162,38 @@ app.get('/api/admin/db-status', requireAdmin, async (req, res) => {
   } catch(e) { log('error', e.message); res.status(500).json({ error: 'Server error' }); }
 });
 
+
+// ════════════════════════════════════════════════════════════════
+// TE VETTING — Textile Exchange Standards Transition Proxy
+// ════════════════════════════════════════════════════════════════
+// Serve portal page
+app.get('/te', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'client-portal', 'pkg-te-vetting.html'));
+});
+app.get('/te/dashboard', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'client-portal', 'pkg-te-vetting.html'));
+});
+
+// Proxy API calls to TE microservice on :3120
+const TE_API_BASE = 'http://127.0.0.1:3120';
+app.all('/te/api/*', async (req, res) => {
+  try {
+    const target = TE_API_BASE + req.path.replace('/te', '');
+    const opts = {
+      method: req.method,
+      headers: { 'Content-Type': 'application/json', 'X-Forwarded-For': req.ip }
+    };
+    if (['POST','PUT','PATCH'].includes(req.method)) opts.body = JSON.stringify(req.body);
+    const upResp = await fetch(target + (req.url.includes('?') ? '?' + req.url.split('?')[1] : ''), opts);
+    const data = await upResp.json();
+    res.status(upResp.status).json(data);
+  } catch (err) {
+    log('error', '[TE-Proxy] ' + err.message);
+    res.status(502).json({ success: false, error: 'TE service unavailable', detail: err.message });
+  }
+});
+// ════════════════════════════════════════════════════════════════
+
 // ── 404 catch-all (must be last) ─────────────────────────────────────────────
 
 // ── RBA AIR Training & KPI API ──────────────────────────────────
