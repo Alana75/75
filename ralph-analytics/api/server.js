@@ -302,8 +302,19 @@ async function dbUpdateTicket(id, updates) {
 
 // ── Email transport ──────────────────────────────────────────
 let mailer = null;
+// Resend HTTP API primary — see resend_send()
+async function resend_send(opts) {
+  const body = { from: opts.from || 'Ralph Analytics <noreply@ralph-analytics.com>', to: Array.isArray(opts.to)?opts.to:[opts.to], subject: opts.subject, html: opts.html||opts.text||''  };
+  const resp = await fetch('https://api.resend.com/emails', { method:'POST', headers:{'Authorization':'Bearer '+process.env.RESEND_API_KEY,'Content-Type':'application/json'}, body:JSON.stringify(body) });
+  const data = await resp.json();
+  if (!resp.ok) throw new Error('Resend: '+JSON.stringify(data));
+  log('info','[EMAIL] Sent: '+JSON.stringify(opts.to)+'  id='+data.id);
+  return { messageId: data.id };
+}
+
 function getMailer() {
   if (mailer) return mailer;
+  if (process.env.RESEND_API_KEY) { mailer = { sendMail: resend_send }; return mailer; }
   if (process.env.SMTP_HOST) {
     mailer = nodemailer.createTransport({
       host: process.env.SMTP_HOST, port: parseInt(process.env.SMTP_PORT||'587'),
