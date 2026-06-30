@@ -1,43 +1,58 @@
 <!DOCTYPE html><html lang="en"><head>
-<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Impact Assessment — Ralph Analytics</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#0d1117;--bg2:#161b22;--bg3:#1c2333;--bdr:#2a2d3e;--text:#e8eaf0;--muted:#8b8fa8;--o:#E8521A;}
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
 .topbar{background:var(--bg2);border-bottom:1px solid var(--bdr);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
 .logo{width:30px;height:30px;border-radius:7px;background:var(--o);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.75rem;color:#fff;}
-.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;font-size:.8rem;font-weight:700;cursor:pointer;border:none;font-family:inherit;text-decoration:none;}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;font-size:.8rem;font-weight:700;cursor:pointer;border:none;font-family:inherit;text-decoration:none;transition:.15s;}
 .btn-back{background:transparent;color:var(--muted);border:1px solid var(--bdr);}
-.btn-primary{background:var(--o);color:#fff;}
+.btn-back:hover{border-color:var(--o);color:var(--o);}
+.btn-p{background:var(--o);color:#fff;}
 .live-badge{display:flex;align-items:center;gap:6px;background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.2);border-radius:20px;padding:4px 12px;font-size:.72rem;font-weight:700;color:#4ade80;}
 .live-dot{width:7px;height:7px;border-radius:50%;background:#4ade80;animation:pulse 2s infinite;}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 .main{max-width:1200px;margin:0 auto;padding:28px 24px;}
-.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px;}
-.stat-card{background:var(--bg2);border:1px solid var(--bdr);border-radius:12px;padding:18px;}
-.stat-val{font-size:1.8rem;font-weight:900;line-height:1;margin-bottom:4px;}
-.stat-label{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);}
+.sr{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px;}
+.sc{background:var(--bg2);border:1px solid var(--bdr);border-radius:12px;padding:18px;}
+.sv{font-size:1.8rem;font-weight:900;line-height:1;margin-bottom:4px;}
+.sl{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);}
+.sd{font-size:.71rem;margin-top:5px;color:#4ade80;}
 .card{background:var(--bg2);border:1px solid var(--bdr);border-radius:12px;padding:22px;margin-bottom:16px;}
-.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.card-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
 .card-title{font-size:.82rem;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);}
-.badge{display:inline-flex;font-size:.7rem;font-weight:700;padding:3px 9px;border-radius:12px;}
-.b-red{background:rgba(239,68,68,.12);color:#ef4444;}
-.b-amber{background:rgba(245,158,11,.12);color:#f59e0b;}
-.b-green{background:rgba(74,222,128,.12);color:#4ade80;}
-.b-blue{background:rgba(96,165,250,.12);color:#60a5fa;}
-.b-purple{background:rgba(139,92,246,.12);color:#a78bfa;}
-.chain-step{background:var(--bg3);border:1px solid var(--bdr);border-radius:10px;padding:16px;position:relative;}
-.chain-step::after{content:'↓';position:absolute;bottom:-18px;left:50%;transform:translateX(-50%);font-size:1rem;color:var(--muted);}
-.chain-step:last-child::after{display:none;}
-.kpi-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px;}
-.kpi-card{background:var(--bg3);border:1px solid var(--bdr);border-radius:10px;padding:14px;}
-.sdg-tag{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:.72rem;font-weight:700;border:1px solid;margin:3px;}
-.progress-bar{height:6px;background:var(--bg);border-radius:3px;overflow:hidden;margin-top:6px;}
-.progress-fill{height:100%;border-radius:3px;}
+table{width:100%;border-collapse:collapse;}
+th{text-align:left;padding:10px 14px;font-size:.7rem;font-weight:800;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--bdr);}
+td{padding:11px 14px;font-size:.83rem;border-bottom:1px solid rgba(42,45,62,.5);}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(255,255,255,.015);}
+.bdg{display:inline-flex;font-size:.7rem;font-weight:700;padding:3px 9px;border-radius:12px;}
+.b-green{background:rgba(74,222,128,.12);color:#4ade80;border:1px solid rgba(74,222,128,.2);}
+.b-amber{background:rgba(245,158,11,.12);color:#f59e0b;border:1px solid rgba(245,158,11,.2);}
+.b-red{background:rgba(239,68,68,.12);color:#ef4444;border:1px solid rgba(239,68,68,.2);}
+.b-blue{background:rgba(96,165,250,.12);color:#60a5fa;border:1px solid rgba(96,165,250,.2);}
+.b-purple{background:rgba(139,92,246,.12);color:#a78bfa;border:1px solid rgba(139,92,246,.2);}
+.b-orange{background:rgba(232,82,26,.12);color:var(--o);border:1px solid rgba(232,82,26,.2);}
+.pb{height:8px;background:var(--bg3);border-radius:4px;overflow:hidden;margin-top:6px;}
+.pf{height:100%;border-radius:4px;}
+.tabs{display:flex;gap:2px;background:var(--bg3);border-radius:10px;padding:4px;margin-bottom:20px;}
+.tab{padding:7px 16px;border-radius:7px;font-size:.8rem;font-weight:700;cursor:pointer;color:var(--muted);background:none;border:none;font-family:inherit;}
+.tab.active{background:var(--bg2);color:var(--text);border:1px solid var(--bdr);}
+.tp{display:none;}.tp.active{display:block;}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1000;align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--bg2);border:1px solid var(--bdr);border-radius:16px;padding:28px;max-width:580px;width:90%;max-height:90vh;overflow-y:auto;}
+.fg{margin-bottom:14px;}
+.fl{display:block;font-size:.73rem;font-weight:700;color:var(--muted);text-transform:uppercase;margin-bottom:6px;}
+.fi,.fs{width:100%;padding:10px 13px;background:var(--bg);border:1px solid var(--bdr);border-radius:8px;color:var(--text);font-size:.85rem;font-family:inherit;outline:none;}
+.fi:focus,.fs:focus{border-color:var(--o);}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+#toast{position:fixed;bottom:24px;right:22px;background:var(--bg2);border:1px solid var(--bdr);padding:12px 20px;border-radius:8px;font-size:.82rem;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,.5);z-index:9999;opacity:0;transform:translateY(10px);transition:.25s;pointer-events:none;}
+#toast.show{opacity:1;transform:translateY(0);}#toast.ok{border-color:#4ade80;color:#4ade80;}#toast.err{border-color:#ef4444;color:#ef4444;}
 </style></head><body>
-
 <div class="topbar">
   <div style="display:flex;align-items:center;gap:12px;">
     <a href="/client"><div class="logo">R</div></a>
@@ -48,89 +63,221 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
   <div style="display:flex;align-items:center;gap:10px;">
     <div class="live-badge"><div class="live-dot"></div>Live</div>
     <a href="/client" class="btn btn-back">← Dashboard</a>
+    <button class="btn btn-p" onclick="document.getElementById('add-kpi-modal').classList.add('open')">+ Add KPI</button>
   </div>
 </div>
-
 <div class="main">
   <div style="margin-bottom:24px;">
     <h1 style="font-size:1.5rem;font-weight:900;margin-bottom:6px;">Impact Assessment &amp; Results Framework</h1>
-    <p style="font-size:.87rem;color:var(--muted);">Results-chain methodology · SDG Mapping · KPI/KRI Tracking · Evidence-based impact verification</p>
+    <p style="font-size:.87rem;color:var(--muted);">SDG alignment &middot; ESG KPIs &middot; Theory of Change &mdash; Results-chain based impact measurement and verification</p>
+  </div>
+  <div class="sr">
+    <div class="sc"><div class="sv" style="color:#4ade80;" id="stat-kpis">0</div><div class="sl">KPIs Tracked</div><div class="sd">Active indicators</div></div>
+    <div class="sc"><div class="sv" style="color:var(--o);" id="stat-on">0</div><div class="sl">On Target</div><div class="sd">Meeting benchmarks</div></div>
+    <div class="sc"><div class="sv" style="color:#60a5fa;" id="stat-sdg">9</div><div class="sl">SDG Goals</div><div class="sd">Mapped &amp; contributing</div></div>
+    <div class="sc"><div class="sv" style="color:#a78bfa;" id="stat-impact">0%</div><div class="sl">Overall Score</div><div class="sd">Against targets</div></div>
+  </div>
+  <div class="tabs">
+    <button class="tab active" onclick="swTab('tKPIs',this)">KPI Dashboard</button>
+    <button class="tab" onclick="swTab('tSDG',this)">SDG Mapping</button>
+    <button class="tab" onclick="swTab('tToC',this)">Theory of Change</button>
+    <button class="tab" onclick="swTab('tRpt',this)">Impact Report</button>
   </div>
 
-  <div class="stats-row">
-    <div class="stat-card"><div class="stat-val" style="color:var(--o);">82%</div><div class="stat-label">Impact Score</div></div>
-    <div class="stat-card"><div class="stat-val" style="color:#4ade80;">24</div><div class="stat-label">KPIs On Track</div></div>
-    <div class="stat-card"><div class="stat-val" style="color:#f59e0b;">6</div><div class="stat-label">KPIs At Risk</div></div>
-    <div class="stat-card"><div class="stat-val" style="color:#60a5fa;">11</div><div class="stat-label">SDGs Mapped</div></div>
-  </div>
-
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
-    <!-- Results Chain -->
+  <div class="tp active" id="tKPIs">
     <div class="card">
-      <div class="card-header"><span class="card-title">Results Chain (ToC)</span></div>
-      <div style="display:flex;flex-direction:column;gap:18px;padding:4px;">
-        <div class="chain-step"><div style="font-size:.68rem;font-weight:800;color:var(--o);text-transform:uppercase;margin-bottom:4px;">Inputs</div><div style="font-size:.84rem;">Audit teams, technology platform, methodology, partner organisations</div></div>
-        <div class="chain-step"><div style="font-size:.68rem;font-weight:800;color:#60a5fa;text-transform:uppercase;margin-bottom:4px;">Activities</div><div style="font-size:.84rem;">Field audits, gap analysis, supplier training, compliance reporting</div></div>
-        <div class="chain-step"><div style="font-size:.68rem;font-weight:800;color:#a78bfa;text-transform:uppercase;margin-bottom:4px;">Outputs</div><div style="font-size:.84rem;">147 suppliers assessed · 68 audit reports · 34 CAPs closed</div></div>
-        <div class="chain-step"><div style="font-size:.68rem;font-weight:800;color:#4ade80;text-transform:uppercase;margin-bottom:4px;">Outcomes</div><div style="font-size:.84rem;">+18% supplier compliance rate · Regulatory breach incidents reduced by 62%</div></div>
-        <div class="chain-step"><div style="font-size:.68rem;font-weight:800;color:#f59e0b;text-transform:uppercase;margin-bottom:4px;">Impact</div><div style="font-size:.84rem;">Improved worker welfare, reduced environmental footprint, strengthened governance</div></div>
-      </div>
-    </div>
-
-    <!-- SDG Mapping -->
-    <div class="card">
-      <div class="card-header"><span class="card-title">SDG Alignment</span></div>
-      <div style="margin-bottom:14px;">
-        <span class="sdg-tag" style="background:rgba(255,0,0,.1);border-color:rgba(255,0,0,.3);color:#ff6666;">SDG 1 — No Poverty</span>
-        <span class="sdg-tag" style="background:rgba(74,222,128,.1);border-color:rgba(74,222,128,.3);color:#4ade80;">SDG 8 — Decent Work</span>
-        <span class="sdg-tag" style="background:rgba(96,165,250,.1);border-color:rgba(96,165,250,.3);color:#60a5fa;">SDG 10 — Reduced Inequalities</span>
-        <span class="sdg-tag" style="background:rgba(163,230,53,.1);border-color:rgba(163,230,53,.3);color:#a3e635;">SDG 12 — Responsible Consumption</span>
-        <span class="sdg-tag" style="background:rgba(34,197,94,.1);border-color:rgba(34,197,94,.3);color:#22c55e;">SDG 13 — Climate Action</span>
-        <span class="sdg-tag" style="background:rgba(139,92,246,.1);border-color:rgba(139,92,246,.3);color:#a78bfa;">SDG 16 — Peace &amp; Justice</span>
-        <span class="sdg-tag" style="background:rgba(245,158,11,.1);border-color:rgba(245,158,11,.3);color:#f59e0b;">SDG 17 — Partnerships</span>
-      </div>
-      <div class="card-header" style="margin-top:8px;"><span class="card-title">ESG Dimension Progress</span></div>
-      <div style="display:flex;flex-direction:column;gap:12px;">
-        <div><div style="display:flex;justify-content:space-between;font-size:.83rem;margin-bottom:5px;"><span>Environment</span><span style="color:#4ade80;">76%</span></div><div class="progress-bar"><div class="progress-fill" style="width:76%;background:#4ade80;"></div></div></div>
-        <div><div style="display:flex;justify-content:space-between;font-size:.83rem;margin-bottom:5px;"><span>Social</span><span style="color:#f59e0b;">62%</span></div><div class="progress-bar"><div class="progress-fill" style="width:62%;background:#f59e0b;"></div></div></div>
-        <div><div style="display:flex;justify-content:space-between;font-size:.83rem;margin-bottom:5px;"><span>Governance</span><span style="color:#60a5fa;">81%</span></div><div class="progress-bar"><div class="progress-fill" style="width:81%;background:#60a5fa;"></div></div></div>
-      </div>
+      <div class="card-hdr"><span class="card-title">Impact KPI Register</span><button class="btn btn-back" style="font-size:.74rem;" onclick="exportKPIs()">Export CSV</button></div>
+      <table>
+        <thead><tr><th>KPI</th><th>Category</th><th>Baseline</th><th>Target</th><th>Current</th><th>Progress</th><th>SDG</th><th>Status</th><th></th></tr></thead>
+        <tbody id="kpi-tbody"></tbody>
+      </table>
     </div>
   </div>
 
-  <!-- KPI Tracker -->
-  <div class="card">
-    <div class="card-header"><span class="card-title">KPI / KRI Performance Tracker</span></div>
-    <div class="kpi-row" id="kpi-grid"></div>
+  <div class="tp" id="tSDG">
+    <div class="card">
+      <div class="card-hdr"><span class="card-title">SDG Contribution Map</span></div>
+      <div id="sdg-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;"></div>
+    </div>
+  </div>
+
+  <div class="tp" id="tToC">
+    <div class="card">
+      <div class="card-hdr"><span class="card-title">Theory of Change</span></div>
+      <div style="overflow-x:auto;"><div id="toc-chain" style="display:flex;gap:0;align-items:stretch;min-width:700px;"></div></div>
+    </div>
+  </div>
+
+  <div class="tp" id="tRpt">
+    <div class="card">
+      <div class="card-hdr"><span class="card-title">Impact Summary Report</span><button class="btn btn-p" style="font-size:.75rem;padding:6px 14px;" onclick="genReport()">Generate Report</button></div>
+      <div id="rpt-body" style="font-size:.85rem;line-height:1.8;color:var(--muted);">Click "Generate Report" to produce your current period impact summary.</div>
+    </div>
   </div>
 </div>
 
+<div class="modal-overlay" id="add-kpi-modal">
+  <div class="modal">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+      <h2 style="font-size:1rem;font-weight:800;">Add Impact KPI</h2>
+      <button onclick="document.getElementById('add-kpi-modal').classList.remove('open')" style="background:none;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer;">&times;</button>
+    </div>
+    <div class="fg"><label class="fl">KPI Name *</label><input class="fi" id="k-name" placeholder="e.g. Workers with access to grievance mechanism"></div>
+    <div class="fr">
+      <div class="fg"><label class="fl">Category</label>
+        <select class="fs" id="k-cat"><option>Labour Rights</option><option>Health &amp; Safety</option><option>Environment</option><option>Ethics &amp; Governance</option><option>Gender Equity</option><option>Community</option></select>
+      </div>
+      <div class="fg"><label class="fl">SDG Goal</label>
+        <select class="fs" id="k-sdg"><option>SDG 1 — No Poverty</option><option>SDG 3 — Good Health</option><option>SDG 4 — Quality Education</option><option>SDG 5 — Gender Equality</option><option>SDG 8 — Decent Work</option><option>SDG 10 — Reduced Inequalities</option><option>SDG 12 — Responsible Consumption</option><option>SDG 13 — Climate Action</option><option>SDG 16 — Peace &amp; Justice</option></select>
+      </div>
+    </div>
+    <div class="fr">
+      <div class="fg"><label class="fl">Baseline Value</label><input class="fi" id="k-base" placeholder="e.g. 45%"></div>
+      <div class="fg"><label class="fl">Target Value</label><input class="fi" id="k-tgt" placeholder="e.g. 90%"></div>
+    </div>
+    <div class="fg"><label class="fl">Current Value</label><input class="fi" id="k-cur" placeholder="e.g. 67%"></div>
+    <div class="fg"><label class="fl">Unit of Measurement</label><input class="fi" id="k-unit" placeholder="e.g. %, workers, tonnes CO2"></div>
+    <button class="btn btn-p" style="width:100%;justify-content:center;padding:12px;" onclick="addKPI()">Add KPI</button>
+  </div>
+</div>
+<div id="toast"></div>
 <script>
-var kpis=[
-  {label:'Supplier Compliance Rate',baseline:68,target:90,actual:82,unit:'%',trend:'↑'},
-  {label:'Audit Completion Rate',baseline:71,target:95,actual:94,unit:'%',trend:'↑'},
-  {label:'CAP Closure Rate',baseline:55,target:85,actual:72,unit:'%',trend:'↑'},
-  {label:'Labour Rights Violations',baseline:18,target:0,actual:6,unit:'incidents',trend:'↓'},
-  {label:'Environmental Permit Compliance',baseline:74,target:100,actual:88,unit:'%',trend:'↑'},
-  {label:'Training Completion Rate',baseline:62,target:90,actual:78,unit:'%',trend:'↑'},
-  {label:'Grievance Resolution Time',baseline:21,target:7,actual:9,unit:'days',trend:'↓'},
-  {label:'Scope 3 Emissions Captured',baseline:40,target:100,actual:61,unit:'%',trend:'↑'},
-  {label:'ESG Score — Tier 1',baseline:65,target:85,actual:89,unit:'pts',trend:'↑'},
-];
-var grid=document.getElementById('kpi-grid');
-if(grid){
-  grid.innerHTML=kpis.map(function(k){
-    var pct=k.target>k.baseline?Math.round(((k.actual-k.baseline)/(k.target-k.baseline))*100):
-      Math.round(((k.baseline-k.actual)/(k.baseline-k.target))*100);
-    pct=Math.max(0,Math.min(100,pct));
-    var col=pct>=80?'#4ade80':pct>=50?'#f59e0b':'#ef4444';
-    return '<div class="kpi-card"><div style="font-size:.78rem;font-weight:700;margin-bottom:8px;">'+k.label+'</div>'
-      +'<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;">'
-      +'<span style="font-size:1.4rem;font-weight:900;color:'+col+';">'+k.actual+k.unit+'</span>'
-      +'<span style="font-size:.72rem;color:var(--muted);">Target: '+k.target+k.unit+'</span></div>'
-      +'<div class="progress-bar"><div class="progress-fill" style="width:'+pct+'%;background:'+col+';"></div></div>'
-      +'<div style="display:flex;justify-content:space-between;font-size:.68rem;color:var(--muted);margin-top:4px;">'
-      +'<span>Baseline: '+k.baseline+k.unit+'</span><span style="color:'+col+';">'+k.trend+' '+pct+'% to target</span></div></div>';
+const TOK=localStorage.getItem('ralph_client_token');
+if(!TOK)location.href='/client';
+function toast(m,t){t=t||'ok';var el=document.getElementById('toast');el.textContent=m;el.className='show '+t;setTimeout(function(){el.className='';},3000);}
+function swTab(id,btn){document.querySelectorAll('.tp').forEach(function(t){t.classList.remove('active');});document.querySelectorAll('.tab').forEach(function(b){b.classList.remove('active');});document.getElementById(id).classList.add('active');btn.classList.add('active');}
+
+var KPIS=JSON.parse(localStorage.getItem('ra_iarfs')||'[]');
+if(!KPIS.length){KPIS=[
+{id:'K-001',name:'Workers with access to a formal grievance mechanism',cat:'Labour Rights',base:'32%',tgt:'90%',cur:'74%',unit:'% of workforce',sdg:'SDG 8 — Decent Work',baseN:32,tgtN:90,curN:74},
+{id:'K-002',name:'Lost Time Injury Frequency Rate (LTIFR)',cat:'Health & Safety',base:'4.2',tgt:'1.0',cur:'2.1',unit:'per 1M hrs worked',sdg:'SDG 3 — Good Health',baseN:4.2,tgtN:1.0,curN:2.1,inverse:true},
+{id:'K-003',name:'Female workers in supervisory roles',cat:'Gender Equity',base:'18%',tgt:'40%',cur:'26%',unit:'% of supervisors',sdg:'SDG 5 — Gender Equality',baseN:18,tgtN:40,curN:26},
+{id:'K-004',name:'Suppliers with completed ESG assessment',cat:'Ethics & Governance',base:'0%',tgt:'80%',cur:'61%',unit:'% of key suppliers',sdg:'SDG 12 — Responsible Consumption',baseN:0,tgtN:80,curN:61},
+{id:'K-005',name:'GHG emissions reduction vs 2023 baseline',cat:'Environment',base:'0%',tgt:'30%',cur:'12%',unit:'% reduction CO2e',sdg:'SDG 13 — Climate Action',baseN:0,tgtN:30,curN:12},
+{id:'K-006',name:'Workers completing AI governance training',cat:'Ethics & Governance',base:'0%',tgt:'80%',cur:'43%',unit:'% of workforce',sdg:'SDG 4 — Quality Education',baseN:0,tgtN:80,curN:43}
+];localStorage.setItem('ra_iarfs',JSON.stringify(KPIS));}
+
+function progress(k){return k.inverse?Math.min(100,Math.round((k.baseN-k.curN)/(k.baseN-k.tgtN)*100)):Math.min(100,Math.round((k.curN-k.baseN)/(k.tgtN-k.baseN)*100));}
+function pCol(p){return p>=80?'#4ade80':p>=50?'var(--o)':'#ef4444';}
+function statusLbl(p){return p>=100?'Achieved':p>=80?'On Track':p>=50?'In Progress':'Below Target';}
+function statusCls(p){return p>=80?'b-green':p>=50?'b-amber':'b-red';}
+
+function renKPIs(){
+  document.getElementById('kpi-tbody').innerHTML=KPIS.map(function(k){
+    var p=progress(k),col=pCol(p);
+    return '<tr>'
+      +'<td style="max-width:220px;font-size:.8rem;font-weight:600;">'+k.name+'</td>'
+      +'<td><span class="bdg b-blue">'+k.cat+'</span></td>'
+      +'<td style="color:var(--muted);">'+k.base+'</td>'
+      +'<td style="color:#4ade80;font-weight:700;">'+k.tgt+'</td>'
+      +'<td style="font-weight:800;color:'+col+';">'+k.cur+'</td>'
+      +'<td style="min-width:120px;">'
+        +'<div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;height:6px;background:var(--bg3);border-radius:3px;overflow:hidden;"><div style="height:100%;background:'+col+';width:'+p+'%;border-radius:3px;"></div></div><span style="font-size:.72rem;color:var(--muted);">'+p+'%</span></div>'
+      +'</td>'
+      +'<td style="font-size:.75rem;color:#a78bfa;">'+k.sdg.split(' — ')[0]+'</td>'
+      +'<td><span class="bdg '+statusCls(p)+'">'+statusLbl(p)+'</span></td>'
+      +'<td><button onclick="updKPI(''+k.id+'')" style="background:none;border:1px solid var(--bdr);color:var(--muted);border-radius:5px;padding:3px 8px;font-size:.7rem;cursor:pointer;">Update</button></td>'
+      +'</tr>';
+  }).join('');
+  var total=KPIS.length,on=KPIS.filter(function(k){return progress(k)>=80;}).length;
+  var avg=KPIS.reduce(function(s,k){return s+progress(k);},0)/Math.max(total,1);
+  document.getElementById('stat-kpis').textContent=total;
+  document.getElementById('stat-on').textContent=on;
+  document.getElementById('stat-impact').textContent=Math.round(avg)+'%';
+}
+
+function renSDG(){
+  var sdgData=[
+    {n:'SDG 1',title:'No Poverty',col:'#e5243b',icon:'&#x1F3F7;'},
+    {n:'SDG 3',title:'Good Health',col:'#4c9f38',icon:'&#x2764;'},
+    {n:'SDG 4',title:'Quality Education',col:'#c5192d',icon:'&#x1F4DA;'},
+    {n:'SDG 5',title:'Gender Equality',col:'#ff3a21',icon:'&#x2642;'},
+    {n:'SDG 8',title:'Decent Work',col:'#a21942',icon:'&#x1F4BC;'},
+    {n:'SDG 10',title:'Reduced Inequalities',col:'#dd1367',icon:'&#x3D;&#x3D;'},
+    {n:'SDG 12',title:'Responsible Consumption',col:'#bf8b2e',icon:'&#x267B;'},
+    {n:'SDG 13',title:'Climate Action',col:'#3f7e44',icon:'&#x1F30D;'},
+    {n:'SDG 16',title:'Peace & Justice',col:'#00689d',icon:'&#x2696;'}
+  ];
+  document.getElementById('sdg-grid').innerHTML=sdgData.map(function(s){
+    var related=KPIS.filter(function(k){return k.sdg.startsWith(s.n);});
+    var avgP=related.length?Math.round(related.reduce(function(sum,k){return sum+progress(k);},0)/related.length):null;
+    return '<div style="background:var(--bg3);border:1px solid var(--bdr);border-radius:10px;padding:16px;">'
+      +'<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">'
+      +'<div style="width:36px;height:36px;border-radius:8px;background:'+s.col+';display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.7rem;color:#fff;flex-shrink:0;">'+s.n.replace('SDG ','')+'</div>'
+      +'<div><div style="font-size:.8rem;font-weight:700;">'+s.title+'</div><div style="font-size:.7rem;color:var(--muted);">'+related.length+' KPI'+(related.length!==1?'s':'')+' mapped</div></div></div>'
+      +(avgP!==null?'<div style="height:6px;background:var(--bg2);border-radius:3px;overflow:hidden;"><div style="height:100%;background:'+pCol(avgP)+';width:'+avgP+'%;border-radius:3px;"></div></div><div style="font-size:.72rem;color:var(--muted);margin-top:4px;">'+avgP+'% avg progress</div>':'<div style="font-size:.72rem;color:var(--muted);">No KPIs mapped yet</div>')
+      +'</div>';
   }).join('');
 }
+
+function renToC(){
+  var chain=[
+    {label:'Inputs',col:'#60a5fa',items:['M&E data collection','Audit field teams','AI analytics platform','Client organisation data','Standards frameworks (RBA, ISO, SA8000)']},
+    {label:'Activities',col:'var(--o)',items:['Supplier audits & assessments','Data analysis & benchmarking','CAP development & tracking','Training & capacity building','ESG reporting & verification']},
+    {label:'Outputs',col:'#a78bfa',items:['Audit reports & findings','Corrective action plans','Compliance certificates','Training completion records','ESG disclosure reports']},
+    {label:'Outcomes',col:'#4ade80',items:['Improved worker rights','Reduced workplace incidents','Increased supplier compliance','Enhanced ESG performance','Verified standards adherence']},
+    {label:'Impact',col:'#eab308',items:['Sustainable supply chains','Improved worker well-being','Reduced corporate ESG risk','Positive community outcomes','Alignment with SDG goals']}
+  ];
+  document.getElementById('toc-chain').innerHTML=chain.map(function(step,i){
+    return '<div style="flex:1;min-width:140px;">'
+      +(i>0?'':'')
+      +'<div style="background:var(--bg3);border:1px solid var(--bdr);border-radius:10px;padding:14px;height:100%;position:relative;">'
+      +(i<chain.length-1?'<div style="position:absolute;right:-12px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:1.2rem;z-index:1;">&#x2192;</div>':'')
+      +'<div style="font-size:.78rem;font-weight:800;color:'+step.col+';text-transform:uppercase;margin-bottom:10px;letter-spacing:.05em;">'+step.label+'</div>'
+      +'<ul style="padding-left:0;list-style:none;">'+step.items.map(function(item){return '<li style="font-size:.75rem;color:var(--muted);padding:3px 0;border-bottom:1px solid var(--bdr);">&#x2022; '+item+'</li>';}).join('')+'</ul>'
+      +'</div></div>';
+  }).join('');
+}
+
+function genReport(){
+  var total=KPIS.length,on=KPIS.filter(function(k){return progress(k)>=80;}).length;
+  var avg=Math.round(KPIS.reduce(function(s,k){return s+progress(k);},0)/Math.max(total,1));
+  var now=new Date().toLocaleDateString('en-ZA',{year:'numeric',month:'long',day:'numeric'});
+  document.getElementById('rpt-body').innerHTML=
+    '<div style="border:1px solid var(--bdr);border-radius:10px;padding:24px;">'
+    +'<div style="font-size:1.1rem;font-weight:900;margin-bottom:4px;">Impact Assessment Report</div>'
+    +'<div style="font-size:.78rem;color:var(--muted);margin-bottom:20px;">Generated: '+now+' | Ralph Analytics IARFS Module</div>'
+    +'<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;">'
+    +'<div style="background:var(--bg3);border-radius:8px;padding:14px;text-align:center;"><div style="font-size:1.6rem;font-weight:900;color:#4ade80;">'+on+'</div><div style="font-size:.72rem;color:var(--muted);">KPIs on track</div></div>'
+    +'<div style="background:var(--bg3);border-radius:8px;padding:14px;text-align:center;"><div style="font-size:1.6rem;font-weight:900;color:var(--o);">'+avg+'%</div><div style="font-size:.72rem;color:var(--muted);">Avg progress</div></div>'
+    +'<div style="background:var(--bg3);border-radius:8px;padding:14px;text-align:center;"><div style="font-size:1.6rem;font-weight:900;color:#60a5fa;">9</div><div style="font-size:.72rem;color:var(--muted);">SDGs mapped</div></div>'
+    +'</div>'
+    +'<div style="font-size:.85rem;font-weight:700;margin-bottom:10px;color:var(--text);">Key Findings</div>'
+    +KPIS.map(function(k){var p=progress(k);return '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bdr);font-size:.8rem;"><span>'+k.name+'</span><div style="display:flex;align-items:center;gap:8px;"><span style="color:'+pCol(p)+';font-weight:700;">'+p+'%</span><span class="bdg '+statusCls(p)+'" style="font-size:.65rem;">'+statusLbl(p)+'</span></div></div>';}).join('')
+    +'</div>';
+}
+
+function addKPI(){
+  var name=document.getElementById('k-name').value.trim();
+  if(!name){toast('KPI name is required','err');return;}
+  var cur=parseFloat(document.getElementById('k-cur').value)||0;
+  var tgt=parseFloat(document.getElementById('k-tgt').value)||100;
+  var base=parseFloat(document.getElementById('k-base').value)||0;
+  var kpi={id:'K-'+String(KPIS.length+1).padStart(3,'0'),name:name,cat:document.getElementById('k-cat').value,sdg:document.getElementById('k-sdg').value,base:document.getElementById('k-base').value||'0',tgt:document.getElementById('k-tgt').value||'100',cur:document.getElementById('k-cur').value||'0',unit:document.getElementById('k-unit').value||'units',baseN:base,tgtN:tgt,curN:cur};
+  KPIS.push(kpi);
+  localStorage.setItem('ra_iarfs',JSON.stringify(KPIS));
+  document.getElementById('add-kpi-modal').classList.remove('open');
+  ['k-name','k-base','k-tgt','k-cur','k-unit'].forEach(function(id){document.getElementById(id).value='';});
+  renAll();toast('KPI added','ok');
+}
+
+function updKPI(id){
+  var k=KPIS.find(function(x){return x.id===id;});
+  if(!k)return;
+  var cur=prompt('Update current value for: '+k.name,k.cur);
+  if(cur===null)return;
+  k.cur=cur;k.curN=parseFloat(cur)||0;
+  localStorage.setItem('ra_iarfs',JSON.stringify(KPIS));
+  renKPIs();renSDG();
+  toast(id+' updated','ok');
+}
+
+function exportKPIs(){
+  var rows=['KPI ID,Name,Category,Baseline,Target,Current,Progress,SDG,Status'];
+  KPIS.forEach(function(k){var p=progress(k);rows.push('"'+k.id+'","'+k.name+'","'+k.cat+'","'+k.base+'","'+k.tgt+'","'+k.cur+'",'+p+',"'+k.sdg+'","'+statusLbl(p)+'"');});
+  var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([rows.join('\n')],{type:'text/csv'}));a.download='Impact_KPIs.csv';a.click();
+}
+
+function renAll(){renKPIs();renSDG();renToC();}
+document.addEventListener('DOMContentLoaded',renAll);
 </script></body></html>

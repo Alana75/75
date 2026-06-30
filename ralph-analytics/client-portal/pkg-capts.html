@@ -1,50 +1,57 @@
 <!DOCTYPE html><html lang="en"><head>
-<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>CAP Tracker — Ralph Analytics</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#0d1117;--bg2:#161b22;--bg3:#1c2333;--bdr:#2a2d3e;--text:#e8eaf0;--muted:#8b8fa8;--o:#E8521A;}
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
 .topbar{background:var(--bg2);border-bottom:1px solid var(--bdr);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
 .logo{width:30px;height:30px;border-radius:7px;background:var(--o);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.75rem;color:#fff;}
-.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;font-size:.8rem;font-weight:700;cursor:pointer;border:none;font-family:inherit;text-decoration:none;}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;font-size:.8rem;font-weight:700;cursor:pointer;border:none;font-family:inherit;text-decoration:none;transition:.15s;}
 .btn-back{background:transparent;color:var(--muted);border:1px solid var(--bdr);}
-.btn-primary{background:var(--o);color:#fff;}
+.btn-back:hover{border-color:var(--o);color:var(--o);}
+.btn-p{background:var(--o);color:#fff;}
 .live-badge{display:flex;align-items:center;gap:6px;background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.2);border-radius:20px;padding:4px 12px;font-size:.72rem;font-weight:700;color:#4ade80;}
 .live-dot{width:7px;height:7px;border-radius:50%;background:#4ade80;animation:pulse 2s infinite;}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 .main{max-width:1200px;margin:0 auto;padding:28px 24px;}
-.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px;}
-.stat-card{background:var(--bg2);border:1px solid var(--bdr);border-radius:12px;padding:18px;}
-.stat-val{font-size:1.8rem;font-weight:900;line-height:1;margin-bottom:4px;}
-.stat-label{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);}
+.sr{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px;}
+.sc{background:var(--bg2);border:1px solid var(--bdr);border-radius:12px;padding:18px;}
+.sv{font-size:1.8rem;font-weight:900;line-height:1;margin-bottom:4px;}
+.sl{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);}
+.sd{font-size:.71rem;margin-top:5px;}
 .card{background:var(--bg2);border:1px solid var(--bdr);border-radius:12px;padding:22px;margin-bottom:16px;}
-.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.card-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
 .card-title{font-size:.82rem;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);}
-.badge{display:inline-flex;font-size:.7rem;font-weight:700;padding:3px 9px;border-radius:12px;}
-.b-red{background:rgba(239,68,68,.12);color:#ef4444;}
-.b-amber{background:rgba(245,158,11,.12);color:#f59e0b;}
-.b-green{background:rgba(74,222,128,.12);color:#4ade80;}
-.b-blue{background:rgba(96,165,250,.12);color:#60a5fa;}
-.b-gray{background:rgba(139,143,168,.1);color:var(--muted);}
-.cap-card{background:var(--bg3);border:1px solid var(--bdr);border-radius:10px;padding:16px;margin-bottom:10px;cursor:pointer;transition:border-color .18s;}
-.cap-card:hover{border-color:rgba(232,82,26,.4);}
-.cap-card.expanded{border-color:var(--o);}
-.progress-bar{height:6px;background:var(--bg);border-radius:3px;overflow:hidden;}
-.progress-fill{height:100%;border-radius:3px;transition:width .5s;}
+table{width:100%;border-collapse:collapse;}
+th{text-align:left;padding:10px 14px;font-size:.7rem;font-weight:800;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--bdr);}
+td{padding:11px 14px;font-size:.83rem;border-bottom:1px solid rgba(42,45,62,.5);}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(255,255,255,.015);}
+.bdg{display:inline-flex;font-size:.7rem;font-weight:700;padding:3px 9px;border-radius:12px;}
+.b-red{background:rgba(239,68,68,.12);color:#ef4444;border:1px solid rgba(239,68,68,.2);}
+.b-amber{background:rgba(245,158,11,.12);color:#f59e0b;border:1px solid rgba(245,158,11,.2);}
+.b-green{background:rgba(74,222,128,.12);color:#4ade80;border:1px solid rgba(74,222,128,.2);}
+.b-blue{background:rgba(96,165,250,.12);color:#60a5fa;border:1px solid rgba(96,165,250,.2);}
+.b-orange{background:rgba(232,82,26,.12);color:var(--o);border:1px solid rgba(232,82,26,.2);}
+.pb{height:8px;background:var(--bg3);border-radius:4px;overflow:hidden;margin-top:4px;}
+.pf{height:100%;border-radius:4px;}
+.tabs{display:flex;gap:2px;background:var(--bg3);border-radius:10px;padding:4px;margin-bottom:20px;}
 .tab{padding:7px 16px;border-radius:7px;font-size:.8rem;font-weight:700;cursor:pointer;color:var(--muted);background:none;border:none;font-family:inherit;}
 .tab.active{background:var(--bg2);color:var(--text);border:1px solid var(--bdr);}
+.tp{display:none;}.tp.active{display:block;}
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1000;align-items:center;justify-content:center;}
 .modal-overlay.open{display:flex;}
-.modal{background:var(--bg2);border:1px solid var(--bdr);border-radius:16px;padding:28px;max-width:540px;width:90%;max-height:90vh;overflow-y:auto;}
-.form-group{margin-bottom:14px;}
-.form-label{display:block;font-size:.73rem;font-weight:700;color:var(--muted);text-transform:uppercase;margin-bottom:6px;}
-.form-input{width:100%;padding:10px 13px;background:var(--bg);border:1px solid var(--bdr);border-radius:8px;color:var(--text);font-size:.85rem;font-family:inherit;outline:none;}
-.form-input:focus{border-color:var(--o);}
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.modal{background:var(--bg2);border:1px solid var(--bdr);border-radius:16px;padding:28px;max-width:580px;width:90%;max-height:90vh;overflow-y:auto;}
+.fg{margin-bottom:14px;}
+.fl{display:block;font-size:.73rem;font-weight:700;color:var(--muted);text-transform:uppercase;margin-bottom:6px;}
+.fi,.fs{width:100%;padding:10px 13px;background:var(--bg);border:1px solid var(--bdr);border-radius:8px;color:var(--text);font-size:.85rem;font-family:inherit;outline:none;}
+.fi:focus,.fs:focus{border-color:var(--o);}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+#toast{position:fixed;bottom:24px;right:22px;background:var(--bg2);border:1px solid var(--bdr);padding:12px 20px;border-radius:8px;font-size:.82rem;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,.5);z-index:9999;opacity:0;transform:translateY(10px);transition:.25s;pointer-events:none;}
+#toast.show{opacity:1;transform:translateY(0);}#toast.ok{border-color:#4ade80;color:#4ade80;}#toast.err{border-color:#ef4444;color:#ef4444;}
 </style></head><body>
-
 <div class="topbar">
   <div style="display:flex;align-items:center;gap:12px;">
     <a href="/client"><div class="logo">R</div></a>
@@ -55,117 +62,226 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
   <div style="display:flex;align-items:center;gap:10px;">
     <div class="live-badge"><div class="live-dot"></div>Live</div>
     <a href="/client" class="btn btn-back">← Dashboard</a>
-    <button class="btn btn-primary" onclick="document.getElementById('add-cap-modal').classList.add('open')">+ New CAP</button>
+    <button class="btn btn-p" onclick="document.getElementById('add-cap-modal').classList.add('open')">+ Add CAP</button>
   </div>
 </div>
-
 <div class="main">
   <div style="margin-bottom:24px;">
-    <h1 style="font-size:1.5rem;font-weight:900;margin-bottom:6px;">Corrective Action Plans</h1>
-    <p style="font-size:.87rem;color:var(--muted);">End-to-end CAP lifecycle — root cause analysis, evidence submission &amp; structured close-out</p>
+    <h1 style="font-size:1.5rem;font-weight:900;margin-bottom:6px;">Corrective Action Plan Tracker</h1>
+    <p style="font-size:.87rem;color:var(--muted);">RBA CoC &middot; ISO 45001 &middot; SA8000 &mdash; End-to-end CAP lifecycle, evidence validation & client performance</p>
+  </div>
+  <div class="sr">
+    <div class="sc"><div class="sv" style="color:#ef4444;" id="stat-open">0</div><div class="sl">Open CAPs</div><div class="sd" style="color:#ef4444;">Require action</div></div>
+    <div class="sc"><div class="sv" style="color:#f59e0b;" id="stat-progress">0</div><div class="sl">In Progress</div><div class="sd" style="color:#f59e0b;">Under treatment</div></div>
+    <div class="sc"><div class="sv" style="color:#4ade80;" id="stat-closed">0</div><div class="sl">Closed</div><div class="sd" style="color:#4ade80;">This quarter</div></div>
+    <div class="sc"><div class="sv" style="color:var(--o);" id="stat-overdue">0</div><div class="sl">Overdue</div><div class="sd" style="color:var(--o);">Past due date</div></div>
+  </div>
+  <div class="tabs">
+    <button class="tab active" onclick="swTab('tList',this)">All CAPs</button>
+    <button class="tab" onclick="swTab('tOverdue',this)">Overdue</button>
+    <button class="tab" onclick="swTab('tEvid',this)">Evidence Log</button>
+    <button class="tab" onclick="swTab('tPerf',this)">Performance</button>
   </div>
 
-  <div class="stats-row">
-    <div class="stat-card"><div class="stat-val" style="color:#ef4444;">16</div><div class="stat-label">Open CAPs</div></div>
-    <div class="stat-card"><div class="stat-val" style="color:#f59e0b;">5</div><div class="stat-label">Overdue</div></div>
-    <div class="stat-card"><div class="stat-val" style="color:#4ade80;">34</div><div class="stat-label">Closed This Quarter</div></div>
-    <div class="stat-card"><div class="stat-val" style="color:var(--o);">72%</div><div class="stat-label">On-Time Closure Rate</div></div>
+  <div class="tp active" id="tList">
+    <div class="card">
+      <div class="card-hdr">
+        <span class="card-title">CAP Register</span>
+        <button class="btn btn-back" style="font-size:.74rem;" onclick="exportCAPs()">Export CSV</button>
+      </div>
+      <table>
+        <thead><tr><th>CAP ID</th><th>Finding</th><th>Standard</th><th>Severity</th><th>Owner</th><th>Due Date</th><th>Progress</th><th>Status</th><th></th></tr></thead>
+        <tbody id="cap-tbody"></tbody>
+      </table>
+    </div>
   </div>
 
-  <div style="display:flex;gap:4px;background:var(--bg3);border-radius:10px;padding:4px;margin-bottom:20px;width:fit-content;">
-    <button class="tab active" onclick="filterCaps(this,'all')">All (16)</button>
-    <button class="tab" onclick="filterCaps(this,'critical')">Critical</button>
-    <button class="tab" onclick="filterCaps(this,'open')">Open</button>
-    <button class="tab" onclick="filterCaps(this,'overdue')">Overdue</button>
-    <button class="tab" onclick="filterCaps(this,'closed')">Closed</button>
+  <div class="tp" id="tOverdue">
+    <div class="card">
+      <div class="card-hdr"><span class="card-title">Overdue CAPs</span></div>
+      <div id="overdue-list"></div>
+    </div>
   </div>
 
-  <div id="caps-list"></div>
+  <div class="tp" id="tEvid">
+    <div class="card">
+      <div class="card-hdr"><span class="card-title">Evidence Log</span></div>
+      <div id="evid-list"></div>
+    </div>
+  </div>
+
+  <div class="tp" id="tPerf">
+    <div class="card">
+      <div class="card-hdr"><span class="card-title">CAP Performance Dashboard</span></div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px;" id="perf-stats"></div>
+      <div id="perf-chart"></div>
+    </div>
+  </div>
 </div>
 
-<!-- Add CAP Modal -->
+<!-- ADD CAP MODAL -->
 <div class="modal-overlay" id="add-cap-modal">
   <div class="modal">
-    <div style="font-size:1.05rem;font-weight:800;margin-bottom:18px;">Create New CAP</div>
-    <div class="form-group"><label class="form-label">Title / Finding</label>
-      <input type="text" class="form-input" id="c-title" placeholder="Describe the non-conformance..."/></div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Source</label>
-        <select class="form-input" id="c-source"><option>Audit Finding</option><option>Risk Event</option><option>Compliance Gap</option><option>Supplier Assessment</option><option>Regulatory Requirement</option></select></div>
-      <div class="form-group"><label class="form-label">Priority</label>
-        <select class="form-input" id="c-priority"><option value="critical">Critical</option><option value="high">High</option><option value="medium" selected>Medium</option><option value="low">Low</option></select></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+      <h2 style="font-size:1rem;font-weight:800;">Create Corrective Action Plan</h2>
+      <button onclick="document.getElementById('add-cap-modal').classList.remove('open')" style="background:none;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer;">&times;</button>
     </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Assigned To</label>
-        <input type="text" class="form-input" id="c-owner" placeholder="Name / Department"/></div>
-      <div class="form-group"><label class="form-label">Due Date</label>
-        <input type="date" class="form-input" id="c-due"/></div>
+    <div class="fg"><label class="fl">Audit Finding / Non-Conformance *</label><textarea class="fi" id="c-finding" rows="2" placeholder="Describe the finding or non-conformance..."></textarea></div>
+    <div class="fr">
+      <div class="fg"><label class="fl">Standard / Code</label>
+        <select class="fs" id="c-std"><option>RBA CoC</option><option>ISO 45001</option><option>SA8000</option><option>SMETA</option><option>ISO 14001</option><option>GDPR</option><option>Internal Policy</option></select>
+      </div>
+      <div class="fg"><label class="fl">Severity</label>
+        <select class="fs" id="c-sev"><option>Critical</option><option>Major</option><option>Minor</option><option>Observation</option></select>
+      </div>
     </div>
-    <div class="form-group"><label class="form-label">Root Cause</label>
-      <textarea class="form-input" id="c-rootcause" rows="2" placeholder="Identify root cause..."></textarea></div>
-    <div style="display:flex;gap:10px;margin-top:18px;">
-      <button class="btn btn-primary" style="flex:1;justify-content:center;" onclick="addCap()">Create CAP</button>
-      <button class="btn btn-back" style="flex:1;justify-content:center;" onclick="document.getElementById('add-cap-modal').classList.remove('open')">Cancel</button>
+    <div class="fr">
+      <div class="fg"><label class="fl">Responsible Owner</label><input class="fi" id="c-owner" placeholder="Name or department"></div>
+      <div class="fg"><label class="fl">Due Date</label><input class="fi" type="date" id="c-due"></div>
     </div>
+    <div class="fg"><label class="fl">Root Cause Analysis</label><textarea class="fi" id="c-root" rows="2" placeholder="What is the underlying root cause?"></textarea></div>
+    <div class="fg"><label class="fl">Corrective Action Plan</label><textarea class="fi" id="c-plan" rows="2" placeholder="Describe the corrective actions to be taken..."></textarea></div>
+    <div class="fg"><label class="fl">Evidence Required</label><input class="fi" id="c-evid" placeholder="e.g. Updated procedure, Training records, Audit photos..."></div>
+    <button class="btn btn-p" style="width:100%;justify-content:center;padding:12px;" onclick="addCAP()">Create CAP</button>
   </div>
 </div>
-
+<div id="toast"></div>
 <script>
-var caps=[
-  {id:'CAP-001',title:'SA8000 — Working hours violation at Dhaka facility',source:'Audit Finding',priority:'critical',owner:'SCM Director',due:'2026-07-01',status:'open',progress:25,overdue:false,rootcause:'Inadequate monitoring of contractor overtime reporting'},
-  {id:'CAP-002',title:'ISO 45001 — Hazard identification gaps in warehouse',source:'Compliance Gap',priority:'critical',owner:'HSE Manager',due:'2026-06-20',status:'overdue',progress:10,overdue:true,rootcause:'Process not extended to contract workers'},
-  {id:'CAP-003',title:'RBA — Environmental permit expired at Tier 2 supplier',source:'Supplier Assessment',priority:'high',owner:'Procurement',due:'2026-07-15',status:'open',progress:40,overdue:false,rootcause:'No automated permit expiry tracking'},
-  {id:'CAP-004',title:'ISO 9001 — Customer complaint resolution SLA breach',source:'Audit Finding',priority:'high',owner:'Quality Manager',due:'2026-06-25',status:'overdue',progress:60,overdue:true,rootcause:'Ticket routing misconfigured post-system upgrade'},
-  {id:'CAP-005',title:'ESG — Scope 3 emissions not captured for Tier 3',source:'Regulatory Requirement',priority:'high',owner:'ESG Lead',due:'2026-08-01',status:'open',progress:30,overdue:false,rootcause:'Data collection methodology not extended to Tier 3'},
-  {id:'CAP-006',title:'ISO 14001 — Q4 environmental monitoring records incomplete',source:'Compliance Gap',priority:'medium',owner:'Environmental Mgr',due:'2026-07-10',status:'open',progress:55,overdue:false,rootcause:'Manual reporting process created data gaps'},
-  {id:'CAP-007',title:'SMETA — Child labour screening not applied to sub-contractors',source:'Audit Finding',priority:'critical',owner:'HR Director',due:'2026-06-18',status:'overdue',progress:5,overdue:true,rootcause:'Screening process not cascaded beyond Tier 1'},
-  {id:'CAP-008',title:'ISO 37301 — Compliance training completion below 80% threshold',source:'Risk Event',priority:'medium',owner:'Compliance Officer',due:'2026-07-30',status:'open',progress:70,overdue:false,rootcause:'New joiner onboarding track missing compliance module'},
-  {id:'CAP-009',title:'Labour standards — Wage payment irregularities at 3 facilities',source:'Supplier Assessment',priority:'high',owner:'Audit Lead',due:'2026-06-22',status:'overdue',progress:20,overdue:true,rootcause:'Payroll calculation errors due to software migration'},
-  {id:'CAP-010',title:'ISO 9001 — Non-conformance root cause field not consistently completed',source:'Audit Finding',priority:'medium',owner:'Quality Manager',due:'2026-06-01',status:'closed',progress:100,overdue:false,rootcause:'Updated NC template and mandatory field validation added'},
-];
-var currentFilter='all';
-function pColor(p){return {critical:'#ef4444',high:'#f59e0b',medium:'#60a5fa',low:'#4ade80'}[p]||'#8b8fa8';}
-function filterCaps(el,f){
-  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
-  el.classList.add('active'); currentFilter=f; renderCaps();
+const TOK=localStorage.getItem('ralph_client_token');
+if(!TOK)location.href='/client';
+function api(u,o){o=o||{};o.headers=Object.assign({'Content-Type':'application/json','Authorization':'Bearer '+TOK},o.headers||{});return fetch(location.origin+u,o);}
+function toast(m,t){t=t||'ok';var el=document.getElementById('toast');el.textContent=m;el.className='show '+t;setTimeout(function(){el.className='';},3000);}
+function swTab(id,btn){document.querySelectorAll('.tp').forEach(function(t){t.classList.remove('active');});document.querySelectorAll('.tab').forEach(function(b){b.classList.remove('active');});document.getElementById(id).classList.add('active');btn.classList.add('active');}
+
+var CAPS=JSON.parse(localStorage.getItem('ra_capts')||'[]');
+if(!CAPS.length){CAPS=[
+{id:'CAP-001',finding:'Working hours exceed RBA CoC limits — 72 hrs/week documented in 3 facilities',std:'RBA CoC',sev:'Critical',owner:'Operations Director',due:'2026-08-01',progress:40,status:'In Progress',root:'Production targets driving excessive overtime without management oversight',plan:'Implement weekly hours tracking system; enforce mandatory rest periods; revise shift scheduling',evid:'Updated scheduling policy, hours monitoring reports',evidence:[]},
+{id:'CAP-002',finding:'Emergency evacuation procedures not posted in Mandarin for migrant workers',std:'ISO 45001',sev:'Major',owner:'H&S Manager',due:'2026-07-15',progress:80,status:'In Progress',root:'Existing safety documentation only available in English',plan:'Translate all safety signage; conduct multilingual safety training; install bilingual emergency maps',evid:'Translation certificates, training attendance records, site photos',evidence:['Safety_Translation_Draft_v1.pdf']},
+{id:'CAP-003',finding:'Child labour age verification documentation missing for 12 workers',std:'SA8000',sev:'Critical',owner:'HR Director',due:'2026-07-01',progress:100,status:'Closed',root:'Onboarding checklist did not require age verification documents',plan:'Updated onboarding procedure requiring government ID; retrospective verification completed',evid:'Updated onboarding SOP, completed verification forms',evidence:['Age_Verification_Complete.pdf','Onboarding_SOP_v3.pdf']},
+{id:'CAP-004',finding:'Chemical storage area lacks secondary containment — 4 substances at risk',std:'ISO 14001',sev:'Major',owner:'EHS Team',due:'2026-09-30',progress:25,status:'Open',root:'Legacy storage infrastructure not upgraded during facility renovation',plan:'Install secondary containment trays; update MSDS register; conduct hazmat training',evid:'Containment installation certificate, updated MSDS, training records',evidence:[]},
+{id:'CAP-005',finding:'No formal grievance mechanism for third-party migrant workers',std:'RBA CoC',sev:'Major',owner:'HR Manager',due:'2026-10-31',progress:10,status:'Open',root:'Grievance system only covers direct employees, excluding agency workers',plan:'Extend grievance procedure to all workers; install anonymous hotline; conduct awareness sessions',evid:'Updated grievance policy, hotline contract, awareness training records',evidence:[]}
+];localStorage.setItem('ra_capts',JSON.stringify(CAPS));}
+var nextId=CAPS.length+1;
+
+function sevCol(s){return s==='Critical'?'#ef4444':s==='Major'?'#f59e0b':s==='Minor'?'#60a5fa':'#a78bfa';}
+function statusCls(s){return s==='Closed'?'b-green':s==='In Progress'?'b-blue':s==='Open'?'b-amber':'b-red';}
+function isOverdue(cap){return cap.status!=='Closed'&&cap.due&&new Date(cap.due)<new Date();}
+
+function renList(){
+  document.getElementById('cap-tbody').innerHTML=CAPS.map(function(cap){
+    var col=sevCol(cap.sev),ov=isOverdue(cap);
+    return '<tr'+(ov?' style="background:rgba(239,68,68,.04);"':'')+'>'
+      +'<td><span style="font-family:monospace;font-size:.75rem;color:var(--o);">'+cap.id+'</span>'+(ov?'<span class="bdg b-red" style="margin-left:4px;font-size:.6rem;">OVERDUE</span>':'')+'</td>'
+      +'<td style="max-width:220px;font-size:.8rem;">'+cap.finding.substring(0,80)+'...</td>'
+      +'<td><span class="bdg b-blue">'+cap.std+'</span></td>'
+      +'<td><span class="bdg" style="background:'+col+'22;color:'+col+';">'+cap.sev+'</span></td>'
+      +'<td>'+cap.owner+'</td>'
+      +'<td style="font-size:.78rem;'+(ov?'color:#ef4444;':'')+'">'+cap.due+'</td>'
+      +'<td><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;height:6px;background:var(--bg3);border-radius:3px;overflow:hidden;"><div style="height:100%;background:'+(cap.progress>=100?'#4ade80':cap.progress>=50?'var(--o)':'#ef4444')+';width:'+cap.progress+'%;border-radius:3px;"></div></div><span style="font-size:.72rem;color:var(--muted);white-space:nowrap;">'+cap.progress+'%</span></div></td>'
+      +'<td><span class="bdg '+statusCls(cap.status)+'">'+cap.status+'</span></td>'
+      +'<td style="display:flex;gap:4px;">'
+      +'<button onclick="updateProgress(''+cap.id+'')" style="background:none;border:1px solid var(--bdr);color:var(--muted);border-radius:5px;padding:3px 8px;font-size:.7rem;cursor:pointer;">Update</button>'
+      +'</td></tr>';
+  }).join('');
+  updStats();
 }
-function renderCaps(){
-  var data=caps.filter(function(c){
-    if(currentFilter==='all')return true;
-    if(currentFilter==='overdue')return c.overdue;
-    if(currentFilter==='closed')return c.status==='closed';
-    if(currentFilter==='open')return c.status==='open';
-    if(currentFilter==='critical')return c.priority==='critical';
-    return true;
-  });
-  var sc={open:'b-amber',overdue:'b-red',closed:'b-green'};
-  document.getElementById('caps-list').innerHTML=data.map(function(c){
-    return '<div class="cap-card" id="cap-'+c.id+'">'
-      +'<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">'
-      +'<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">'
-      +'<span style="font-weight:700;font-size:.82rem;color:var(--o);">'+c.id+'</span>'
-      +'<span class="badge '+(c.status==='open'?'b-amber':c.status==='overdue'?'b-red':'b-green')+'">'+c.status+'</span>'
-      +'<span class="badge b-gray">'+c.source+'</span>'
-      +'</div><span style="font-size:.75rem;color:var(--muted);">Due: '+c.due+(c.overdue?' ⚠️':'')+'</span></div>'
-      +'<div style="font-weight:600;font-size:.88rem;margin-bottom:6px;border-left:3px solid '+pColor(c.priority)+';padding-left:10px;">'+c.title+'</div>'
-      +'<div style="font-size:.78rem;color:var(--muted);margin-bottom:10px;">Owner: '+c.owner+' · Root cause: '+c.rootcause.slice(0,60)+'...</div>'
-      +'<div style="display:flex;align-items:center;gap:10px;">'
-      +'<div style="flex:1;height:6px;background:var(--bg);border-radius:3px;overflow:hidden;">'
-      +'<div style="width:'+c.progress+'%;height:100%;background:'+pColor(c.priority)+';border-radius:3px;"></div></div>'
-      +'<span style="font-size:.72rem;color:var(--muted);width:35px;text-align:right;">'+c.progress+'%</span>'
+
+function updStats(){
+  var open=0,prog=0,closed=0,ov=0;
+  CAPS.forEach(function(c){if(c.status==='Open')open++;else if(c.status==='In Progress')prog++;else if(c.status==='Closed')closed++;if(isOverdue(c))ov++;});
+  document.getElementById('stat-open').textContent=open;
+  document.getElementById('stat-progress').textContent=prog;
+  document.getElementById('stat-closed').textContent=closed;
+  document.getElementById('stat-overdue').textContent=ov;
+}
+
+function renOverdue(){
+  var ov=CAPS.filter(isOverdue);
+  document.getElementById('overdue-list').innerHTML=ov.length?ov.map(function(c){
+    var days=Math.floor((new Date()-new Date(c.due))/(1000*60*60*24));
+    return '<div style="background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);border-radius:10px;padding:16px;margin-bottom:10px;">'
+      +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">'
+      +'<div style="display:flex;align-items:center;gap:8px;"><span style="font-family:monospace;font-size:.75rem;color:var(--o);">'+c.id+'</span><span class="bdg b-red">'+days+' days overdue</span></div>'
+      +'<span class="bdg" style="background:'+sevCol(c.sev)+'22;color:'+sevCol(c.sev)+';">'+c.sev+'</span></div>'
+      +'<div style="font-size:.83rem;margin-bottom:6px;">'+c.finding+'</div>'
+      +'<div style="font-size:.75rem;color:var(--muted);">Owner: '+c.owner+' &bull; Due: '+c.due+'</div>'
+      +'<div style="margin-top:10px;"><button onclick="updateProgress(''+c.id+'')" class="btn btn-p" style="font-size:.75rem;padding:6px 12px;">Update Progress</button></div>'
+      +'</div>';
+  }).join(''):'<div style="text-align:center;color:#4ade80;padding:40px;font-size:.85rem;">&#x2705; No overdue CAPs — great work!</div>';
+}
+
+function renEvid(){
+  document.getElementById('evid-list').innerHTML=CAPS.map(function(c){
+    return '<div style="background:var(--bg3);border-radius:10px;padding:16px;margin-bottom:10px;">'
+      +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">'
+      +'<div><span style="font-family:monospace;font-size:.75rem;color:var(--o);margin-right:8px;">'+c.id+'</span><span style="font-size:.83rem;font-weight:700;">'+c.finding.substring(0,60)+'...</span></div>'
+      +'<span class="bdg '+statusCls(c.status)+'">'+c.status+'</span></div>'
+      +'<div style="font-size:.78rem;color:var(--muted);margin-bottom:8px;"><strong style="color:var(--text);">Required evidence:</strong> '+c.evid+'</div>'
+      +'<div style="display:flex;gap:8px;flex-wrap:wrap;">'
+      +c.evidence.map(function(e){return '<span style="background:rgba(96,165,250,.1);border:1px solid rgba(96,165,250,.2);color:#60a5fa;border-radius:6px;padding:3px 10px;font-size:.72rem;">&#x1F4CE; '+e+'</span>';}).join('')
+      +(c.status!=='Closed'?'<span style="background:var(--bg2);border:1px dashed var(--bdr);border-radius:6px;padding:3px 10px;font-size:.72rem;color:var(--muted);cursor:pointer;" onclick="addEvid(''+c.id+'')">+ Upload evidence</span>':'')
       +'</div></div>';
   }).join('');
 }
-function addCap(){
-  var title=document.getElementById('c-title').value.trim();if(!title)return;
-  caps.unshift({id:'CAP-'+String(caps.length+1).padStart(3,'0'),title:title,
-    source:document.getElementById('c-source').value,priority:document.getElementById('c-priority').value,
-    owner:document.getElementById('c-owner').value||'Unassigned',
-    due:document.getElementById('c-due').value||'TBD',
-    status:'open',progress:0,overdue:false,
-    rootcause:document.getElementById('c-rootcause').value||'Under investigation'});
-  renderCaps();document.getElementById('add-cap-modal').classList.remove('open');
+
+function renPerf(){
+  var total=CAPS.length,closed=CAPS.filter(function(c){return c.status==='Closed';}).length;
+  var avgProg=CAPS.reduce(function(s,c){return s+c.progress;},0)/Math.max(total,1);
+  var onTime=CAPS.filter(function(c){return c.status==='Closed'&&!isOverdue(c);}).length;
+  document.getElementById('perf-stats').innerHTML=
+    '<div style="background:var(--bg3);border-radius:10px;padding:18px;text-align:center;">'
+    +'<div style="font-size:2rem;font-weight:900;color:#4ade80;">'+Math.round(closed/Math.max(total,1)*100)+'%</div>'
+    +'<div style="font-size:.75rem;font-weight:700;color:var(--muted);text-transform:uppercase;margin-top:4px;">Closure Rate</div></div>'
+    +'<div style="background:var(--bg3);border-radius:10px;padding:18px;text-align:center;">'
+    +'<div style="font-size:2rem;font-weight:900;color:var(--o);">'+Math.round(avgProg)+'%</div>'
+    +'<div style="font-size:.75rem;font-weight:700;color:var(--muted);text-transform:uppercase;margin-top:4px;">Avg Progress</div></div>'
+    +'<div style="background:var(--bg3);border-radius:10px;padding:18px;text-align:center;">'
+    +'<div style="font-size:2rem;font-weight:900;color:#60a5fa;">'+CAPS.filter(function(c){return c.status!=='Closed';}).filter(function(c){return !isOverdue(c);}).length+'</div>'
+    +'<div style="font-size:.75rem;font-weight:700;color:var(--muted);text-transform:uppercase;margin-top:4px;">On Track</div></div>';
+  document.getElementById('perf-chart').innerHTML=
+    '<div style="margin-top:16px;"><div style="font-size:.78rem;font-weight:700;color:var(--muted);text-transform:uppercase;margin-bottom:12px;">Progress by CAP</div>'
+    +CAPS.map(function(c){return '<div style="margin-bottom:10px;"><div style="display:flex;justify-content:space-between;font-size:.78rem;margin-bottom:4px;"><span>'+c.id+'</span><span style="color:var(--muted);">'+c.progress+'%</span></div><div style="height:8px;background:var(--bg3);border-radius:4px;overflow:hidden;"><div style="height:100%;border-radius:4px;background:'+(c.progress>=100?'#4ade80':c.progress>=50?'var(--o)':'#ef4444')+';width:'+c.progress+'%;"></div></div></div>';}).join('')
+    +'</div>';
 }
-document.getElementById('add-cap-modal').addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');});
-renderCaps();
+
+function addCAP(){
+  var finding=document.getElementById('c-finding').value.trim();
+  if(!finding){toast('Finding description is required','err');return;}
+  var cap={id:'CAP-'+String(nextId++).padStart(3,'0'),finding:finding,std:document.getElementById('c-std').value,sev:document.getElementById('c-sev').value,owner:document.getElementById('c-owner').value||'Unassigned',due:document.getElementById('c-due').value||'',progress:0,status:'Open',root:document.getElementById('c-root').value,plan:document.getElementById('c-plan').value,evid:document.getElementById('c-evid').value,evidence:[]};
+  CAPS.push(cap);
+  localStorage.setItem('ra_capts',JSON.stringify(CAPS));
+  document.getElementById('add-cap-modal').classList.remove('open');
+  ['c-finding','c-owner','c-due','c-root','c-plan','c-evid'].forEach(function(id){document.getElementById(id).value='';});
+  renAll();
+  toast('CAP '+cap.id+' created','ok');
+}
+
+function updateProgress(id){
+  var cap=CAPS.find(function(c){return c.id===id;});
+  if(!cap)return;
+  var pct=prompt('Update progress for '+id+' (0-100):', cap.progress);
+  if(pct===null)return;
+  cap.progress=Math.min(100,Math.max(0,parseInt(pct)||0));
+  if(cap.progress===100)cap.status='Closed';
+  else if(cap.progress>0)cap.status='In Progress';
+  localStorage.setItem('ra_capts',JSON.stringify(CAPS));
+  renAll();
+  toast(id+' updated to '+cap.progress+'%','ok');
+}
+
+function addEvid(id){
+  var ev=prompt('Enter evidence document name:');
+  if(!ev)return;
+  var cap=CAPS.find(function(c){return c.id===id;});
+  if(cap){cap.evidence.push(ev);localStorage.setItem('ra_capts',JSON.stringify(CAPS));renEvid();toast('Evidence added','ok');}
+}
+
+function exportCAPs(){
+  var rows=['CAP ID,Finding,Standard,Severity,Owner,Due Date,Progress,Status'];
+  CAPS.forEach(function(c){rows.push('"'+c.id+'","'+c.finding.replace(/"/g,''')+'","'+c.std+'","'+c.sev+'","'+c.owner+'","'+c.due+'",'+c.progress+',"'+c.status+'"');});
+  var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([rows.join('\n')],{type:'text/csv'}));a.download='CAP_Register.csv';a.click();
+}
+
+function renAll(){renList();renOverdue();renEvid();renPerf();}
+document.addEventListener('DOMContentLoaded',renAll);
 </script></body></html>

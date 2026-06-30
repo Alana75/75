@@ -1,164 +1,290 @@
 <!DOCTYPE html><html lang="en"><head>
-<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Reporting &amp; Exports — Ralph Analytics</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ESG Reporting — Ralph Analytics</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#0d1117;--bg2:#161b22;--bg3:#1c2333;--bdr:#2a2d3e;--text:#e8eaf0;--muted:#8b8fa8;--o:#E8521A;}
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
 .topbar{background:var(--bg2);border-bottom:1px solid var(--bdr);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
 .logo{width:30px;height:30px;border-radius:7px;background:var(--o);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.75rem;color:#fff;}
-.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;font-size:.8rem;font-weight:700;cursor:pointer;border:none;font-family:inherit;text-decoration:none;}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;font-size:.8rem;font-weight:700;cursor:pointer;border:none;font-family:inherit;text-decoration:none;transition:.15s;}
 .btn-back{background:transparent;color:var(--muted);border:1px solid var(--bdr);}
-.btn-primary{background:var(--o);color:#fff;}
-.btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--bdr);}
+.btn-back:hover{border-color:var(--o);color:var(--o);}
+.btn-p{background:var(--o);color:#fff;}
 .live-badge{display:flex;align-items:center;gap:6px;background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.2);border-radius:20px;padding:4px 12px;font-size:.72rem;font-weight:700;color:#4ade80;}
 .live-dot{width:7px;height:7px;border-radius:50%;background:#4ade80;animation:pulse 2s infinite;}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 .main{max-width:1200px;margin:0 auto;padding:28px 24px;}
-.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px;}
-.stat-card{background:var(--bg2);border:1px solid var(--bdr);border-radius:12px;padding:18px;}
-.stat-val{font-size:1.8rem;font-weight:900;line-height:1;margin-bottom:4px;}
-.stat-label{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);}
+.sr{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px;}
+.sc{background:var(--bg2);border:1px solid var(--bdr);border-radius:12px;padding:18px;}
+.sv{font-size:1.8rem;font-weight:900;line-height:1;margin-bottom:4px;}
+.sl{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);}
+.sd{font-size:.71rem;margin-top:5px;}
 .card{background:var(--bg2);border:1px solid var(--bdr);border-radius:12px;padding:22px;margin-bottom:16px;}
-.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.card-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
 .card-title{font-size:.82rem;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);}
-.badge{display:inline-flex;font-size:.7rem;font-weight:700;padding:3px 9px;border-radius:12px;}
-.b-green{background:rgba(74,222,128,.12);color:#4ade80;}
-.b-amber{background:rgba(245,158,11,.12);color:#f59e0b;}
-.b-blue{background:rgba(96,165,250,.12);color:#60a5fa;}
-.b-gray{background:rgba(139,143,168,.1);color:var(--muted);}
-.report-card{background:var(--bg3);border:1px solid var(--bdr);border-radius:10px;padding:18px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;}
-.template-card{background:var(--bg3);border:1px solid var(--bdr);border-radius:10px;padding:16px;cursor:pointer;transition:border-color .18s;}
-.template-card:hover{border-color:rgba(232,82,26,.5);}
-.template-card.active{border-color:var(--o);}
+.bdg{display:inline-flex;font-size:.7rem;font-weight:700;padding:3px 9px;border-radius:12px;}
+.b-green{background:rgba(74,222,128,.12);color:#4ade80;border:1px solid rgba(74,222,128,.2);}
+.b-amber{background:rgba(245,158,11,.12);color:#f59e0b;border:1px solid rgba(245,158,11,.2);}
+.b-red{background:rgba(239,68,68,.12);color:#ef4444;border:1px solid rgba(239,68,68,.2);}
+.b-blue{background:rgba(96,165,250,.12);color:#60a5fa;border:1px solid rgba(96,165,250,.2);}
+.b-purple{background:rgba(139,92,246,.12);color:#a78bfa;border:1px solid rgba(139,92,246,.2);}
+.pb{height:8px;background:var(--bg3);border-radius:4px;overflow:hidden;}
+.pf{height:100%;border-radius:4px;}
+.tabs{display:flex;gap:2px;background:var(--bg3);border-radius:10px;padding:4px;margin-bottom:20px;}
+.tab{padding:7px 16px;border-radius:7px;font-size:.8rem;font-weight:700;cursor:pointer;color:var(--muted);background:none;border:none;font-family:inherit;}
+.tab.active{background:var(--bg2);color:var(--text);border:1px solid var(--bdr);}
+.tp{display:none;}.tp.active{display:block;}
+.disc-item{background:var(--bg3);border:1px solid var(--bdr);border-radius:10px;padding:16px;margin-bottom:10px;}
+.fi,.fs{width:100%;padding:10px 13px;background:var(--bg);border:1px solid var(--bdr);border-radius:8px;color:var(--text);font-size:.85rem;font-family:inherit;outline:none;}
+.fi:focus,.fs:focus{border-color:var(--o);}
+#toast{position:fixed;bottom:24px;right:22px;background:var(--bg2);border:1px solid var(--bdr);padding:12px 20px;border-radius:8px;font-size:.82rem;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,.5);z-index:9999;opacity:0;transform:translateY(10px);transition:.25s;pointer-events:none;}
+#toast.show{opacity:1;transform:translateY(0);}#toast.ok{border-color:#4ade80;color:#4ade80;}
 </style></head><body>
-
 <div class="topbar">
   <div style="display:flex;align-items:center;gap:12px;">
     <a href="/client"><div class="logo">R</div></a>
     <span style="font-weight:800;font-size:.88rem;">Ralph Analytics</span>
     <span style="color:var(--bdr);margin:0 4px;">/</span>
-    <span style="font-size:.82rem;color:var(--muted);">Reporting &amp; Data Export</span>
+    <span style="font-size:.82rem;color:var(--muted);">Governance, Risk &amp; ESG Reporting</span>
   </div>
   <div style="display:flex;align-items:center;gap:10px;">
     <div class="live-badge"><div class="live-dot"></div>Live</div>
     <a href="/client" class="btn btn-back">← Dashboard</a>
-    <button class="btn btn-primary" onclick="generateReport()">Generate Report</button>
+    <button class="btn btn-p" onclick="genReport()">Generate Report</button>
   </div>
 </div>
-
 <div class="main">
   <div style="margin-bottom:24px;">
-    <h1 style="font-size:1.5rem;font-weight:900;margin-bottom:6px;">Reports &amp; Data Exports</h1>
-    <p style="font-size:.87rem;color:var(--muted);">Board-ready reports · Donor compliance submissions · Regulatory filings · PDF, Excel &amp; API export</p>
+    <h1 style="font-size:1.5rem;font-weight:900;margin-bottom:6px;">Governance, Risk &amp; ESG Reporting</h1>
+    <p style="font-size:.87rem;color:var(--muted);">GRI Standards &middot; SASB &middot; TCFD &middot; UN SDGs &mdash; Structured ESG disclosure builder and reporting hub</p>
+  </div>
+  <div class="sr">
+    <div class="sc"><div class="sv" style="color:#4ade80;" id="st-comp">0</div><div class="sl">Disclosures</div><div class="sd" style="color:#4ade80;">Completed</div></div>
+    <div class="sc"><div class="sv" style="color:#f59e0b;" id="st-pend">0</div><div class="sl">Pending</div><div class="sd" style="color:#f59e0b;">Data required</div></div>
+    <div class="sc"><div class="sv" style="color:var(--o);" id="st-frame">3</div><div class="sl">Frameworks</div><div class="sd">GRI &middot; SASB &middot; TCFD</div></div>
+    <div class="sc"><div class="sv" style="color:#a78bfa;" id="st-score">0%</div><div class="sl">Completion</div><div class="sd">Overall readiness</div></div>
+  </div>
+  <div class="tabs">
+    <button class="tab active" onclick="swTab('tGRI',this)">GRI Disclosures</button>
+    <button class="tab" onclick="swTab('tSASB',this)">SASB</button>
+    <button class="tab" onclick="swTab('tTCFD',this)">TCFD</button>
+    <button class="tab" onclick="swTab('tRpt',this)">Report Builder</button>
   </div>
 
-  <div class="stats-row">
-    <div class="stat-card"><div class="stat-val" style="color:var(--o);">68</div><div class="stat-label">Reports Generated</div></div>
-    <div class="stat-card"><div class="stat-val" style="color:#4ade80;">94%</div><div class="stat-label">On-Time Delivery</div></div>
-    <div class="stat-card"><div class="stat-val" style="color:#60a5fa;">12</div><div class="stat-label">Active Templates</div></div>
-    <div class="stat-card"><div class="stat-val" style="color:#f59e0b;">3</div><div class="stat-label">Scheduled Reports</div></div>
-  </div>
-
-  <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:16px;">
-    <div>
-      <div class="card">
-        <div class="card-header"><span class="card-title">Report Templates</span></div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;" id="template-grid"></div>
-      </div>
-
-      <div class="card">
-        <div class="card-header"><span class="card-title">Generated Reports</span></div>
-        <div id="report-list"></div>
-      </div>
-    </div>
-
+  <div class="tp active" id="tGRI">
     <div class="card">
-      <div class="card-header"><span class="card-title">Generate New Report</span></div>
-      <div style="display:flex;flex-direction:column;gap:12px;">
-        <div><label style="font-size:.72rem;font-weight:700;color:var(--muted);display:block;margin-bottom:6px;text-transform:uppercase;">Report Type</label>
-          <select id="rpt-type" style="width:100%;padding:10px 13px;background:var(--bg);border:1px solid var(--bdr);border-radius:8px;color:var(--text);font-size:.85rem;font-family:inherit;">
-            <option>Executive Compliance Summary</option><option>Supplier ESG Report</option><option>Risk Register Export</option>
-            <option>Board Governance Report</option><option>Donor Compliance Submission</option><option>CAP Status Report</option>
-            <option>Field Audit Summary</option><option>Impact &amp; Results Report</option>
-          </select></div>
-        <div><label style="font-size:.72rem;font-weight:700;color:var(--muted);display:block;margin-bottom:6px;text-transform:uppercase;">Period</label>
-          <select id="rpt-period" style="width:100%;padding:10px 13px;background:var(--bg);border:1px solid var(--bdr);border-radius:8px;color:var(--text);font-size:.85rem;font-family:inherit;">
-            <option>Q2 2026 (Apr–Jun)</option><option>Q1 2026 (Jan–Mar)</option><option>H1 2026</option><option>FY 2025</option><option>Last 30 days</option>
-          </select></div>
-        <div><label style="font-size:.72rem;font-weight:700;color:var(--muted);display:block;margin-bottom:6px;text-transform:uppercase;">Format</label>
-          <div style="display:flex;gap:8px;">
-            <button id="fmt-pdf" class="btn btn-primary" onclick="setFmt('pdf')" style="flex:1;justify-content:center;">PDF</button>
-            <button id="fmt-excel" class="btn btn-ghost" onclick="setFmt('excel')" style="flex:1;justify-content:center;">Excel</button>
-            <button id="fmt-json" class="btn btn-ghost" onclick="setFmt('json')" style="flex:1;justify-content:center;">JSON</button>
-          </div></div>
-        <div><label style="font-size:.72rem;font-weight:700;color:var(--muted);display:block;margin-bottom:6px;text-transform:uppercase;">Include AI Narrative</label>
-          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:.85rem;">
-            <input type="checkbox" id="rpt-ai" checked style="accent-color:var(--o);width:16px;height:16px;"/>
-            Automatically generate executive summary narrative</label></div>
-        <button class="btn btn-primary" style="width:100%;justify-content:center;padding:12px;" onclick="generateReport()">Generate &amp; Download</button>
+      <div class="card-hdr"><span class="card-title">GRI Standards Disclosures</span><button class="btn btn-back" style="font-size:.74rem;" onclick="exportGRI()">Export CSV</button></div>
+      <div id="gri-list"></div>
+    </div>
+  </div>
+
+  <div class="tp" id="tSASB">
+    <div class="card">
+      <div class="card-hdr"><span class="card-title">SASB Metrics &mdash; Professional Services</span></div>
+      <div id="sasb-list"></div>
+    </div>
+  </div>
+
+  <div class="tp" id="tTCFD">
+    <div class="card">
+      <div class="card-hdr"><span class="card-title">TCFD Climate Disclosures</span></div>
+      <div id="tcfd-list"></div>
+    </div>
+  </div>
+
+  <div class="tp" id="tRpt">
+    <div class="card">
+      <div class="card-hdr"><span class="card-title">ESG Report Builder</span></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+        <div>
+          <label style="font-size:.73rem;font-weight:700;color:var(--muted);text-transform:uppercase;display:block;margin-bottom:6px;">Report Period</label>
+          <select class="fs" id="rpt-period"><option>FY 2026 (Jan - Dec 2026)</option><option>FY 2025 (Jan - Dec 2025)</option><option>Q2 2026 (Apr - Jun 2026)</option></select>
+        </div>
+        <div>
+          <label style="font-size:.73rem;font-weight:700;color:var(--muted);text-transform:uppercase;display:block;margin-bottom:6px;">Reporting Framework</label>
+          <select class="fs" id="rpt-fwk"><option>GRI Standards (Core)</option><option>SASB</option><option>TCFD</option><option>Integrated (GRI + SASB + TCFD)</option><option>Custom</option></select>
+        </div>
       </div>
+      <div style="margin-bottom:16px;">
+        <label style="font-size:.73rem;font-weight:700;color:var(--muted);text-transform:uppercase;display:block;margin-bottom:8px;">Include Sections</label>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;">
+          <label style="display:flex;align-items:center;gap:8px;font-size:.82rem;cursor:pointer;"><input type="checkbox" id="inc-gov" checked> Governance</label>
+          <label style="display:flex;align-items:center;gap:8px;font-size:.82rem;cursor:pointer;"><input type="checkbox" id="inc-env" checked> Environmental</label>
+          <label style="display:flex;align-items:center;gap:8px;font-size:.82rem;cursor:pointer;"><input type="checkbox" id="inc-soc" checked> Social</label>
+          <label style="display:flex;align-items:center;gap:8px;font-size:.82rem;cursor:pointer;"><input type="checkbox" id="inc-risk" checked> Risk Management</label>
+          <label style="display:flex;align-items:center;gap:8px;font-size:.82rem;cursor:pointer;"><input type="checkbox" id="inc-sdg" checked> SDG Mapping</label>
+          <label style="display:flex;align-items:center;gap:8px;font-size:.82rem;cursor:pointer;"><input type="checkbox" id="inc-kpi" checked> KPI Summary</label>
+        </div>
+      </div>
+      <button class="btn btn-p" style="width:100%;justify-content:center;padding:12px;" onclick="genReport()">Generate ESG Report</button>
+      <div id="rpt-output" style="margin-top:20px;"></div>
     </div>
   </div>
 </div>
-
+<div id="toast"></div>
 <script>
-var selectedFmt='pdf';
-function setFmt(f){
-  selectedFmt=f;
-  ['pdf','excel','json'].forEach(function(x){
-    var b=document.getElementById('fmt-'+x);
-    b.className='btn '+(x===f?'btn-primary':'btn-ghost');
-    b.style.flex='1';b.style.justifyContent='center';
-  });
-}
-var templates=[
-  {name:'Executive Summary',desc:'Board-level overview',icon:'📊',std:'All modules'},
-  {name:'Supplier ESG',desc:'ESG performance by supplier',icon:'🏭',std:'RBA/SMETA/SA8000'},
-  {name:'Risk Register',desc:'Full risk matrix export',icon:'⚠️',std:'ISO 31000'},
-  {name:'Donor Compliance',desc:'USAID/DFID formatted',icon:'📋',std:'Custom'},
-  {name:'Board Governance',desc:'Governance &amp; ESG metrics',icon:'🏛️',std:'GRI/ESG'},
-  {name:'CAP Status',desc:'Open/closed CAP summary',icon:'✅',std:'All CAPs'},
-  {name:'Field Audit',desc:'Audit findings by facility',icon:'🔍',std:'Multi-standard'},
-  {name:'Impact Report',desc:'Results-chain evidence',icon:'📈',std:'SDG/ESG'},
+const TOK=localStorage.getItem('ralph_client_token');
+if(!TOK)location.href='/client';
+function toast(m,t){t=t||'ok';var el=document.getElementById('toast');el.textContent=m;el.className='show '+t;setTimeout(function(){el.className='';},3000);}
+function swTab(id,btn){document.querySelectorAll('.tp').forEach(function(t){t.classList.remove('active');});document.querySelectorAll('.tab').forEach(function(b){b.classList.remove('active');});document.getElementById(id).classList.add('active');btn.classList.add('active');}
+
+var GRI=JSON.parse(localStorage.getItem('ra_gri')||'null');
+if(!GRI){GRI=[
+{code:'GRI 2-1',title:'Organizational Details',cat:'General',status:'Complete',data:'Ralph Analytics — M&E Data Analytics & Regulatory Compliance, incorporated South Africa'},
+{code:'GRI 2-5',title:'External Assurance',cat:'General',status:'Pending',data:''},
+{code:'GRI 2-9',title:'Governance Structure & Composition',cat:'General',status:'Complete',data:'Board oversight with AI Governance Lead reporting line; quarterly board ESG reporting'},
+{code:'GRI 2-22',title:'Statement on Sustainable Development Strategy',cat:'General',status:'Complete',data:'Committed to responsible AI governance, worker rights monitoring and supply chain ESG compliance'},
+{code:'GRI 3-1',title:'Process to Determine Material Topics',cat:'Materiality',status:'Pending',data:''},
+{code:'GRI 302-1',title:'Energy Consumption Within the Organisation',cat:'Environmental',status:'Pending',data:''},
+{code:'GRI 305-1',title:'Direct (Scope 1) GHG Emissions',cat:'Environmental',status:'Partial',data:'Scope 1: Minimal — cloud-based operations. Scope 2 calculation in progress'},
+{code:'GRI 401-1',title:'New Employee Hires and Employee Turnover',cat:'Social',status:'Partial',data:'FY2026 H1: 3 new hires, 0 turnover. Full year data pending'},
+{code:'GRI 403-1',title:'Occupational Health & Safety Management System',cat:'Social',status:'Complete',data:'ISO 45001-aligned H&S management system covering all employees and contractors'},
+{code:'GRI 406-1',title:'Incidents of Discrimination and Corrective Actions',cat:'Social',status:'Complete',data:'0 formal discrimination incidents reported FY2026. Grievance mechanism operational'},
+{code:'GRI 414-1',title:'New Suppliers Screened Using Social Criteria',cat:'Supply Chain',status:'Partial',data:'61% of key suppliers completed ESG screening. Target: 80% by Q4 2026'},
+{code:'GRI 418-1',title:'Personal Data Breaches',cat:'Governance',status:'Complete',data:'0 personal data breaches reported. POPIA & GDPR compliant. DPA register maintained'}
+];localStorage.setItem('ra_gri',JSON.stringify(GRI));}
+
+var SASB=[
+{metric:'Employee Engagement as a Percentage',code:'SV-PS-310a.1',val:'Not yet measured',unit:'%',status:'Pending'},
+{metric:'Total Recordable Incident Rate (TRIR)',code:'SV-PS-320a.1',val:'0.0',unit:'per 200k hrs',status:'Complete'},
+{metric:'Description of approach to ensuring responsible business practices',code:'SV-PS-510a.1',val:'AI Ethics Policy v1.1, POPIA/GDPR compliance, RBA CoC monitoring',unit:'Qualitative',status:'Complete'},
+{metric:'Percentage of revenue from government contracts',code:'SV-PS-510a.2',val:'0%',unit:'%',status:'Complete'},
+{metric:'High-risk countries — business activities',code:'SV-PS-510a.3',val:'Client operations span SE Asia, sub-Saharan Africa — mitigated through RBA CoC audits',unit:'Qualitative',status:'Partial'}
 ];
-var tGrid=document.getElementById('template-grid');
-if(tGrid){
-  tGrid.innerHTML=templates.map(function(t){
-    return '<div class="template-card"><div style="font-size:1.2rem;margin-bottom:8px;">'+t.icon+'</div>'
-      +'<div style="font-weight:700;font-size:.85rem;margin-bottom:4px;">'+t.name+'</div>'
-      +'<div style="font-size:.75rem;color:var(--muted);margin-bottom:6px;">'+t.desc+'</div>'
-      +'<span class="badge b-blue" style="font-size:.65rem;">'+t.std+'</span></div>';
+
+var TCFD=[
+{pillar:'Governance',q:'Board oversight of climate-related risks and opportunities',status:'Complete',response:'Board receives quarterly ESG reporting including climate risk metrics. AI Governance Lead responsible for climate-related data.'},
+{pillar:'Governance',q:'Management role in assessing climate-related risks',status:'Complete',response:'Operations team conducts annual climate risk assessment mapped to ISO 14001 and GRI 305.'},
+{pillar:'Strategy',q:'Climate-related risks and opportunities over short, medium and long term',status:'Partial',response:'Short-term: cloud infrastructure energy consumption. Medium-term: supply chain climate risk in SE Asia. Long-term: regulatory carbon pricing exposure.'},
+{pillar:'Strategy',q:'Impact of climate-related risks on organisation's businesses, strategy, and financial planning',status:'Pending',response:''},
+{pillar:'Risk Management',q:'Processes for identifying and assessing climate-related risks',status:'Complete',response:'Integrated into IRMP risk register under Environmental category. ISO 31000 methodology applied. ESG risk dashboard operational.'},
+{pillar:'Risk Management',q:'Processes for managing climate-related risks',status:'Complete',response:'ESG risk treatment plans maintained in CAPTS module. Annual external environmental review scheduled.'},
+{pillar:'Metrics & Targets',q:'Metrics used to assess climate-related risks and opportunities',status:'Partial',response:'GHG emissions reduction target: 30% vs 2023 baseline by 2030. Current progress: 12%.'},
+{pillar:'Metrics & Targets',q:'Scope 1, 2, 3 GHG emissions and related risks',status:'Pending',response:'Scope 1 & 2 measurement in progress. Scope 3 (supply chain) — supplier data collection underway via SCVMS module.'}
+];
+
+function statCls(s){return s==='Complete'?'b-green':s==='Partial'?'b-amber':'b-red';}
+function statCol(s){return s==='Complete'?'#4ade80':s==='Partial'?'var(--o)':'#ef4444';}
+
+function renGRI(){
+  var comp=GRI.filter(function(g){return g.status==='Complete';}).length;
+  var pend=GRI.filter(function(g){return g.status==='Pending';}).length;
+  var score=Math.round((comp*100+GRI.filter(function(g){return g.status==='Partial';}).length*50)/(GRI.length*100)*100);
+  document.getElementById('st-comp').textContent=comp;
+  document.getElementById('st-pend').textContent=pend;
+  document.getElementById('st-score').textContent=score+'%';
+  var cats={};
+  GRI.forEach(function(g){if(!cats[g.cat])cats[g.cat]=[];cats[g.cat].push(g);});
+  document.getElementById('gri-list').innerHTML=Object.keys(cats).map(function(cat){
+    return '<div style="margin-bottom:20px;">'
+      +'<div style="font-size:.78rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--bdr);">'+cat+'</div>'
+      +cats[cat].map(function(g){
+        return '<div class="disc-item">'
+          +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">'
+          +'<div style="display:flex;align-items:center;gap:10px;">'
+          +'<span style="font-family:monospace;font-size:.75rem;color:var(--o);background:rgba(232,82,26,.1);padding:2px 7px;border-radius:4px;">'+g.code+'</span>'
+          +'<span style="font-size:.83rem;font-weight:700;">'+g.title+'</span></div>'
+          +'<span class="bdg '+statCls(g.status)+'">'+g.status+'</span></div>'
+          +(g.data?'<div style="font-size:.78rem;color:var(--muted);line-height:1.6;">'+g.data+'</div>'
+            :'<div style="font-size:.75rem;color:var(--muted);font-style:italic;">Data not yet entered &mdash; click to update</div>')
+          +'<div style="margin-top:8px;display:flex;gap:6px;">'
+          +'<button onclick="editGRI(''+g.code+'')" style="background:var(--bg2);border:1px solid var(--bdr);color:var(--muted);border-radius:5px;padding:3px 10px;font-size:.72rem;cursor:pointer;">Edit data</button>'
+          +(g.status!=='Complete'?'<button onclick="markComplete(''+g.code+'')" style="background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.2);color:#4ade80;border-radius:5px;padding:3px 10px;font-size:.72rem;cursor:pointer;">Mark Complete</button>':'')
+          +'</div></div>';
+      }).join('')
+      +'</div>';
   }).join('');
 }
-var reports=[
-  {name:'Q2 2026 Executive Summary',type:'Executive Compliance Summary',period:'Q2 2026',fmt:'PDF',date:'2026-06-24',status:'Ready'},
-  {name:'H1 2026 Supplier ESG Report',type:'Supplier ESG Report',period:'H1 2026',fmt:'Excel',date:'2026-06-20',status:'Ready'},
-  {name:'CAP Status — June 2026',type:'CAP Status Report',period:'Jun 2026',fmt:'PDF',date:'2026-06-18',status:'Ready'},
-  {name:'USAID Donor Submission Q1',type:'Donor Compliance',period:'Q1 2026',fmt:'PDF',date:'2026-04-05',status:'Submitted'},
-];
-var rList=document.getElementById('report-list');
-if(rList){
-  rList.innerHTML=reports.map(function(r){
-    return '<div class="report-card"><div><div style="font-weight:600;font-size:.88rem;margin-bottom:4px;">'+r.name+'</div>'
-      +'<div style="font-size:.75rem;color:var(--muted);">'+r.period+' · '+r.date+'</div></div>'
-      +'<div style="display:flex;gap:8px;align-items:center;">'
-      +'<span class="badge b-gray">'+r.fmt+'</span>'
-      +'<span class="badge '+(r.status==='Ready'?'b-green':'b-blue')+'">'+r.status+'</span>'
-      +'<button class="btn" style="padding:5px 12px;background:var(--bg);border:1px solid var(--bdr);font-size:.75rem;" onclick="alert(\'Downloading '+r.name+'...\')">↓</button></div></div>';
+
+function renSASB(){
+  document.getElementById('sasb-list').innerHTML=SASB.map(function(m){
+    return '<div class="disc-item">'
+      +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">'
+      +'<div><span style="font-family:monospace;font-size:.72rem;color:var(--o);">'+m.code+'</span>'
+      +'<div style="font-size:.83rem;font-weight:700;margin-top:2px;">'+m.metric+'</div></div>'
+      +'<span class="bdg '+statCls(m.status)+'">'+m.status+'</span></div>'
+      +'<div style="font-size:.8rem;color:var(--muted);margin-bottom:4px;"><strong style="color:var(--text);">Value:</strong> '+m.val+' <span style="font-size:.72rem;">('+m.unit+')</span></div>'
+      +'</div>';
   }).join('');
 }
-function generateReport(){
-  var type=document.getElementById('rpt-type').value;
-  var period=document.getElementById('rpt-period').value;
-  var fmt=selectedFmt.toUpperCase();
-  var ai=document.getElementById('rpt-ai').checked;
-  var btn=document.querySelector('.btn-primary[onclick="generateReport()"]');
-  btn.textContent='Generating...';btn.disabled=true;
-  setTimeout(function(){
-    btn.textContent='Generate & Download';btn.disabled=false;
-    alert('Report ready: '+type+' ('+period+') — '+fmt+(ai?' + AI Narrative':''));
-  },1800);
+
+function renTCFD(){
+  var pillars={};
+  TCFD.forEach(function(t){if(!pillars[t.pillar])pillars[t.pillar]=[];pillars[t.pillar].push(t);});
+  var pillarCols={Governance:'#60a5fa',Strategy:'#a78bfa','Risk Management':'#f59e0b','Metrics & Targets':'#4ade80'};
+  document.getElementById('tcfd-list').innerHTML=Object.keys(pillars).map(function(pillar){
+    var col=pillarCols[pillar]||'var(--muted)';
+    return '<div style="margin-bottom:20px;">'
+      +'<div style="font-size:.82rem;font-weight:800;color:'+col+';text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;padding:8px 12px;background:'+col+'11;border-left:3px solid '+col+';border-radius:0 6px 6px 0;">'+pillar+'</div>'
+      +pillars[pillar].map(function(t){
+        return '<div class="disc-item" style="margin-left:12px;">'
+          +'<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:8px;">'
+          +'<div style="font-size:.8rem;font-weight:600;flex:1;">'+t.q+'</div>'
+          +'<span class="bdg '+statCls(t.status)+'" style="flex-shrink:0;">'+t.status+'</span></div>'
+          +(t.response?'<div style="font-size:.78rem;color:var(--muted);line-height:1.6;">'+t.response+'</div>'
+            :'<div style="font-size:.75rem;color:var(--muted);font-style:italic;">Response required</div>')
+          +'</div>';
+      }).join('')
+      +'</div>';
+  }).join('');
 }
+
+function editGRI(code){
+  var g=GRI.find(function(x){return x.code===code;});
+  if(!g)return;
+  var val=prompt('Update disclosure data for '+code+':
+'+g.title,g.data);
+  if(val===null)return;
+  g.data=val;
+  if(val.trim())g.status='Complete';
+  localStorage.setItem('ra_gri',JSON.stringify(GRI));
+  renGRI();toast('GRI disclosure updated','ok');
+}
+
+function markComplete(code){
+  var g=GRI.find(function(x){return x.code===code;});
+  if(g){g.status='Complete';localStorage.setItem('ra_gri',JSON.stringify(GRI));renGRI();toast('Marked as complete','ok');}
+}
+
+function exportGRI(){
+  var rows=['GRI Code,Title,Category,Status,Data'];
+  GRI.forEach(function(g){rows.push('"'+g.code+'","'+g.title+'","'+g.cat+'","'+g.status+'","'+g.data.replace(/"/g,"'")+'"');});
+  var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([rows.join('\n')],{type:'text/csv'}));a.download='GRI_Disclosures.csv';a.click();
+}
+
+function genReport(){
+  var period=document.getElementById('rpt-period')?document.getElementById('rpt-period').value:'FY 2026';
+  var fwk=document.getElementById('rpt-fwk')?document.getElementById('rpt-fwk').value:'GRI Standards';
+  var comp=GRI.filter(function(g){return g.status==='Complete';}).length;
+  var now=new Date().toLocaleDateString('en-ZA',{year:'numeric',month:'long',day:'numeric'});
+  var out=document.getElementById('rpt-output');
+  if(!out){swTab('tRpt',document.querySelectorAll('.tab')[3]);setTimeout(genReport,100);return;}
+  out.innerHTML='<div style="border:2px solid var(--bdr);border-radius:12px;padding:28px;">'
+    +'<div style="text-align:center;margin-bottom:24px;">'
+    +'<div style="font-size:1.3rem;font-weight:900;margin-bottom:4px;">ESG Disclosure Report</div>'
+    +'<div style="font-size:.82rem;color:var(--muted);">'+period+' &middot; '+fwk+' &middot; Generated '+now+'</div>'
+    +'<div style="font-size:.78rem;color:var(--muted);margin-top:4px;">Ralph Analytics &mdash; M&amp;E Data Analytics &amp; Regulatory Compliance</div></div>'
+    +'<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:24px;">'
+    +'<div style="background:var(--bg3);border-radius:8px;padding:12px;text-align:center;"><div style="font-size:1.4rem;font-weight:900;color:#4ade80;">'+comp+'</div><div style="font-size:.7rem;color:var(--muted);">Disclosures complete</div></div>'
+    +'<div style="background:var(--bg3);border-radius:8px;padding:12px;text-align:center;"><div style="font-size:1.4rem;font-weight:900;color:var(--o);">74%</div><div style="font-size:.7rem;color:var(--muted);">Overall health score</div></div>'
+    +'<div style="background:var(--bg3);border-radius:8px;padding:12px;text-align:center;"><div style="font-size:1.4rem;font-weight:900;color:#60a5fa;">9</div><div style="font-size:.7rem;color:var(--muted);">SDGs contributed</div></div>'
+    +'<div style="background:var(--bg3);border-radius:8px;padding:12px;text-align:center;"><div style="font-size:1.4rem;font-weight:900;color:#a78bfa;">0</div><div style="font-size:.7rem;color:var(--muted);">Data breaches</div></div>'
+    +'</div>'
+    +'<div style="font-size:.85rem;font-weight:700;margin-bottom:12px;color:var(--text);">Key GRI Disclosures</div>'
+    +GRI.filter(function(g){return g.status==='Complete'&&g.data;}).map(function(g){
+      return '<div style="padding:10px 0;border-bottom:1px solid var(--bdr);font-size:.8rem;">'
+        +'<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">'
+        +'<span style="font-family:monospace;font-size:.72rem;color:var(--o);">'+g.code+'</span>'
+        +'<strong>'+g.title+'</strong></div>'
+        +'<div style="color:var(--muted);">'+g.data+'</div></div>';
+    }).join('')
+    +'<div style="margin-top:20px;padding:14px;background:var(--bg3);border-radius:8px;font-size:.75rem;color:var(--muted);text-align:center;">'
+    +'This report was generated by the Ralph Analytics GRES Module &middot; '+(fwk)+' Framework &middot; '+now
+    +'</div></div>';
+  toast('Report generated','ok');
+}
+
+document.addEventListener('DOMContentLoaded',function(){renGRI();renSASB();renTCFD();});
 </script></body></html>
