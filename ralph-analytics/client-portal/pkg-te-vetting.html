@@ -104,6 +104,8 @@ tr:hover td{background:rgba(255,255,255,.015);}
   <button class="nav-item" onclick="showPage('timeline',this)">📅 Transition Timeline</button>
   <button class="nav-item" onclick="showPage('tiers',this)">🔗 Supply Chain Tiers</button>
   <button class="nav-item" onclick="showPage('materials',this)">🧵 Material Scope</button>
+  <button class="nav-item" onclick="showPage('evidence',this)">📎 Evidence Upload</button>
+  <button class="nav-item" onclick="showPage('review',this)">✅ Evidence Review</button>
   <button class="nav-item" onclick="showPage('reports',this)">📄 Export Reports</button>
   <div style="padding:.8rem .5rem;margin-top:1rem;border-top:1px solid var(--border);">
     <div style="font-size:.65rem;color:var(--muted);line-height:1.8;">
@@ -446,6 +448,149 @@ tr:hover td{background:rgba(255,255,255,.015);}
   </div>
 </div>
 
+
+<!-- EVIDENCE UPLOAD -->
+<div class="page" id="page-evidence">
+  <div class="page-title">Evidence Upload</div>
+  <div class="page-sub">Upload supporting documents, photos, policies, and audits per MMS principle — linked to a member record</div>
+  <div class="doc-refs"><span class="doc-ref">TE-MM-STN-101 P1–P7</span><span class="doc-ref">Max 25MB per file</span><span class="doc-ref">PDF · DOCX · XLSX · CSV · JPG · PNG · MP4</span></div>
+
+  <!-- Member selector -->
+  <div class="card">
+    <div class="card-header"><span class="card-title">Step 1 — Select Member</span></div>
+    <div class="card-body" style="display:flex;gap:.6rem;align-items:flex-end;flex-wrap:wrap;">
+      <div class="form-group" style="flex:1;min-width:200px;margin:0;">
+        <label>Member ID or Company</label>
+        <select id="ev-member-select" onchange="loadEvidenceSummary()">
+          <option value="">— Select a member —</option>
+        </select>
+      </div>
+      <button class="btn btn-outline btn-sm" onclick="populateMemberSelect()">↻ Load Members</button>
+    </div>
+  </div>
+
+  <!-- Evidence summary for selected member -->
+  <div id="ev-summary-panel" style="display:none;">
+    <div class="stat-grid" id="ev-stats"></div>
+
+    <!-- Upload form -->
+    <div class="card">
+      <div class="card-header"><span class="card-title">Step 2 — Upload Evidence</span></div>
+      <div class="card-body">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Evidence Type (MMS Principle)</label>
+            <select id="ev-type">
+              <optgroup label="P1 — Organisational Management">
+                <option value="mgmt_system">Management System Documentation</option>
+                <option value="org_chart">Org Chart / RACI / Roles</option>
+                <option value="te_id_registration">TE-ID / Trackit Registration Proof</option>
+              </optgroup>
+              <optgroup label="P2 — Human Rights & Livelihoods">
+                <option value="hrdd_policy">Human Rights Due Diligence Policy</option>
+                <option value="working_practices">Working Practices / Anti-Discrimination Policy</option>
+                <option value="hs_policy">Health & Safety Policy / Risk Register</option>
+                <option value="payroll_records">Payroll / Wage Records (anonymised)</option>
+                <option value="grievance_mechanism">Grievance Mechanism / Worker Feedback Records</option>
+                <option value="age_verification">Age Verification Procedures</option>
+              </optgroup>
+              <optgroup label="P3 — Land Use (Tier 4 Farms)">
+                <option value="land_mgmt_plan">Land Management Plan</option>
+                <option value="soil_monitoring">Soil Health Monitoring Records</option>
+                <option value="pest_mgmt_plan">IPM / Pest Management Plan</option>
+                <option value="water_mgmt_plan">Water Management Plan</option>
+                <option value="pesticide_records">Pesticide Application Records</option>
+              </optgroup>
+              <optgroup label="P4 — Animal Welfare (Tier 4 Farms)">
+                <option value="welfare_plan">Animal Health & Welfare Plan</option>
+                <option value="vet_records">Veterinary Review Records</option>
+                <option value="mulesing_declaration">Mulesing Declaration (Wool — NO MULESING)</option>
+                <option value="shearing_records">Shearing Records / Site Photos</option>
+                <option value="transport_records">Animal Transport Journey Records</option>
+              </optgroup>
+              <optgroup label="P5 — Processing Facility">
+                <option value="ems_certificate">ISO 14001 / EMS Certificate</option>
+                <option value="zdhc_report">ZDHC MRSL Conformance Report</option>
+                <option value="rmdf_form">RMDF — TE-MM-TEM-105 Reclaimed Material Declaration Form</option>
+                <option value="wastewater_results">Wastewater Test Results / Discharge Permit</option>
+                <option value="waste_mgmt_plan">Waste Management Plan</option>
+                <option value="air_monitoring">Air Emissions Monitoring Report</option>
+                <option value="chemical_inventory">Chemical Inventory (vs ZDHC MRSL)</option>
+              </optgroup>
+              <optgroup label="P6 — Chain of Custody">
+                <option value="scope_certificate">MMS / Legacy Scope Certificate</option>
+                <option value="trademark_license">Trademark License Agreement (signed)</option>
+                <option value="transaction_certs">Sample Transaction Certificates (TCs)</option>
+                <option value="segregation_sop">Material Segregation SOP / Procedures</option>
+                <option value="volume_reconciliation">Volume Reconciliation Records</option>
+              </optgroup>
+              <optgroup label="P7 — Group Certification">
+                <option value="group_config">Group Configuration Document</option>
+                <option value="internal_inspections">Internal Inspection Records (% to MMS)</option>
+              </optgroup>
+              <optgroup label="General / Transition">
+                <option value="audit_report">Third-Party Audit Report</option>
+                <option value="transition_plan">MMS Transition Plan / Project Plan</option>
+                <option value="corrective_action">Corrective Action Plan (CAP)</option>
+                <option value="site_photos">Site / Facility / Farm Photos</option>
+                <option value="policy_other">Other Policy / Procedure Document</option>
+              </optgroup>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Notes for Reviewer (optional)</label>
+            <input id="ev-note" placeholder="e.g. Version 3.1 approved by CEO Jan 2026, covers all South Africa operations"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Select Files (up to 10, max 25MB each)</label>
+          <input type="file" id="ev-files" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.csv,.jpg,.jpeg,.png,.mp4"
+            style="background:var(--surface);border:2px dashed var(--border);border-radius:8px;padding:1.2rem;width:100%;cursor:pointer;color:var(--text);"
+            onchange="previewFiles(this)"/>
+          <div id="ev-file-preview" style="margin-top:.5rem;"></div>
+        </div>
+        <button class="btn btn-primary" onclick="uploadEvidence()">⬆ Upload Evidence</button>
+        <div id="ev-upload-result" style="margin-top:.8rem;"></div>
+      </div>
+    </div>
+
+    <!-- Existing evidence by principle -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">📁 Uploaded Evidence — by MMS Principle</span>
+        <button class="btn btn-outline btn-sm" onclick="loadEvidenceSummary()">↻ Refresh</button>
+      </div>
+      <div class="card-body" id="ev-evidence-list"><p style="color:var(--muted)">Loading...</p></div>
+    </div>
+
+    <!-- Missing required evidence -->
+    <div class="card">
+      <div class="card-header"><span class="card-title">⚠ Missing Required Evidence</span></div>
+      <div class="card-body" id="ev-missing-list"><p style="color:var(--muted)">Loading...</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- EVIDENCE REVIEW -->
+<div class="page" id="page-review">
+  <div class="page-title">Evidence Review</div>
+  <div class="page-sub">Review, verify, or reject uploaded evidence per member — updates their assessment score</div>
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">Portfolio Evidence Status</span>
+      <button class="btn btn-outline btn-sm" onclick="loadReviewPortfolio()">↻ Refresh</button>
+    </div>
+    <div class="card-body" style="padding:0;">
+      <table>
+        <thead><tr><th>Member</th><th>Tier</th><th>Files</th><th>Verified</th><th>Pending</th><th>Rejected</th><th>Required Coverage</th><th>Doc Completeness</th><th>Action</th></tr></thead>
+        <tbody id="review-tbody"><tr><td colspan="9" style="text-align:center;color:var(--muted);padding:2rem;">Click Refresh to load</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+  <div id="review-detail-panel"></div>
+</div>
+
+
 <!-- REPORTS -->
 <div class="page" id="page-reports">
   <div class="page-title">Export Reports</div>
@@ -708,6 +853,178 @@ async function exportPortfolio() { const d = await api('/te/api/portfolio'); dow
 async function exportAuditLog()  { const d = await api('/te/api/audit-log'); download('te_audit_log.json', d); }
 async function exportHighRisk()  { const d = await api('/te/api/portfolio'); download('te_highrisk.json', d.data?.highRiskMembers||[]); }
 async function exportStandards() { const d = await api('/te/api/standards'); download('te_standards_ref.json', d); }
+
+// ── EVIDENCE UPLOAD ────────────────────────────────────────────────
+let currentEvidenceMemberId = null;
+
+async function populateMemberSelect() {
+  const d = await api('/te/api/members');
+  if (!d.success) return;
+  const sel = document.getElementById('ev-member-select');
+  sel.innerHTML = '<option value="">— Select a member —</option>' +
+    d.data.map(m => `<option value="${m.id}">${m.companyName} (${m.id}) — Tier ${m.tier||'?'}</option>`).join('');
+}
+
+async function loadEvidenceSummary() {
+  const sel = document.getElementById('ev-member-select');
+  const memberId = sel.value;
+  if (!memberId) return;
+  currentEvidenceMemberId = memberId;
+  document.getElementById('ev-summary-panel').style.display = 'block';
+  const d = await api('/te/api/members/' + memberId + '/evidence');
+  if (!d.success) return;
+  const s = d.summary;
+
+  // Stats
+  document.getElementById('ev-stats').innerHTML = `
+    <div class="stat"><div class="stat-label">Total Files</div><div class="stat-val blue">${s.totalFiles}</div></div>
+    <div class="stat"><div class="stat-label">Verified</div><div class="stat-val green">${s.verified}</div></div>
+    <div class="stat"><div class="stat-label">Pending Review</div><div class="stat-val amber">${s.pending}</div></div>
+    <div class="stat"><div class="stat-label">Rejected</div><div class="stat-val red">${s.rejected}</div></div>
+    <div class="stat"><div class="stat-label">Required Covered</div><div class="stat-val">${s.requiredCovered}</div></div>
+    <div class="stat"><div class="stat-label">Doc Completeness</div><div class="stat-val ${s.docCompleteness>=80?'green':s.docCompleteness>=50?'amber':'red'}">${s.docCompleteness}%</div></div>`;
+
+  // Evidence by principle
+  const el = document.getElementById('ev-evidence-list');
+  const principles = ['P1','P2','P3','P4','P5','P6','P7','General'];
+  const pLabels = { P1:'Org Management', P2:'Human Rights', P3:'Land Use', P4:'Animal Welfare', P5:'Processing', P6:'Chain of Custody', P7:'Group Cert', General:'General / Transition' };
+  let html = '';
+  principles.forEach(p => {
+    const pg = d.byPrinciple[p];
+    if (!pg || (pg.uploaded.length === 0 && pg.missing.length === 0)) return;
+    html += `<div style="margin-bottom:1rem;"><div class="section-head">${p}: ${pLabels[p]} — ${pg.uploaded.length} file(s) uploaded</div>`;
+    pg.uploaded.forEach(ev => {
+      const statusColor = ev.status==='Verified'?'pill-green':ev.status==='Rejected'?'pill-red':ev.status==='Insufficient'?'pill-amber':'pill-gray';
+      html += `<div style="display:flex;align-items:center;gap:.5rem;padding:.4rem 0;border-bottom:1px solid rgba(255,255,255,.03);">
+        <span class="pill ${statusColor}" style="flex-shrink:0">${ev.status}</span>
+        <div style="flex:1;">
+          <div style="font-size:.8rem;font-weight:600;">${ev.label}</div>
+          <div style="font-size:.7rem;color:var(--muted);">${ev.originalName} · ${ev.sizeMB}MB · ${new Date(ev.uploadedAt).toLocaleDateString()}</div>
+        </div>
+        <button class="btn btn-outline btn-sm" onclick="downloadEvidence('${memberId}','${ev.id}','${ev.originalName}')">⬇</button>
+        <button class="btn btn-outline btn-sm" style="color:var(--red)" onclick="deleteEvidence('${memberId}','${ev.id}')">✕</button>
+      </div>`;
+    });
+    html += '</div>';
+  });
+  el.innerHTML = html || '<p style="color:var(--muted)">No evidence uploaded yet.</p>';
+
+  // Missing required
+  const ml = document.getElementById('ev-missing-list');
+  let missingHtml = '';
+  principles.forEach(p => {
+    const pg = d.byPrinciple[p];
+    if (!pg || pg.missing.length === 0) return;
+    pg.missing.forEach(m => {
+      missingHtml += `<div class="alert alert-amber" style="margin-bottom:.4rem;display:flex;justify-content:space-between;align-items:center;">
+        <div><strong>${p}:</strong> ${m.label} <span style="color:var(--muted);font-size:.75rem;">(required)</span></div>
+        <button class="btn btn-outline btn-sm" onclick="document.getElementById('ev-type').value='${m.evidenceType}';document.getElementById('ev-files').focus();">Upload →</button>
+      </div>`;
+    });
+  });
+  ml.innerHTML = missingHtml || '<div class="alert alert-green">All required evidence types are covered ✓</div>';
+}
+
+function previewFiles(input) {
+  const files = Array.from(input.files);
+  document.getElementById('ev-file-preview').innerHTML = files.map(f =>
+    `<div style="font-size:.75rem;color:var(--muted);padding:.2rem 0;">📎 ${f.name} (${(f.size/1024/1024).toFixed(2)}MB)</div>`
+  ).join('');
+}
+
+async function uploadEvidence() {
+  const memberId = currentEvidenceMemberId;
+  const result = document.getElementById('ev-upload-result');
+  if (!memberId) { result.innerHTML = '<div class="alert alert-red">Select a member first.</div>'; return; }
+  const files = document.getElementById('ev-files').files;
+  if (!files.length) { result.innerHTML = '<div class="alert alert-red">Select at least one file.</div>'; return; }
+  result.innerHTML = '<p style="color:var(--muted)">Uploading...</p>';
+  const formData = new FormData();
+  formData.append('evidenceType', document.getElementById('ev-type').value);
+  formData.append('reviewNote', document.getElementById('ev-note').value);
+  Array.from(files).forEach(f => formData.append('files', f));
+  try {
+    const r = await fetch(window.location.origin + '/te/api/members/' + memberId + '/evidence', { method: 'POST', body: formData });
+    const d = await r.json();
+    if (d.success) {
+      result.innerHTML = `<div class="alert alert-green">✓ ${d.message} · Doc completeness now: <strong>${d.memberDocCompleteness}%</strong></div>`;
+      document.getElementById('ev-files').value = '';
+      document.getElementById('ev-file-preview').innerHTML = '';
+      loadEvidenceSummary();
+    } else {
+      result.innerHTML = '<div class="alert alert-red">Upload failed: ' + (d.error||'unknown') + '</div>';
+    }
+  } catch(e) { result.innerHTML = '<div class="alert alert-red">Upload error: ' + e.message + '</div>'; }
+}
+
+async function deleteEvidence(memberId, evidenceId) {
+  if (!confirm('Delete this evidence file? This cannot be undone.')) return;
+  const d = await api('/te/api/members/' + memberId + '/evidence/' + evidenceId, 'DELETE');
+  if (d.success) loadEvidenceSummary();
+}
+
+function downloadEvidence(memberId, evidenceId, filename) {
+  window.open(window.location.origin + '/te/api/members/' + memberId + '/evidence/' + evidenceId + '/download', '_blank');
+}
+
+// ── EVIDENCE REVIEW ────────────────────────────────────────────────
+async function loadReviewPortfolio() {
+  const d = await api('/te/api/evidence/portfolio-summary');
+  const tbody = document.getElementById('review-tbody');
+  if (!d.success || !d.data.length) {
+    tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:var(--muted);padding:2rem;">No members with evidence yet</td></tr>';
+    return;
+  }
+  tbody.innerHTML = d.data.map(m => `<tr>
+    <td><strong>${m.companyName||m.memberId}</strong></td>
+    <td><span class="pill pill-gray">T${m.tier||'?'}</span></td>
+    <td>${m.totalFiles}</td>
+    <td><span style="color:#10b981;font-weight:600;">${m.verified}</span></td>
+    <td><span style="color:#f59e0b;font-weight:600;">${m.pending}</span></td>
+    <td><span style="color:#ef4444;font-weight:600;">${m.rejected}</span></td>
+    <td>${m.requiredCovered}</td>
+    <td><span style="color:${m.docCompleteness>=80?'#10b981':m.docCompleteness>=50?'#f59e0b':'#ef4444'};font-weight:700;">${m.docCompleteness}%</span></td>
+    <td><button class="btn btn-outline btn-sm" onclick="openReviewDetail('${m.memberId}')">Review →</button></td>
+  </tr>`).join('');
+}
+
+async function openReviewDetail(memberId) {
+  const d = await api('/te/api/members/' + memberId + '/evidence');
+  if (!d.success) return;
+  const panel = document.getElementById('review-detail-panel');
+  const allFiles = d.allFiles || [];
+  if (!allFiles.length) { panel.innerHTML = '<div class="alert alert-blue">No evidence uploaded for this member yet.</div>'; return; }
+  panel.innerHTML = `<div class="card"><div class="card-header"><span class="card-title">Reviewing: ${memberId}</span></div><div class="card-body" style="padding:0;">
+    <table><thead><tr><th>Evidence Type</th><th>Principle</th><th>File</th><th>Size</th><th>Uploaded</th><th>Status</th><th>Reviewer Note</th><th>Actions</th></tr></thead>
+    <tbody>${allFiles.map(ev => `<tr>
+      <td style="font-size:.75rem;">${ev.label}</td>
+      <td><span class="pill pill-gray">${ev.principle}</span></td>
+      <td style="font-size:.75rem;">${ev.originalName}</td>
+      <td style="font-size:.75rem;">${ev.sizeMB}MB</td>
+      <td style="font-size:.72rem;color:var(--muted);">${new Date(ev.uploadedAt).toLocaleDateString()}</td>
+      <td><select onchange="updateEvidenceStatus('${memberId}','${ev.id}',this.value)" style="background:var(--surface);border:1px solid var(--border);color:var(--text);padding:2px 6px;border-radius:4px;font-size:.72rem;">
+        <option ${ev.status==='Pending Review'?'selected':''}>Pending Review</option>
+        <option ${ev.status==='Verified'?'selected':''}>Verified</option>
+        <option ${ev.status==='Insufficient'?'selected':''}>Insufficient</option>
+        <option ${ev.status==='Rejected'?'selected':''}>Rejected</option>
+      </select></td>
+      <td style="font-size:.72rem;color:var(--muted);">${ev.reviewNote||'—'}</td>
+      <td style="white-space:nowrap;">
+        <button class="btn btn-outline btn-sm" onclick="downloadEvidence('${memberId}','${ev.id}','${ev.originalName}')">⬇ View</button>
+        <button class="btn btn-outline btn-sm" style="color:var(--red)" onclick="deleteEvidence('${memberId}','${ev.id}');openReviewDetail('${memberId}')">✕</button>
+      </td>
+    </tr>`).join('')}</tbody></table></div></div>`;
+}
+
+async function updateEvidenceStatus(memberId, evidenceId, status) {
+  const verifiedBy = prompt(`Reviewer name (for audit trail):`);
+  if (!verifiedBy) return;
+  const d = await api('/te/api/members/' + memberId + '/evidence/' + evidenceId, 'PATCH', { status, verifiedBy });
+  if (d.success) openReviewDetail(memberId);
+}
+
+// Auto-populate member list on evidence page load
+document.addEventListener('DOMContentLoaded', () => { populateMemberSelect(); });
 function download(name, data) {
   const b = new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
   const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = name; a.click();

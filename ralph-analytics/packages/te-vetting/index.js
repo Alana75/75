@@ -475,6 +475,191 @@ app.get('/api/standards', (req, res) => {
 // Audit log
 app.get('/api/audit-log', (req, res) => res.json({ success: true, log: auditLog.slice(-200) }));
 
+
+// ════════════════════════════════════════════════════════════════════════
+// EVIDENCE UPLOAD SYSTEM
+// ════════════════════════════════════════════════════════════════════════
+const multer = require('multer');
+const path   = require('path');
+const fs     = require('fs');
+const { v4: uuidv4 } = require('uuid');
+
+const EVIDENCE_TYPES = {
+  'mgmt_system':          { label: 'Management System Documentation',              principle: 'P1', required: true,  extensions: ['pdf','doc','docx'] },
+  'org_chart':            { label: 'Org Chart / RACI / Roles & Responsibilities',  principle: 'P1', required: true,  extensions: ['pdf','doc','docx','png','jpg'] },
+  'te_id_registration':   { label: 'TE-ID / Trackit Registration Proof',           principle: 'P1', required: true,  extensions: ['pdf','png','jpg','jpeg'] },
+  'hrdd_policy':          { label: 'Human Rights Due Diligence Policy',            principle: 'P2', required: true,  extensions: ['pdf','doc','docx'] },
+  'working_practices':    { label: 'Working Practices / Anti-Discrimination Policy',principle: 'P2', required: true,  extensions: ['pdf','doc','docx'] },
+  'hs_policy':            { label: 'Health & Safety Policy / Risk Register',       principle: 'P2', required: true,  extensions: ['pdf','doc','docx','xls','xlsx'] },
+  'payroll_records':      { label: 'Payroll / Wage Records (anonymised)',          principle: 'P2', required: true,  extensions: ['pdf','xls','xlsx','csv'] },
+  'grievance_mechanism':  { label: 'Grievance Mechanism / Worker Feedback Records',principle: 'P2', required: true,  extensions: ['pdf','doc','docx','png','jpg'] },
+  'age_verification':     { label: 'Age Verification Procedures',                  principle: 'P2', required: true,  extensions: ['pdf','doc','docx'] },
+  'land_mgmt_plan':       { label: 'Land Management Plan',                         principle: 'P3', required: false, extensions: ['pdf','doc','docx'] },
+  'soil_monitoring':      { label: 'Soil Health Monitoring Records',               principle: 'P3', required: false, extensions: ['pdf','xls','xlsx','csv','jpg','png'] },
+  'pest_mgmt_plan':       { label: 'IPM / Pest Management Plan',                   principle: 'P3', required: false, extensions: ['pdf','doc','docx'] },
+  'water_mgmt_plan':      { label: 'Water Management Plan',                        principle: 'P3', required: false, extensions: ['pdf','doc','docx'] },
+  'pesticide_records':    { label: 'Pesticide Application Records',                principle: 'P3', required: false, extensions: ['pdf','xls','xlsx','csv'] },
+  'welfare_plan':         { label: 'Animal Health & Welfare Plan',                 principle: 'P4', required: false, extensions: ['pdf','doc','docx'] },
+  'vet_records':          { label: 'Veterinary Review Records',                    principle: 'P4', required: false, extensions: ['pdf','doc','docx','jpg','png'] },
+  'mulesing_declaration': { label: 'Mulesing Declaration (Wool — NO MULESING)',    principle: 'P4', required: false, extensions: ['pdf','doc','docx'] },
+  'shearing_records':     { label: 'Shearing Records / Site Photos',               principle: 'P4', required: false, extensions: ['pdf','jpg','jpeg','png','mp4'] },
+  'transport_records':    { label: 'Animal Transport Journey Records',             principle: 'P4', required: false, extensions: ['pdf','doc','docx','xls','xlsx'] },
+  'ems_certificate':      { label: 'ISO 14001 / EMS Certificate',                  principle: 'P5', required: false, extensions: ['pdf','jpg','png'] },
+  'zdhc_report':          { label: 'ZDHC MRSL Conformance Report',                 principle: 'P5', required: false, extensions: ['pdf','xls','xlsx'] },
+  'rmdf_form':            { label: 'RMDF — TE-MM-TEM-105 Reclaimed Material Declaration Form', principle: 'P5', required: false, extensions: ['pdf','xls','xlsx','doc','docx'] },
+  'wastewater_results':   { label: 'Wastewater Test Results / Discharge Permit',   principle: 'P5', required: false, extensions: ['pdf','xls','xlsx','csv'] },
+  'waste_mgmt_plan':      { label: 'Waste Management Plan',                        principle: 'P5', required: false, extensions: ['pdf','doc','docx'] },
+  'air_monitoring':       { label: 'Air Emissions Monitoring Report',              principle: 'P5', required: false, extensions: ['pdf','xls','xlsx'] },
+  'chemical_inventory':   { label: 'Chemical Inventory (vs ZDHC MRSL)',            principle: 'P5', required: false, extensions: ['pdf','xls','xlsx','csv'] },
+  'scope_certificate':    { label: 'MMS / Legacy Scope Certificate',               principle: 'P6', required: true,  extensions: ['pdf','jpg','png'] },
+  'trademark_license':    { label: 'Trademark License Agreement (signed)',          principle: 'P6', required: true,  extensions: ['pdf','doc','docx'] },
+  'transaction_certs':    { label: 'Sample Transaction Certificates (TCs)',         principle: 'P6', required: true,  extensions: ['pdf','xls','xlsx','csv'] },
+  'segregation_sop':      { label: 'Material Segregation SOP / Procedures',        principle: 'P6', required: true,  extensions: ['pdf','doc','docx'] },
+  'volume_reconciliation':{ label: 'Volume Reconciliation Records',                principle: 'P6', required: true,  extensions: ['pdf','xls','xlsx','csv'] },
+  'group_config':         { label: 'Group Configuration Document',                 principle: 'P7', required: false, extensions: ['pdf','doc','docx'] },
+  'internal_inspections': { label: 'Internal Inspection Records (% to MMS)',       principle: 'P7', required: false, extensions: ['pdf','xls','xlsx','csv'] },
+  'audit_report':         { label: 'Third-Party Audit Report',                     principle: 'General', required: false, extensions: ['pdf','doc','docx'] },
+  'transition_plan':      { label: 'MMS Transition Plan / Project Plan',           principle: 'General', required: false, extensions: ['pdf','doc','docx','xls','xlsx'] },
+  'corrective_action':    { label: 'Corrective Action Plan (CAP)',                 principle: 'General', required: false, extensions: ['pdf','doc','docx','xls','xlsx'] },
+  'site_photos':          { label: 'Site / Facility / Farm Photos',                principle: 'General', required: false, extensions: ['jpg','jpeg','png','pdf'] },
+  'policy_other':         { label: 'Other Policy / Procedure Document',            principle: 'General', required: false, extensions: ['pdf','doc','docx'] },
+};
+
+const evidenceStore = new Map();
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const memberId = req.params.memberId || 'unlinked';
+    const dir = require('path').join(__dirname, 'uploads', memberId);
+    require('fs').mkdirSync(dir, { recursive: true });
+    cb(null, dir);
+  },
+  filename: (req, file, cb) => {
+    const ext = require('path').extname(file.originalname).toLowerCase();
+    cb(null, uuidv4() + ext);
+  }
+});
+
+const fileFilter = (req, file, cb) => {
+  const allowed = ['.pdf','.doc','.docx','.xls','.xlsx','.csv','.jpg','.jpeg','.png','.mp4'];
+  const ext = require('path').extname(file.originalname).toLowerCase();
+  allowed.includes(ext) ? cb(null, true) : cb(new Error('File type not permitted: ' + ext), false);
+};
+
+const upload = multer({ storage, fileFilter, limits: { fileSize: 25 * 1024 * 1024 } });
+
+// Upload evidence
+app.post('/api/members/:memberId/evidence', upload.array('files', 10), (req, res) => {
+  const { memberId } = req.params;
+  const evidenceType = req.body.evidenceType || 'policy_other';
+  const reviewNote   = req.body.reviewNote   || '';
+  if (!members.has(memberId)) {
+    (req.files || []).forEach(f => fs.unlink(f.path, () => {}));
+    return res.status(404).json({ error: 'Member not found' });
+  }
+  const typeInfo  = EVIDENCE_TYPES[evidenceType] || { label: evidenceType, principle: 'General', required: false };
+  const existing  = evidenceStore.get(memberId) || [];
+  const uploaded  = (req.files || []).map(f => {
+    const rec = { id: uuidv4(), memberId, evidenceType, label: typeInfo.label, principle: typeInfo.principle,
+      filename: f.filename, originalName: f.originalname, size: f.size,
+      sizeMB: (f.size/1024/1024).toFixed(2), mimetype: f.mimetype, path: f.path,
+      uploadedAt: new Date().toISOString(), status: 'Pending Review', reviewNote, verifiedBy: null, verifiedAt: null };
+    existing.push(rec);
+    return rec;
+  });
+  evidenceStore.set(memberId, existing);
+  logAction('evidence.uploaded', { memberId, count: uploaded.length, types: uploaded.map(u => u.evidenceType) });
+  const requiredTypes = Object.entries(EVIDENCE_TYPES).filter(([,v]) => v.required).map(([k]) => k);
+  const covered = requiredTypes.filter(t => existing.some(e => e.evidenceType === t && e.status !== 'Rejected'));
+  const docCompleteness = Math.round((covered.length / requiredTypes.length) * 100);
+  members.set(memberId, { ...members.get(memberId), docCompleteness });
+  res.json({ success: true, uploaded: uploaded.map(u => ({ id: u.id, originalName: u.originalName, evidenceType: u.evidenceType, label: u.label, principle: u.principle, sizeMB: u.sizeMB, status: u.status })), memberDocCompleteness: docCompleteness, message: `${uploaded.length} file(s) uploaded` });
+});
+
+// List evidence for a member grouped by principle
+app.get('/api/members/:memberId/evidence', (req, res) => {
+  const { memberId } = req.params;
+  if (!members.has(memberId)) return res.status(404).json({ error: 'Member not found' });
+  const evidence = evidenceStore.get(memberId) || [];
+  const requiredTypes = Object.entries(EVIDENCE_TYPES).filter(([,v]) => v.required).map(([k]) => k);
+  const byPrinciple = {};
+  Object.entries(EVIDENCE_TYPES).forEach(([key, info]) => {
+    if (!byPrinciple[info.principle]) byPrinciple[info.principle] = { uploaded: [], missing: [] };
+    const found = evidence.filter(e => e.evidenceType === key);
+    if (found.length) byPrinciple[info.principle].uploaded.push(...found.map(u => ({ ...u, path: undefined })));
+    else if (info.required) byPrinciple[info.principle].missing.push({ evidenceType: key, label: info.label });
+  });
+  const covered = requiredTypes.filter(t => evidence.some(e => e.evidenceType === t && e.status !== 'Rejected'));
+  res.json({ success: true, memberId,
+    summary: { totalFiles: evidence.length, verified: evidence.filter(e=>e.status==='Verified').length, pending: evidence.filter(e=>e.status==='Pending Review').length, rejected: evidence.filter(e=>e.status==='Rejected').length, docCompleteness: Math.round((covered.length/requiredTypes.length)*100), requiredCovered: `${covered.length}/${requiredTypes.length}` },
+    byPrinciple, allFiles: evidence.map(e => ({ ...e, path: undefined })) });
+});
+
+// Update evidence status (reviewer action)
+app.patch('/api/members/:memberId/evidence/:evidenceId', (req, res) => {
+  const { memberId, evidenceId } = req.params;
+  const { status, reviewNote, verifiedBy } = req.body;
+  const allowed = ['Pending Review','Verified','Rejected','Insufficient'];
+  if (!allowed.includes(status)) return res.status(400).json({ error: 'Invalid status' });
+  const evidence = evidenceStore.get(memberId) || [];
+  const idx = evidence.findIndex(e => e.id === evidenceId);
+  if (idx === -1) return res.status(404).json({ error: 'Evidence not found' });
+  evidence[idx] = { ...evidence[idx], status, reviewNote: reviewNote || evidence[idx].reviewNote, verifiedBy: verifiedBy || null, verifiedAt: new Date().toISOString() };
+  evidenceStore.set(memberId, evidence);
+  logAction('evidence.reviewed', { memberId, evidenceId, status, verifiedBy });
+  res.json({ success: true, evidence: { ...evidence[idx], path: undefined } });
+});
+
+// Delete evidence
+app.delete('/api/members/:memberId/evidence/:evidenceId', (req, res) => {
+  const { memberId, evidenceId } = req.params;
+  const evidence = evidenceStore.get(memberId) || [];
+  const idx = evidence.findIndex(e => e.id === evidenceId);
+  if (idx === -1) return res.status(404).json({ error: 'Evidence not found' });
+  fs.unlink(evidence[idx].path, () => {});
+  evidence.splice(idx, 1);
+  evidenceStore.set(memberId, evidence);
+  logAction('evidence.deleted', { memberId, evidenceId });
+  res.json({ success: true });
+});
+
+// Download evidence file
+app.get('/api/members/:memberId/evidence/:evidenceId/download', (req, res) => {
+  const { memberId, evidenceId } = req.params;
+  const evidence = evidenceStore.get(memberId) || [];
+  const rec = evidence.find(e => e.id === evidenceId);
+  if (!rec) return res.status(404).json({ error: 'Evidence not found' });
+  if (!fs.existsSync(rec.path)) return res.status(404).json({ error: 'File not on disk' });
+  res.download(rec.path, rec.originalName);
+});
+
+// Evidence types reference
+app.get('/api/evidence-types', (req, res) => {
+  const byPrinciple = {};
+  Object.entries(EVIDENCE_TYPES).forEach(([key, info]) => {
+    if (!byPrinciple[info.principle]) byPrinciple[info.principle] = [];
+    byPrinciple[info.principle].push({ key, ...info });
+  });
+  res.json({ success: true, types: EVIDENCE_TYPES, byPrinciple, total: Object.keys(EVIDENCE_TYPES).length });
+});
+
+// Portfolio evidence summary
+app.get('/api/evidence/portfolio-summary', (req, res) => {
+  const requiredTypes = Object.entries(EVIDENCE_TYPES).filter(([,v]) => v.required).map(([k]) => k);
+  const summary = [];
+  members.forEach((member, memberId) => {
+    const evidence = evidenceStore.get(memberId) || [];
+    const covered = requiredTypes.filter(t => evidence.some(e => e.evidenceType === t && e.status !== 'Rejected'));
+    summary.push({ memberId, companyName: member.companyName, tier: member.tier,
+      totalFiles: evidence.length, verified: evidence.filter(e=>e.status==='Verified').length,
+      pending: evidence.filter(e=>e.status==='Pending Review').length, rejected: evidence.filter(e=>e.status==='Rejected').length,
+      docCompleteness: Math.round((covered.length/requiredTypes.length)*100),
+      requiredCovered: `${covered.length}/${requiredTypes.length}`,
+      missingRequired: requiredTypes.filter(t => !evidence.some(e => e.evidenceType === t && e.status !== 'Rejected')).length });
+  });
+  res.json({ success: true, data: summary });
+});
+
 app.listen(PORT, () => {
   console.log(`[TE-Vetting] @ralph/te-vetting running on :${PORT}`);
   console.log(`[TE-Vetting] Aligned to: TE-MM-STN-101, TE-MM-POL-101, TE-MM-POL-102, TE-MM-POL-301, CCS-101`);
