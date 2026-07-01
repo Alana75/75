@@ -204,7 +204,43 @@ qu:[
 let P=JSON.parse(localStorage.getItem('ra_tp')||'{}'),CUR=null,LI=0,QS={};
 function saveP(){localStorage.setItem('ra_tp',JSON.stringify(P));api('/api/rba/training/progress',{method:'POST',body:JSON.stringify(P)}).catch(()=>{});updSt();}
 function updSt(){let cm=0,tL=0,dL=0;COURSES.forEach(c=>{const p=P[c.id]||{};if(p.passed)cm++;tL+=c.ls.length;dL+=Math.min((p.ls||[]).length,c.ls.length);});document.getElementById('sC').textContent=cm;document.getElementById('sP').textContent=tL?Math.round(dL/tL*100)+'%':'0%';document.getElementById('sCt').textContent=cm;}
-function renGrid(){document.getElementById('cG').innerHTML=COURSES.map(c=>{const p=P[c.id]||{},pc=Math.round((p.ls||[]).length/c.ls.length*100),dn=p.passed;return '<div class="cc '+(dn?'dn':'')+'" onclick="openC(''+c.id+'')"><div class="cch"><div class="ccic">'+c.ic+'</div><div class="cct">'+c.tt+'</div><div class="ccm">'+c.co+' &middot; '+c.du+' &middot; Pass: '+c.pa+'%</div></div><div class="ccb"><div class="ccd">'+c.ds+'</div><div style="font-size:11px;color:var(--mu);margin-bottom:8px">'+c.st+'</div><div class="ccf"><div style="flex:1;margin-right:12px"><div class="ccp">'+(dn?'&#x2705; Score: '+p.score+'%':pc>0?pc+'% complete':'Not started')+'</div><div class="pb"><div class="pf '+(dn?'g':pc>50?'o':'b')+'" style="width:'+(dn?100:pc)+'%"></div></div></div><span class="bd '+(dn?'g':pc>0?'a':'gr')+'">'+(dn?'CERTIFIED':pc>0?'IN PROGRESS':'START')+'</span></div></div></div>';}).join('');}
+function renGrid(){
+  const el=document.getElementById('cG');
+  if(!el)return;
+  el.innerHTML=COURSES.map(function(cr){
+    const p=P[cr.id]||{};
+    const pc=Math.round(((p.ls||[]).length/cr.ls.length)*100);
+    const dn=p.passed;
+    const badge=dn?'CERTIFIED':pc>0?'IN PROGRESS':'START';
+    const badgeCls=dn?'g':pc>0?'a':'gr';
+    const prog=dn?'&#x2705; Score: '+p.score+'%':pc>0?pc+'% complete':'Not started';
+    const barCls=dn?'g':pc>50?'o':'b';
+    const barW=dn?100:pc;
+    return '<div class="cc '+(dn?'dn':'')+'" data-cid="'+cr.id+'" style="cursor:pointer">'+
+      '<div class="cch">'+
+        '<div class="ccic">'+cr.ic+'</div>'+
+        '<div class="cct">'+cr.tt+'</div>'+
+        '<div class="ccm">'+cr.co+' &middot; '+cr.du+' &middot; Pass: '+cr.pa+'%</div>'+
+      '</div>'+
+      '<div class="ccb">'+
+        '<div class="ccd">'+cr.ds+'</div>'+
+        '<div style="font-size:11px;color:var(--mu);margin-bottom:8px">'+cr.st+'</div>'+
+        '<div class="ccf">'+
+          '<div style="flex:1;margin-right:12px">'+
+            '<div class="ccp">'+prog+'</div>'+
+            '<div class="pb"><div class="pf '+barCls+'" style="width:'+barW+'%"></div></div>'+
+          '</div>'+
+          '<span class="bd '+badgeCls+'">'+badge+'</span>'+
+        '</div>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+  // Event delegation - safe click handling
+  el.onclick=function(e){
+    var card=e.target.closest('[data-cid]');
+    if(card)openC(card.getAttribute('data-cid'));
+  };
+},pc=Math.round((p.ls||[]).length/c.ls.length*100),dn=p.passed;return '<div class="cc '+(dn?'dn':'')+'" onclick="openC(''+c.id+'')"><div class="cch"><div class="ccic">'+c.ic+'</div><div class="cct">'+c.tt+'</div><div class="ccm">'+c.co+' &middot; '+c.du+' &middot; Pass: '+c.pa+'%</div></div><div class="ccb"><div class="ccd">'+c.ds+'</div><div style="font-size:11px;color:var(--mu);margin-bottom:8px">'+c.st+'</div><div class="ccf"><div style="flex:1;margin-right:12px"><div class="ccp">'+(dn?'&#x2705; Score: '+p.score+'%':pc>0?pc+'% complete':'Not started')+'</div><div class="pb"><div class="pf '+(dn?'g':pc>50?'o':'b')+'" style="width:'+(dn?100:pc)+'%"></div></div></div><span class="bd '+(dn?'g':pc>0?'a':'gr')+'">'+(dn?'CERTIFIED':pc>0?'IN PROGRESS':'START')+'</span></div></div></div>';}).join('');}
 function renRec(){const rr=[];COURSES.forEach(c=>{const p=P[c.id]||{};if(p.score!==undefined)rr.push({t:c.tt,s:p.score,ok:p.passed,d:p.date||'&mdash;'});});document.getElementById('rT').innerHTML=rr.length?rr.map(r=>'<tr><td style="padding:11px 10px">'+r.t+'</td><td style="padding:11px 10px;font-weight:700">'+r.s+'%</td><td style="padding:11px 10px"><span class="bd '+(r.ok?'g':'r')+'">'+(r.ok?'PASSED':'FAILED')+'</span></td><td style="padding:11px 10px;color:var(--mu)">'+r.d+'</td><td style="padding:11px 10px">'+(r.ok?'<button class="btn" style="font-size:11px;padding:4px 10px" onclick="dlCt(''+r.t+'')">Download</button>':'&mdash;')+'</td></tr>').join(''):'<tr><td colspan="5" style="padding:20px 10px;color:var(--mu);text-align:center;font-size:12px">No records yet &mdash; complete a course to earn your certificate.</td></tr>';}
 function expCSV(){let r=['Course,Score,Result,Date'];COURSES.forEach(c=>{const p=P[c.id]||{};if(p.score!==undefined)r.push('"'+c.tt+'","'+p.score+'%","'+(p.passed?'PASSED':'FAILED')+'","'+(p.date||'')+'"');});const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([r.join('\n')],{type:'text/csv'}));a.download='AI_Training_Records.csv';a.click();}
 function dlCt(t){toast('Certificate for "'+t+'" downloaded','gs');}
