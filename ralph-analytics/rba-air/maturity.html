@@ -138,10 +138,10 @@ a{color:inherit;text-decoration:none}
 </div></div>
 <div id="toast"></div><script>
 const TOK=localStorage.getItem('ralph_client_token');
-if(!TOK)location.href='/client';
+// No hard redirect — maturity page works with localStorage even without login
 function api(u,o){o=o||{};o.headers=Object.assign({'Content-Type':'application/json','Authorization':'Bearer '+TOK},o.headers||{});return fetch(location.origin+u,o);}
 function toast(m,t){t=t||'gs';var el=document.getElementById('toast');el.textContent=m;el.className='show '+t;setTimeout(function(){el.className='';},3200);}
-function swTab(id,btn){document.querySelectorAll('.tp').forEach(function(t){t.classList.remove('ac');});document.querySelectorAll('.tab').forEach(function(b){b.classList.remove('ac');});document.getElementById(id).classList.add('ac');btn.classList.add('ac');}
+function swTab(id,btn){document.querySelectorAll('.tp').forEach(function(t){t.classList.remove('ac');});document.querySelectorAll('.tab').forEach(function(b){b.classList.remove('ac');});document.getElementById(id).classList.add('ac');btn.classList.add('ac');if(id==='tD')renDiag();if(id==='tK')renKPI();if(id==='tR')renRoad();}
 
 var S={};
 try{S=JSON.parse(localStorage.getItem('ra_mat')||'{}');}catch(e){S={};}
@@ -347,10 +347,14 @@ function updStats(){
 }
 
 document.addEventListener('DOMContentLoaded',function(){
-  api('/api/rba/training/maturity').then(function(r){return r.json();}).then(function(d){
-    if(d&&Object.keys(d).length){S=d;if(!S.kpis)S.kpis={};if(!S.diag)S.diag={};localStorage.setItem('ra_mat',JSON.stringify(S));}
-    diagAnswers=S.diag||{};
-    renML();renDiag();renKPI();renRoad();updStats();
-  }).catch(function(){renML();renDiag();renKPI();renRoad();updStats();});
+  // Render immediately from localStorage — no API dependency
+  diagAnswers=S.diag||{};
+  renML();renDiag();renKPI();renRoad();updStats();
+  // Try to sync with server if logged in (non-blocking)
+  if(TOK){
+    api('/api/rba/training/maturity').then(function(r){return r.json();}).then(function(d){
+      if(d&&Object.keys(d).length&&!d.error){S=d;if(!S.kpis)S.kpis={};if(!S.diag)S.diag={};localStorage.setItem('ra_mat',JSON.stringify(S));diagAnswers=S.diag||{};renML();renDiag();renKPI();renRoad();updStats();}
+    }).catch(function(){});
+  }
 });
 </script></body></html>
