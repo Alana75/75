@@ -1197,7 +1197,15 @@ app.all('/te/api/*', async (req, res) => {
 // ── 404 catch-all (must be last) ─────────────────────────────────────────────
 
 // ── RBA AIR Training & KPI API ──────────────────────────────────
-const trainingStore = {}; // In-memory store (use DB in production)
+const TRAINING_FILE = path.join(__dirname, '..', 'data', 'training_store.json');
+function loadTrainingStore() {
+  try { if (fs.existsSync(TRAINING_FILE)) return JSON.parse(fs.readFileSync(TRAINING_FILE, 'utf8')); } catch(e) {}
+  return {};
+}
+function saveTrainingStore() {
+  try { fs.writeFileSync(TRAINING_FILE, JSON.stringify(trainingStore, null, 2)); } catch(e) {}
+}
+const trainingStore = loadTrainingStore();
 app.get('/api/rba/training/progress', requireAuth, (req, res) => {
   const key = req.user.email;
   res.json((trainingStore[key] && trainingStore[key].progress) || {});
@@ -1207,6 +1215,7 @@ app.post('/api/rba/training/progress', requireAuth, (req, res) => {
   if (!trainingStore[key]) trainingStore[key] = {};
   trainingStore[key].progress = req.body;
   res.json({ ok: true });
+  saveTrainingStore();
 });
 app.get('/api/rba/training/maturity', requireAuth, (req, res) => {
   const key = req.user.email;
@@ -1217,6 +1226,7 @@ app.post('/api/rba/training/maturityData', requireAuth, (req, res) => {
   if (!trainingStore[key]) trainingStore[key] = {};
   trainingStore[key].maturityData = req.body;
   res.json({ ok: true });
+  saveTrainingStore();
 });
 
 
@@ -1229,6 +1239,7 @@ app.post('/api/rba/training/maturity', requireAuth, (req, res) => {
   const key = req.user?.id || 'default';
   if (!trainingStore[key]) trainingStore[key] = {};
   trainingStore[key].maturity = req.body.level;
+  saveTrainingStore();
   res.json({ ok: true });
 });
 
@@ -1237,6 +1248,7 @@ app.post('/api/rba/training/completion', requireAuth, (req, res) => {
   if (!trainingStore[key]) trainingStore[key] = {};
   if (!trainingStore[key].training) trainingStore[key].training = {};
   trainingStore[key].training[req.body.cohort] = { done: req.body.done, total: req.body.total };
+  saveTrainingStore();
   res.json({ ok: true });
 });
 
@@ -1244,6 +1256,7 @@ app.post('/api/rba/training/kpis', requireAuth, (req, res) => {
   const key = req.user?.id || 'default';
   if (!trainingStore[key]) trainingStore[key] = {};
   trainingStore[key].kpis = req.body;
+  saveTrainingStore();
   res.json({ ok: true });
 });
 // ── End RBA Training API ─────────────────────────────────────────
