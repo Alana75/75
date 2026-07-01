@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RBA Audit Management — Ralph Analytics</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0d1117;--sf:#161b22;--s2:#1c2230;--bd:#21262d;--or:#e8510a;--od:#c04008;--tx:#e6edf3;--mu:#8b949e;--gn:#2ea043;--rd:#da3633;--am:#d29922;--bl:#388bfd;--pu:#a371f7}
+body{background:var(--bg);color:var(--tx);font-family:'Segoe UI',system-ui,sans-serif;font-size:14px;min-height:100vh;display:flex;flex-direction:column}
+a{color:inherit;text-decoration:none}
+.tb{background:var(--sf);border-bottom:1px solid var(--bd);height:52px;display:flex;align-items:center;padding:0 20px;gap:12px;position:sticky;top:0;z-index:100;flex-shrink:0}
+.lp{background:var(--or);color:#fff;font-weight:800;font-size:13px;padding:5px 10px;border-radius:6px}
+.st{font-weight:700;font-size:15px}.sp{color:var(--bd);margin:0 4px}.br{color:var(--mu);font-size:13px}
+.rgt{margin-left:auto;display:flex;align-items:center;gap:10px}
+.badge-rba{background:rgba(232,81,10,.15);border:1px solid rgba(232,81,10,.35);color:var(--or);font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px}
+.ly{display:flex;flex:1;overflow:hidden}
+.sb{width:220px;background:var(--sf);border-right:1px solid var(--bd);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto}
+.sbt{padding:14px 16px 10px;border-bottom:1px solid var(--bd);margin-bottom:6px}
+.ml{font-size:10px;font-weight:700;color:var(--or);letter-spacing:1px;text-transform:uppercase}
+.ms{font-size:11px;color:var(--mu);margin-top:2px}
+.ni{display:flex;align-items:center;gap:10px;padding:9px 16px;color:var(--mu);font-size:13px;font-weight:500;cursor:pointer;border-left:2px solid transparent;transition:.15s}
+.ni:hover,.ni.ac{color:var(--tx);background:rgba(255,255,255,.04);border-left-color:var(--or)}
+.ni.ac{color:var(--or);font-weight:600}
+.nic{width:16px;text-align:center;font-size:14px}
+.nd{height:1px;background:var(--bd);margin:8px 12px}
+.mn{flex:1;overflow-y:auto;padding:28px 32px}
+.btn{background:var(--s2);border:1px solid var(--bd);color:var(--tx);padding:7px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;transition:.15s;display:inline-flex;align-items:center;gap:6px}
+.btn:hover{border-color:var(--or);color:var(--or)}
+.btnp{background:var(--or);border-color:var(--or);color:#fff}
+.btnp:hover{background:var(--od);border-color:var(--od);color:#fff}
+.btnsm{padding:4px 10px;font-size:11px}
+.btnd{color:var(--rd);border-color:var(--rd)}
+.btnd:hover{background:rgba(218,54,51,.1)}
+.card{background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:20px;margin-bottom:16px}
+.ch{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.ct{font-size:15px;font-weight:700}
+.cs{font-size:12px;color:var(--mu);margin-top:2px}
+.stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:12px;margin-bottom:24px}
+.stat{background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:16px}
+.stat .lb{font-size:10px;color:var(--mu);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.stat .vl{font-size:26px;font-weight:800}
+.stat .sb2{font-size:11px;color:var(--mu);margin-top:2px}
+.c-or .vl{color:var(--or)}.c-gn .vl{color:var(--gn)}.c-rd .vl{color:var(--rd)}.c-am .vl{color:var(--am)}.c-bl .vl{color:var(--bl)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;padding:8px 12px;border-bottom:1px solid var(--bd);color:var(--mu);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+td{padding:10px 12px;border-bottom:1px solid rgba(33,38,45,.6)}
+tr:hover td{background:rgba(255,255,255,.02)}
+.b{display:inline-block;font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;text-transform:uppercase;letter-spacing:.3px}
+.b-sc{background:rgba(56,139,253,.15);color:var(--bl);border:1px solid rgba(56,139,253,.3)}
+.b-ip{background:rgba(210,153,34,.15);color:var(--am);border:1px solid rgba(210,153,34,.3)}
+.b-fi{background:rgba(163,113,247,.15);color:var(--pu);border:1px solid rgba(163,113,247,.3)}
+.b-qa{background:rgba(232,81,10,.15);color:var(--or);border:1px solid rgba(232,81,10,.3)}
+.b-cp{background:rgba(218,54,51,.15);color:var(--rd);border:1px solid rgba(218,54,51,.3)}
+.b-cl{background:rgba(46,160,67,.15);color:var(--gn);border:1px solid rgba(46,160,67,.3)}
+.b-lo{background:rgba(46,160,67,.12);color:var(--gn)}
+.b-me{background:rgba(210,153,34,.12);color:var(--am)}
+.b-hi{background:rgba(218,54,51,.12);color:var(--rd)}
+.b-cr{background:rgba(218,54,51,.25);color:#ff6b6b}
+.b-ac{background:rgba(46,160,67,.12);color:var(--gn)}
+.b-in{background:rgba(139,148,158,.12);color:var(--mu)}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:200;align-items:center;justify-content:center}
+.modal-bg.open{display:flex}
+.modal{background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:28px;width:560px;max-width:95vw;max-height:90vh;overflow-y:auto}
+.modal h2{font-size:17px;font-weight:700;margin-bottom:20px}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.fr.full{grid-template-columns:1fr}
+.fg{display:flex;flex-direction:column;gap:5px}
+.fg label{font-size:10px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:.5px}
+.fg input,.fg select,.fg textarea{background:var(--s2);border:1px solid var(--bd);color:var(--tx);padding:8px 10px;border-radius:6px;font-size:13px;font-family:inherit;transition:.15s}
+.fg input:focus,.fg select:focus,.fg textarea:focus{outline:none;border-color:var(--or)}
+.fg textarea{resize:vertical;min-height:70px}
+.fa{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--bd)}
+.pillars{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:12px 0}
+.pc{background:var(--s2);border:1px solid var(--bd);border-radius:8px;padding:12px;text-align:center}
+.pc .pl{font-size:10px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:.5px}
+.pc .pn{font-size:11px;color:var(--mu);margin:2px 0 8px}
+.pc input{width:100%;background:var(--bg);border:1px solid var(--bd);color:var(--tx);padding:6px;border-radius:4px;text-align:center;font-size:15px;font-weight:700}
+.nc-row{display:flex;gap:12px;margin:12px 0;flex-wrap:wrap}
+.nc-item{flex:1;min-width:90px;background:var(--s2);border:1px solid var(--bd);border-radius:8px;padding:10px;text-align:center}
+.nc-item .nl{font-size:10px;font-weight:700;color:var(--mu);text-transform:uppercase}
+.pipeline{display:flex;align-items:center;padding:16px 0}
+.step{flex:1;text-align:center;position:relative}
+.sdot{width:28px;height:28px;border-radius:50%;border:2px solid var(--bd);background:var(--s2);display:flex;align-items:center;justify-content:center;margin:0 auto;font-size:11px;font-weight:700;color:var(--mu);position:relative;z-index:1}
+.step.done .sdot{background:var(--gn);border-color:var(--gn);color:#fff}
+.step.active .sdot{background:var(--or);border-color:var(--or);color:#fff}
+.slbl{font-size:10px;color:var(--mu);margin-top:5px;white-space:nowrap}
+.step.active .slbl{color:var(--or);font-weight:700}
+.step.done .slbl{color:var(--gn)}
+.sline{position:absolute;top:14px;left:50%;right:-50%;height:2px;background:var(--bd);z-index:0}
+.step.done .sline{background:var(--gn)}
+.dg{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}
+.di .dl{font-size:10px;color:var(--mu);font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px}
+.di .dv{font-size:13px;font-weight:500}
+.sb-row{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.sb-row input{background:var(--s2);border:1px solid var(--bd);color:var(--tx);padding:8px 12px;border-radius:6px;font-size:13px;width:240px}
+.sb-row input:focus{outline:none;border-color:var(--or)}
+.sb-row select{background:var(--s2);border:1px solid var(--bd);color:var(--tx);padding:8px 10px;border-radius:6px;font-size:13px}
+.empty{text-align:center;padding:48px 20px;color:var(--mu)}
+.empty .ei{font-size:32px;margin-bottom:12px}
+.empty .et{font-size:15px;font-weight:600;color:var(--tx);margin-bottom:6px}
+#toast{position:fixed;bottom:24px;right:24px;background:var(--s2);border:1px solid var(--bd);color:var(--tx);padding:12px 20px;border-radius:8px;font-size:13px;font-weight:600;opacity:0;transform:translateY(10px);transition:.3s;z-index:999;pointer-events:none}
+#toast.show{opacity:1;transform:translateY(0)}
+#toast.ok{border-color:var(--gn);color:var(--gn)}
+#toast.err{border-color:var(--rd);color:var(--rd)}
+</style></head>
+<body>
+<div class="tb">
+  <div class="lp">RA</div><span class="st">Ralph Analytics</span><span class="sp">&rsaquo;</span>
+  <span class="br" id="ptitle">RBA Audit Management</span>
+  <div class="rgt">
+    <span class="badge-rba">RBA Code v8.0</span>
+    <button class="btn" onclick="location='/rba/air'">&larr; AIR Portal</button>
+    <button class="btn" onclick="location='/client'">Client Portal</button>
+  </div>
+</div>
+<div class="ly">
+  <div class="sb">
+    <div class="sbt"><div class="ml">Audit Management</div><div class="ms">RBA Code v8.0</div></div>
+    <a class="ni ac" id="nav-dash" onclick="sv('dash')"><span class="nic">&#9632;</span>Dashboard</a>
+    <a class="ni" id="nav-bodies" onclick="sv('bodies')"><span class="nic">&#127970;</span>Audit Bodies</a>
+    <a class="ni" id="nav-fac" onclick="sv('fac')"><span class="nic">&#127981;</span>Facilities</a>
+    <a class="ni" id="nav-audits" onclick="sv('audits')"><span class="nic">&#128203;</span>Audits</a>
+    <div class="nd"></div>
+    <a class="ni" href="/rba/air"><span class="nic">&#8592;</span>AIR Portal</a>
+    <a class="ni" href="/client"><span class="nic">&#8592;</span>Client Portal</a>
+  </div>
+  <div class="mn" id="app">
+
+    <!-- DASHBOARD -->
+    <div id="vd">
+      <div style="margin-bottom:20px"><h1 style="font-size:21px;font-weight:700;margin-bottom:4px">Audit Dashboard</h1><p style="color:var(--mu);font-size:13px">Real-time monitoring across all certified bodies and facilities</p></div>
+      <div class="stats">
+        <div class="stat c-or"><div class="lb">Audit Bodies</div><div class="vl" id="dBod">—</div><div class="sb2">Active CBs</div></div>
+        <div class="stat c-bl"><div class="lb">Facilities</div><div class="vl" id="dFac">—</div><div class="sb2">Registered</div></div>
+        <div class="stat c-am"><div class="lb">Total Audits</div><div class="vl" id="dTot">—</div><div class="sb2">All time</div></div>
+        <div class="stat c-gn"><div class="lb">Open Audits</div><div class="vl" id="dOpn">—</div><div class="sb2">Active</div></div>
+        <div class="stat c-gn"><div class="lb">Avg Score</div><div class="vl" id="dScr">—</div><div class="sb2">Closed audits</div></div>
+        <div class="stat c-rd"><div class="lb">Critical NCs</div><div class="vl" id="dCrit">—</div><div class="sb2">Open</div></div>
+        <div class="stat c-rd"><div class="lb">Overdue CAPs</div><div class="vl" id="dCap">—</div><div class="sb2">Past due</div></div>
+        <div class="stat c-am"><div class="lb">Overdue Audits</div><div class="vl" id="dOvr">—</div><div class="sb2">Facilities</div></div>
+      </div>
+      <div class="card">
+        <div class="ch"><div><div class="ct">Recent Audits</div><div class="cs">Latest audit activity</div></div><button class="btn btnp" onclick="sv('audits')">All Audits</button></div>
+        <table><thead><tr><th>Audit #</th><th>Facility</th><th>Audit Body</th><th>Date</th><th>Status</th><th>Score</th><th>NCs</th><th></th></tr></thead>
+        <tbody id="dRecent"><tr><td colspan="8" style="text-align:center;padding:20px;color:var(--mu)">Loading...</td></tr></tbody></table>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div class="card"><div class="ch"><div class="ct">Audits by Status</div></div><div id="dStatus"></div></div>
+        <div class="card"><div class="ch"><div class="ct">NCs by Pillar</div></div><div id="dPillar"></div></div>
+      </div>
+    </div>
+
+    <!-- AUDIT BODIES -->
+    <div id="vbodies" style="display:none">
+      <div class="ch" style="margin-bottom:20px"><div><h1 style="font-size:21px;font-weight:700">Audit Bodies</h1><p style="color:var(--mu);font-size:13px">Certified Bodies managing facility audits</p></div><button class="btn btnp" onclick="openBM()">+ Add Audit Body</button></div>
+      <div class="sb-row"><input type="text" id="bSrch" placeholder="Search..." oninput="fBodies()"></div>
+      <div class="card" style="padding:0"><table>
+        <thead><tr><th>Code</th><th>Name</th><th>Accreditation</th><th>Country</th><th>Contact</th><th>Status</th><th>Facilities</th><th></th></tr></thead>
+        <tbody id="bTbl"><tr><td colspan="8" style="text-align:center;padding:20px;color:var(--mu)">Loading...</td></tr></tbody>
+      </table></div>
+    </div>
+
+    <!-- FACILITIES -->
+    <div id="vfac" style="display:none">
+      <div class="ch" style="margin-bottom:20px"><div><h1 style="font-size:21px;font-weight:700">Facilities</h1><p style="color:var(--mu);font-size:13px">RBA member auditees</p></div><button class="btn btnp" onclick="openFM()">+ Add Facility</button></div>
+      <div class="sb-row">
+        <input type="text" id="fSrch" placeholder="Search..." oninput="fFac()">
+        <select id="fBFilt" onchange="fFac()"><option value="">All Bodies</option></select>
+        <select id="fRFilt" onchange="fFac()"><option value="">All Risk</option><option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option><option value="critical">Critical</option></select>
+      </div>
+      <div class="card" style="padding:0"><table>
+        <thead><tr><th>Code</th><th>Facility</th><th>Audit Body</th><th>Country</th><th>Industry</th><th>Workers</th><th>Risk</th><th>Last Audit</th><th>Next Due</th><th></th></tr></thead>
+        <tbody id="fTbl"><tr><td colspan="10" style="text-align:center;padding:20px;color:var(--mu)">Loading...</td></tr></tbody>
+      </table></div>
+    </div>
+
+    <!-- AUDITS -->
+    <div id="vaudits" style="display:none">
+      <div id="valist">
+        <div class="ch" style="margin-bottom:20px"><div><h1 style="font-size:21px;font-weight:700">Audits</h1><p style="color:var(--mu);font-size:13px">Schedule and manage RBA audits</p></div><button class="btn btnp" onclick="openAM()">+ Schedule Audit</button></div>
+        <div class="sb-row">
+          <input type="text" id="aSrch" placeholder="Search..." oninput="fAudits()">
+          <select id="aStFilt" onchange="fAudits()"><option value="">All Statuses</option><option value="scheduled">Scheduled</option><option value="in_progress">In Progress</option><option value="findings">Findings</option><option value="qa">QA Review</option><option value="cap">CAP</option><option value="closed">Closed</option></select>
+        </div>
+        <div class="card" style="padding:0"><table>
+          <thead><tr><th>Audit #</th><th>Facility</th><th>Body</th><th>Type</th><th>Scheduled</th><th>Status</th><th>Score</th><th>Crit</th><th>Maj</th><th>Min</th><th></th></tr></thead>
+          <tbody id="aTbl"><tr><td colspan="11" style="text-align:center;padding:20px;color:var(--mu)">Loading...</td></tr></tbody>
+        </table></div>
+      </div>
+      <!-- AUDIT DETAIL -->
+      <div id="vadet" style="display:none">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
+          <button class="btn" onclick="closeDetail()">&larr; All Audits</button>
+          <div><h1 style="font-size:19px;font-weight:700" id="detT">Audit Detail</h1><p style="color:var(--mu);font-size:12px" id="detS"></p></div>
+          <div style="margin-left:auto;display:flex;gap:8px"><button class="btn btnp" id="advBtn" onclick="advance()">Advance &rarr;</button><button class="btn" onclick="openEditA()">Edit</button></div>
+        </div>
+        <div class="card" style="padding:16px 20px"><div class="pipeline" id="pipeline"></div></div>
+        <div class="card"><div class="ch"><div class="ct">Audit Information</div></div><div class="dg" id="detInfo"></div></div>
+        <div class="card" id="scoreCard">
+          <div class="ch"><div class="ct">Pillar Scores (0-100)</div><button class="btn btnsm btnp" onclick="saveScores()">Save Scores</button></div>
+          <div class="pillars">
+            <div class="pc"><div class="pl">Pillar A</div><div class="pn">Labour</div><input type="number" id="pA" min="0" max="100" placeholder="—" oninput="calcOverall()"></div>
+            <div class="pc"><div class="pl">Pillar B</div><div class="pn">H&amp;S</div><input type="number" id="pB" min="0" max="100" placeholder="—" oninput="calcOverall()"></div>
+            <div class="pc"><div class="pl">Pillar C</div><div class="pn">Environment</div><input type="number" id="pC" min="0" max="100" placeholder="—" oninput="calcOverall()"></div>
+            <div class="pc"><div class="pl">Pillar D</div><div class="pn">Ethics</div><input type="number" id="pD" min="0" max="100" placeholder="—" oninput="calcOverall()"></div>
+            <div class="pc"><div class="pl">Pillar E</div><div class="pn">Mgmt Sys</div><input type="number" id="pE" min="0" max="100" placeholder="—" oninput="calcOverall()"></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:14px;padding-top:12px">
+            <span style="font-size:13px;color:var(--mu)">Overall:</span>
+            <span style="font-size:26px;font-weight:800;color:var(--or)" id="ovScore">—</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="ch"><div class="ct">Non-Conformances</div><button class="btn btnsm btnp" onclick="openFdM()">+ Add Finding</button></div>
+          <div class="nc-row" id="ncSum"></div>
+          <table><thead><tr><th>Pillar</th><th>Clause</th><th>Severity</th><th>Description</th><th>CAP Status</th><th>CAP Due</th><th></th></tr></thead>
+          <tbody id="fdTbl"></tbody></table>
+        </div>
+        <div class="card">
+          <div class="ch"><div class="ct">Summary &amp; QA</div><button class="btn btnsm btnp" onclick="saveSummary()">Save</button></div>
+          <div class="fr full"><div class="fg"><label>Findings Summary</label><textarea id="fdSum" rows="4" placeholder="Overall audit findings narrative..."></textarea></div></div>
+          <div class="fr">
+            <div class="fg"><label>QA Reviewer</label><input type="text" id="qaRev" placeholder="Name of QA reviewer"></div>
+            <div class="fg"><label>CAP Due Date</label><input type="date" id="capDue"></div>
+          </div>
+          <div class="fr full"><div class="fg"><label>QA Notes</label><textarea id="qaNts" rows="3" placeholder="QA review comments..."></textarea></div></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+<div id="toast"></div>
+
+<!-- MODAL: Audit Body -->
+<div class="modal-bg" id="mBody">
+  <div class="modal">
+    <h2 id="mBT">Add Audit Body</h2><input type="hidden" id="bId">
+    <div class="fr"><div class="fg"><label>Company Name *</label><input type="text" id="bN" placeholder="e.g. Bureau Veritas"></div><div class="fg"><label>Short Code *</label><input type="text" id="bC" placeholder="e.g. BV"></div></div>
+    <div class="fr"><div class="fg"><label>Contact Name</label><input type="text" id="bCN"></div><div class="fg"><label>Contact Email</label><input type="email" id="bCE"></div></div>
+    <div class="fr"><div class="fg"><label>Phone</label><input type="text" id="bPh"></div><div class="fg"><label>Country</label><input type="text" id="bCo"></div></div>
+    <div class="fr"><div class="fg"><label>Accreditation Body</label><input type="text" id="bAB" placeholder="e.g. UKAS, DAkkS"></div><div class="fg"><label>Accreditation Number</label><input type="text" id="bAN"></div></div>
+    <div class="fr"><div class="fg"><label>Accreditation Expiry</label><input type="date" id="bAE"></div><div class="fg"><label>Status</label><select id="bSt"><option value="active">Active</option><option value="suspended">Suspended</option><option value="inactive">Inactive</option></select></div></div>
+    <div class="fr full"><div class="fg"><label>Notes</label><textarea id="bNo"></textarea></div></div>
+    <div class="fa"><button class="btn" onclick="cm('mBody')">Cancel</button><button class="btn btnp" onclick="saveBody()">Save</button></div>
+  </div>
+</div>
+
+<!-- MODAL: Facility -->
+<div class="modal-bg" id="mFac">
+  <div class="modal">
+    <h2 id="mFT">Add Facility</h2><input type="hidden" id="fId">
+    <div class="fr"><div class="fg"><label>Facility Name *</label><input type="text" id="fN"></div><div class="fg"><label>Code *</label><input type="text" id="fCd"></div></div>
+    <div class="fr"><div class="fg"><label>Audit Body *</label><select id="fAB"><option value="">Select...</option></select></div><div class="fg"><label>Industry</label><input type="text" id="fInd"></div></div>
+    <div class="fr"><div class="fg"><label>Country</label><input type="text" id="fCo"></div><div class="fg"><label>City</label><input type="text" id="fCy"></div></div>
+    <div class="fr full"><div class="fg"><label>Address</label><input type="text" id="fAd"></div></div>
+    <div class="fr"><div class="fg"><label>Contact Name</label><input type="text" id="fCN"></div><div class="fg"><label>Contact Email</label><input type="email" id="fCE"></div></div>
+    <div class="fr"><div class="fg"><label>Phone</label><input type="text" id="fPh"></div><div class="fg"><label>Worker Count</label><input type="number" id="fWk" value="0" min="0"></div></div>
+    <div class="fr"><div class="fg"><label>RBA Member ID</label><input type="text" id="fRM"></div><div class="fg"><label>Risk Level</label><select id="fRL"><option value="low">Low</option><option value="medium" selected>Medium</option><option value="high">High</option><option value="critical">Critical</option></select></div></div>
+    <div class="fr"><div class="fg"><label>Next Audit Due</label><input type="date" id="fND"></div><div class="fg"><label>Status</label><select id="fSt"><option value="active">Active</option><option value="inactive">Inactive</option><option value="suspended">Suspended</option></select></div></div>
+    <div class="fr full"><div class="fg"><label>Notes</label><textarea id="fNo"></textarea></div></div>
+    <div class="fa"><button class="btn" onclick="cm('mFac')">Cancel</button><button class="btn btnp" onclick="saveFac()">Save</button></div>
+  </div>
+</div>
+
+<!-- MODAL: Schedule Audit -->
+<div class="modal-bg" id="mAudit">
+  <div class="modal">
+    <h2 id="mAT">Schedule Audit</h2><input type="hidden" id="aEId">
+    <div class="fr"><div class="fg"><label>Facility *</label><select id="aFac"><option value="">Select...</option></select></div><div class="fg"><label>Audit Body *</label><select id="aBod"><option value="">Select...</option></select></div></div>
+    <div class="fr"><div class="fg"><label>Audit Type *</label><select id="aTyp"><option value="announced">Announced</option><option value="semi-announced">Semi-Announced</option><option value="unannounced">Unannounced</option></select></div><div class="fg"><label>Scheduled Date *</label><input type="date" id="aDt"></div></div>
+    <div class="fr full"><div class="fg"><label>Scope</label><input type="text" id="aScp" value="RBA Code v8.0 - Full Audit"></div></div>
+    <div class="fr"><div class="fg"><label>Lead Auditor</label><input type="text" id="aLA"></div><div class="fg"><label>Co-Auditor</label><input type="text" id="aCA"></div></div>
+    <div class="fa"><button class="btn" onclick="cm('mAudit')">Cancel</button><button class="btn btnp" onclick="saveAudit()">Save</button></div>
+  </div>
+</div>
+
+<!-- MODAL: Finding -->
+<div class="modal-bg" id="mFd">
+  <div class="modal">
+    <h2>Add Finding / NC</h2>
+    <div class="fr"><div class="fg"><label>Pillar *</label><select id="fdP"><option value="A">A — Labour</option><option value="B">B — H&amp;S</option><option value="C">C — Environment</option><option value="D">D — Ethics</option><option value="E">E — Mgmt Systems</option></select></div><div class="fg"><label>Severity *</label><select id="fdSv"><option value="critical">Critical</option><option value="major">Major</option><option value="minor">Minor</option><option value="observation">Observation</option></select></div></div>
+    <div class="fr full"><div class="fg"><label>RBA Clause</label><input type="text" id="fdCl" placeholder="e.g. A.1.1, B.3.2"></div></div>
+    <div class="fr full"><div class="fg"><label>Description *</label><textarea id="fdDs" rows="3" placeholder="Describe the non-conformance..."></textarea></div></div>
+    <div class="fr full"><div class="fg"><label>Evidence Observed</label><textarea id="fdEv" rows="2" placeholder="Evidence found during audit..."></textarea></div></div>
+    <div class="fr full"><div class="fg"><label>RBA Requirement</label><textarea id="fdRq" rows="2"></textarea></div></div>
+    <div class="fr full"><div class="fg"><label>Required CAP Action</label><textarea id="fdCap" rows="2"></textarea></div></div>
+    <div class="fr"><div class="fg"><label>CAP Responsible</label><input type="text" id="fdCR"></div><div class="fg"><label>CAP Due Date</label><input type="date" id="fdCD"></div></div>
+    <div class="fa"><button class="btn" onclick="cm('mFd')">Cancel</button><button class="btn btnp" onclick="saveFd()">Add Finding</button></div>
+  </div>
+</div>
+
+<script>
+var TOK=localStorage.getItem('ralph_client_token');
+if(!TOK)location.href='/client';
+var BODIES=[],FACS=[],AUDITS=[],CUR=null;
+var STEPS=['scheduled','in_progress','findings','qa','cap','closed'];
+var SLABELS={scheduled:'Scheduled',in_progress:'In Progress',findings:'Findings',qa:'QA Review',cap:'CAP',closed:'Closed'};
+var SCLS={scheduled:'sc',in_progress:'ip',findings:'fi',qa:'qa',cap:'cp',closed:'cl'};
+
+function api(u,o){o=o||{};o.headers=Object.assign({'Content-Type':'application/json','Authorization':'Bearer '+TOK},o.headers||{});return fetch(location.origin+u,o);}
+function toast(m,t){var e=document.getElementById('toast');e.textContent=m;e.className='show '+(t||'');setTimeout(function(){e.className='';},3000);}
+function cm(id){document.getElementById(id).classList.remove('open');}
+function om(id){document.getElementById(id).classList.add('open');}
+function sv(v){
+  ['dash','bodies','fac','audits'].forEach(function(n){document.getElementById('v'+n).style.display=n===v?'block':'none';var nav=document.getElementById('nav-'+n);if(nav)nav.classList.toggle('ac',n===v);});
+  document.getElementById('ptitle').textContent={dash:'Dashboard',bodies:'Audit Bodies',fac:'Facilities',audits:'Audits'}[v]||v;
+  if(v==='dash')loadDash();if(v==='bodies')loadBodies();if(v==='fac')loadFac();if(v==='audits')loadAudits();
+}
+function fmt(d){if(!d)return'—';return new Date(d).toLocaleDateString('en-ZA',{day:'2-digit',month:'short',year:'numeric'});}
+function scCol(s){if(s===null||s===undefined)return'var(--mu)';return s>=80?'var(--gn)':s>=60?'var(--am)':'var(--rd)';}
+function sbadge(s){return '<span class="b b-'+SCLS[s]+'">'+(SLABELS[s]||s)+'</span>';}
+function rbadge(r){var m={low:'lo',medium:'me',high:'hi',critical:'cr'};return '<span class="b b-'+(m[r]||'me')+'">'+r.toUpperCase()+'</span>';}
+function sevbadge(s){var m={critical:'cr',major:'hi',minor:'me',observation:'in'};return '<span class="b b-'+(m[s]||'in')+'">'+s.toUpperCase()+'</span>';}
+
+function loadDash(){
+  api('/api/rba/dashboard').then(function(r){return r.json();}).then(function(d){
+    var s=d.stats;
+    document.getElementById('dBod').textContent=s.bodies;
+    document.getElementById('dFac').textContent=s.facilities;
+    document.getElementById('dTot').textContent=s.total_audits;
+    document.getElementById('dOpn').textContent=s.open_audits;
+    document.getElementById('dScr').textContent=s.avg_score?s.avg_score+'%':'N/A';
+    document.getElementById('dCrit').textContent=s.open_ncs.critical;
+    document.getElementById('dCap').textContent=s.overdue_caps;
+    document.getElementById('dOvr').textContent=s.overdue_audits;
+    var rt=document.getElementById('dRecent');
+    if(!d.recent_audits.length){rt.innerHTML='<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--mu)">No audits yet. <a onclick="sv(\'audits\')" style="color:var(--or);cursor:pointer">Schedule one.</a></td></tr>';return;}
+    rt.innerHTML=d.recent_audits.map(function(a){
+      var nc=(a.nc_critical?'<span style="color:var(--rd);font-weight:700">'+a.nc_critical+'C</span> ':'')+
+             (a.nc_major?'<span style="color:var(--am)">'+a.nc_major+'M</span> ':'')+
+             (a.nc_minor?'<span style="color:var(--mu)">'+a.nc_minor+'m</span>':'');
+      return '<tr><td style="font-family:monospace;font-size:12px;color:var(--or)">'+a.audit_number+'</td>'
+        +'<td style="font-weight:600">'+a.facility_name+'</td><td style="color:var(--mu)">'+a.body_name+'</td>'
+        +'<td style="color:var(--mu)">'+fmt(a.scheduled_date)+'</td><td>'+sbadge(a.status)+'</td>'
+        +'<td style="color:'+scCol(a.overall_score)+';font-weight:700">'+(a.overall_score!==null&&a.overall_score!==undefined?a.overall_score+'%':'—')+'</td>'
+        +'<td>'+nc+'</td><td><button class="btn btnsm" onclick="openDet('+a.id+')">Open</button></td></tr>';
+    }).join('');
+    var ds=document.getElementById('dStatus');
+    if(!d.by_status.length){ds.innerHTML='<p style="color:var(--mu);padding:8px 0;font-size:13px">No audits yet</p>';}
+    else{ds.innerHTML=d.by_status.map(function(s){var p=d.stats.total_audits?Math.round(s.n/d.stats.total_audits*100):0;return'<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span>'+sbadge(s.status)+'</span><span style="font-size:12px;color:var(--mu)">'+s.n+' ('+p+'%)</span></div><div style="background:var(--s2);border-radius:4px;height:6px"><div style="background:var(--or);border-radius:4px;height:6px;width:'+p+'%"></div></div></div>';}).join('');}
+    var dp=document.getElementById('dPillar');
+    var pnames={A:'Labour',B:'H&S',C:'Environ',D:'Ethics',E:'Mgmt'};
+    var pd={};d.by_pillar.forEach(function(r){if(!pd[r.pillar])pd[r.pillar]={};pd[r.pillar][r.severity]=r.n;});
+    if(!d.by_pillar.length){dp.innerHTML='<p style="color:var(--mu);padding:8px 0;font-size:13px">No findings yet</p>';}
+    else{dp.innerHTML=Object.keys(pnames).map(function(p){var x=pd[p]||{};var tot=(x.critical||0)+(x.major||0)+(x.minor||0)+(x.observation||0);if(!tot)return'';return'<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px"><div style="width:80px;font-size:12px;font-weight:600">'+p+' '+pnames[p]+'</div><div style="display:flex;gap:6px;font-size:11px">'+(x.critical?'<span style="color:var(--rd)">'+x.critical+' Crit</span>':'')+(x.major?'<span style="color:var(--am)">'+x.major+' Maj</span>':'')+(x.minor?'<span style="color:var(--mu)">'+x.minor+' Min</span>':'')+'</div></div>';}).join('');}
+  }).catch(function(e){toast('Dashboard error: '+e.message,'err');});
+}
+
+function loadBodies(){
+  api('/api/rba/bodies').then(function(r){return r.json();}).then(function(d){
+    BODIES=d.bodies||[];rBodies(BODIES);
+    var sel=document.getElementById('fBFilt');
+    sel.innerHTML='<option value="">All Bodies</option>'+BODIES.map(function(b){return'<option value="'+b.id+'">'+b.name+'</option>';}).join('');
+  });
+}
+function rBodies(list){
+  var t=document.getElementById('bTbl');
+  if(!list.length){t.innerHTML='<tr><td colspan="8"><div class="empty"><div class="ei">&#127970;</div><div class="et">No Audit Bodies Yet</div><p>Add your first certified body.</p></div></td></tr>';return;}
+  var fc={};FACS.forEach(function(f){fc[f.audit_body_id]=(fc[f.audit_body_id]||0)+1;});
+  t.innerHTML=list.map(function(b){
+    return'<tr><td style="font-family:monospace;font-weight:700;color:var(--or)">'+b.code+'</td><td style="font-weight:600">'+b.name+'</td>'
+      +'<td style="font-size:12px;color:var(--mu)">'+(b.accreditation_body||'—')+(b.accreditation_number?' #'+b.accreditation_number:'')+'</td>'
+      +'<td>'+(b.country||'—')+'</td>'
+      +'<td style="font-size:12px">'+(b.contact_name||'—')+(b.contact_email?'<br><span style="color:var(--mu)">'+b.contact_email+'</span>':'')+'</td>'
+      +'<td><span class="b '+(b.status==='active'?'b-ac':'b-in')+'">'+b.status.toUpperCase()+'</span></td>'
+      +'<td style="text-align:center">'+(fc[b.id]||0)+'</td>'
+      +'<td><button class="btn btnsm" onclick="editBody('+b.id+')">Edit</button></td></tr>';
+  }).join('');
+}
+function fBodies(){var q=document.getElementById('bSrch').value.toLowerCase();rBodies(BODIES.filter(function(b){return!q||(b.name+b.code+(b.country||'')).toLowerCase().includes(q);}));}
+function openBM(){document.getElementById('bId').value='';['bN','bC','bCN','bCE','bPh','bCo','bAB','bAN','bAE','bNo'].forEach(function(i){document.getElementById(i).value='';});document.getElementById('bSt').value='active';document.getElementById('mBT').textContent='Add Audit Body';om('mBody');}
+function editBody(id){var b=BODIES.find(function(x){return x.id===id;});if(!b)return;document.getElementById('bId').value=b.id;document.getElementById('bN').value=b.name||'';document.getElementById('bC').value=b.code||'';document.getElementById('bCN').value=b.contact_name||'';document.getElementById('bCE').value=b.contact_email||'';document.getElementById('bPh').value=b.contact_phone||'';document.getElementById('bCo').value=b.country||'';document.getElementById('bAB').value=b.accreditation_body||'';document.getElementById('bAN').value=b.accreditation_number||'';document.getElementById('bAE').value=b.accreditation_expiry?b.accreditation_expiry.slice(0,10):'';document.getElementById('bSt').value=b.status||'active';document.getElementById('bNo').value=b.notes||'';document.getElementById('mBT').textContent='Edit Audit Body';om('mBody');}
+function saveBody(){var id=document.getElementById('bId').value;var body={name:document.getElementById('bN').value.trim(),code:document.getElementById('bC').value.trim().toUpperCase(),contact_name:document.getElementById('bCN').value.trim(),contact_email:document.getElementById('bCE').value.trim(),contact_phone:document.getElementById('bPh').value.trim(),country:document.getElementById('bCo').value.trim(),accreditation_body:document.getElementById('bAB').value.trim(),accreditation_number:document.getElementById('bAN').value.trim(),accreditation_expiry:document.getElementById('bAE').value||null,status:document.getElementById('bSt').value,notes:document.getElementById('bNo').value.trim()};if(!body.name||!body.code){toast('Name and code required','err');return;}api('/api/rba/bodies'+(id?'/'+id:''),{method:id?'PUT':'POST',body:JSON.stringify(body)}).then(function(r){return r.json();}).then(function(d){if(d.error){toast(d.error,'err');return;}toast(id?'Updated':'Added','ok');cm('mBody');loadBodies();}).catch(function(e){toast(e.message,'err');});}
+
+function loadFac(){
+  api('/api/rba/facilities').then(function(r){return r.json();}).then(function(d){
+    FACS=d.facilities||[];rFac(FACS);
+    var sels=[document.getElementById('fAB'),document.getElementById('aBod')];
+    sels.forEach(function(s){if(!s)return;var cv=s.value;s.innerHTML='<option value="">Select...</option>'+BODIES.map(function(b){return'<option value="'+b.id+'">'+b.name+'</option>';}).join('');if(cv)s.value=cv;});
+    var fs=document.getElementById('aFac');if(fs)fs.innerHTML='<option value="">Select...</option>'+FACS.map(function(f){return'<option value="'+f.id+'">'+f.name+' ('+f.code+')</option>';}).join('');
+  });
+}
+function rFac(list){var t=document.getElementById('fTbl');if(!list.length){t.innerHTML='<tr><td colspan="10"><div class="empty"><div class="ei">&#127981;</div><div class="et">No Facilities Yet</div><p>Add your first RBA member facility.</p></div></td></tr>';return;}t.innerHTML=list.map(function(f){var od=f.next_audit_due&&new Date(f.next_audit_due)<new Date()?' style="color:var(--rd)"':'';return'<tr><td style="font-family:monospace;font-weight:700;color:var(--or)">'+f.code+'</td><td style="font-weight:600">'+f.name+'</td><td style="font-size:12px;color:var(--mu)">'+(f.body_name||'—')+'</td><td>'+(f.country||'—')+'</td><td style="color:var(--mu)">'+(f.industry||'—')+'</td><td style="text-align:center">'+(f.worker_count||0).toLocaleString()+'</td><td>'+rbadge(f.risk_level||'medium')+'</td><td style="color:var(--mu)">'+fmt(f.last_audit_date)+'</td><td'+od+'>'+fmt(f.next_audit_due)+'</td><td><button class="btn btnsm" onclick="editFac('+f.id+')">Edit</button></td></tr>';}).join('');}
+function fFac(){var q=document.getElementById('fSrch').value.toLowerCase();var bId=document.getElementById('fBFilt').value;var rk=document.getElementById('fRFilt').value;rFac(FACS.filter(function(f){return(!q||(f.name+f.code+(f.country||'')).toLowerCase().includes(q))&&(!bId||f.audit_body_id==bId)&&(!rk||f.risk_level===rk);}));}
+function openFM(){document.getElementById('fId').value='';['fN','fCd','fInd','fCo','fCy','fAd','fCN','fCE','fPh','fRM','fNo','fND'].forEach(function(i){document.getElementById(i).value='';});document.getElementById('fWk').value='0';document.getElementById('fAB').value='';document.getElementById('fRL').value='medium';document.getElementById('fSt').value='active';document.getElementById('mFT').textContent='Add Facility';om('mFac');}
+function editFac(id){var f=FACS.find(function(x){return x.id===id;});if(!f)return;document.getElementById('fId').value=f.id;document.getElementById('fN').value=f.name||'';document.getElementById('fCd').value=f.code||'';document.getElementById('fAB').value=f.audit_body_id||'';document.getElementById('fInd').value=f.industry||'';document.getElementById('fCo').value=f.country||'';document.getElementById('fCy').value=f.city||'';document.getElementById('fAd').value=f.address||'';document.getElementById('fCN').value=f.contact_name||'';document.getElementById('fCE').value=f.contact_email||'';document.getElementById('fPh').value=f.contact_phone||'';document.getElementById('fWk').value=f.worker_count||0;document.getElementById('fRM').value=f.rba_member_id||'';document.getElementById('fRL').value=f.risk_level||'medium';document.getElementById('fSt').value=f.status||'active';document.getElementById('fNo').value=f.notes||'';document.getElementById('fND').value=f.next_audit_due?f.next_audit_due.slice(0,10):'';document.getElementById('mFT').textContent='Edit Facility';om('mFac');}
+function saveFac(){var id=document.getElementById('fId').value;var body={name:document.getElementById('fN').value.trim(),code:document.getElementById('fCd').value.trim().toUpperCase(),audit_body_id:document.getElementById('fAB').value,industry:document.getElementById('fInd').value.trim(),country:document.getElementById('fCo').value.trim(),city:document.getElementById('fCy').value.trim(),address:document.getElementById('fAd').value.trim(),contact_name:document.getElementById('fCN').value.trim(),contact_email:document.getElementById('fCE').value.trim(),contact_phone:document.getElementById('fPh').value.trim(),worker_count:parseInt(document.getElementById('fWk').value)||0,rba_member_id:document.getElementById('fRM').value.trim(),risk_level:document.getElementById('fRL').value,status:document.getElementById('fSt').value,notes:document.getElementById('fNo').value.trim(),next_audit_due:document.getElementById('fND').value||null};if(!body.name||!body.code||!body.audit_body_id){toast('Name, code and audit body required','err');return;}api('/api/rba/facilities'+(id?'/'+id:''),{method:id?'PUT':'POST',body:JSON.stringify(body)}).then(function(r){return r.json();}).then(function(d){if(d.error){toast(d.error,'err');return;}toast(id?'Updated':'Added','ok');cm('mFac');loadFac();}).catch(function(e){toast(e.message,'err');});}
+
+function loadAudits(){api('/api/rba/audits').then(function(r){return r.json();}).then(function(d){AUDITS=d.audits||[];rAudits(AUDITS);populateAuditSelects();});}
+function rAudits(list){var t=document.getElementById('aTbl');if(!list.length){t.innerHTML='<tr><td colspan="11"><div class="empty"><div class="ei">&#128203;</div><div class="et">No Audits Yet</div><p>Schedule your first audit.</p></div></td></tr>';return;}t.innerHTML=list.map(function(a){return'<tr><td style="font-family:monospace;font-size:12px;color:var(--or)">'+a.audit_number+'</td><td style="font-weight:600">'+a.facility_name+'</td><td style="color:var(--mu)">'+a.body_name+'</td><td><span class="b b-in">'+a.audit_type.toUpperCase()+'</span></td><td style="color:var(--mu)">'+fmt(a.scheduled_date)+'</td><td>'+sbadge(a.status)+'</td><td style="color:'+scCol(a.overall_score)+';font-weight:700">'+(a.overall_score!==null&&a.overall_score!==undefined?a.overall_score+'%':'—')+'</td><td style="color:var(--rd);font-weight:700;text-align:center">'+(a.nc_critical||0)+'</td><td style="color:var(--am);font-weight:700;text-align:center">'+(a.nc_major||0)+'</td><td style="text-align:center">'+(a.nc_minor||0)+'</td><td><button class="btn btnsm btnp" onclick="openDet('+a.id+')">Open</button></td></tr>';}).join('');}
+function fAudits(){var q=document.getElementById('aSrch').value.toLowerCase();var st=document.getElementById('aStFilt').value;rAudits(AUDITS.filter(function(a){return(!q||(a.audit_number+a.facility_name+a.body_name).toLowerCase().includes(q))&&(!st||a.status===st);}));}
+function populateAuditSelects(){var fs=document.getElementById('aFac');if(fs)fs.innerHTML='<option value="">Select...</option>'+FACS.map(function(f){return'<option value="'+f.id+'">'+f.name+' ('+f.code+')</option>';}).join('');var bs=document.getElementById('aBod');if(bs)bs.innerHTML='<option value="">Select...</option>'+BODIES.map(function(b){return'<option value="'+b.id+'">'+b.name+'</option>';}).join('');}
+function openAM(){document.getElementById('aEId').value='';['aFac','aBod'].forEach(function(i){document.getElementById(i).value='';});document.getElementById('aTyp').value='announced';document.getElementById('aDt').value='';document.getElementById('aScp').value='RBA Code v8.0 - Full Audit';document.getElementById('aLA').value='';document.getElementById('aCA').value='';document.getElementById('mAT').textContent='Schedule Audit';om('mAudit');}
+function saveAudit(){var id=document.getElementById('aEId').value;var body={facility_id:document.getElementById('aFac').value,audit_body_id:document.getElementById('aBod').value,audit_type:document.getElementById('aTyp').value,scheduled_date:document.getElementById('aDt').value,audit_scope:document.getElementById('aScp').value.trim(),lead_auditor:document.getElementById('aLA').value.trim(),co_auditor:document.getElementById('aCA').value.trim()};if(!body.facility_id||!body.audit_body_id||!body.scheduled_date){toast('Facility, body and date required','err');return;}api('/api/rba/audits'+(id?'/'+id:''),{method:id?'PUT':'POST',body:JSON.stringify(body)}).then(function(r){return r.json();}).then(function(d){if(d.error){toast(d.error,'err');return;}toast(id?'Updated':'Audit '+d.audit_number+' scheduled','ok');cm('mAudit');loadAudits();}).catch(function(e){toast(e.message,'err');});}
+
+function openDet(id){api('/api/rba/audits/'+id).then(function(r){return r.json();}).then(function(d){CUR=d.audit;document.getElementById('valist').style.display='none';document.getElementById('vadet').style.display='block';renderDet(d.audit,d.findings);});}
+function closeDetail(){document.getElementById('valist').style.display='block';document.getElementById('vadet').style.display='none';CUR=null;loadAudits();}
+function renderDet(a,findings){
+  document.getElementById('detT').textContent=a.audit_number+' — '+a.facility_name;
+  document.getElementById('detS').textContent=a.body_name+' | '+a.audit_type+' | '+fmt(a.scheduled_date);
+  var ci=STEPS.indexOf(a.status);
+  document.getElementById('pipeline').innerHTML=STEPS.map(function(s,i){var cls=i<ci?'step done':i===ci?'step active':'step';var line=i<STEPS.length-1?'<div class="sline"></div>':'';return'<div class="'+cls+'"><div class="sdot">'+line+(i<ci?'&#10003;':(i+1))+'</div><div class="slbl">'+SLABELS[s]+'</div></div>';}).join('');
+  var ni=ci+1;var ab=document.getElementById('advBtn');if(ni<STEPS.length){ab.textContent='Move to '+SLABELS[STEPS[ni]]+' \u2192';ab.style.display='inline-flex';}else{ab.style.display='none';}
+  document.getElementById('detInfo').innerHTML=[{l:'Facility',v:a.facility_name},{l:'Audit Body',v:a.body_name},{l:'Type',v:a.audit_type},{l:'Scope',v:a.audit_scope||'—'},{l:'Scheduled',v:fmt(a.scheduled_date)},{l:'Start Date',v:fmt(a.start_date)},{l:'End Date',v:fmt(a.end_date)},{l:'Lead Auditor',v:a.lead_auditor||'—'},{l:'Co-Auditor',v:a.co_auditor||'—'},{l:'Status',v:sbadge(a.status)},{l:'CAP Due',v:fmt(a.cap_due_date)},{l:'Created By',v:a.created_by||'—'}].map(function(x){return'<div class="di"><div class="dl">'+x.l+'</div><div class="dv">'+x.v+'</div></div>';}).join('');
+  document.getElementById('pA').value=a.pillar_a_score!==null&&a.pillar_a_score!==undefined?a.pillar_a_score:'';
+  document.getElementById('pB').value=a.pillar_b_score!==null&&a.pillar_b_score!==undefined?a.pillar_b_score:'';
+  document.getElementById('pC').value=a.pillar_c_score!==null&&a.pillar_c_score!==undefined?a.pillar_c_score:'';
+  document.getElementById('pD').value=a.pillar_d_score!==null&&a.pillar_d_score!==undefined?a.pillar_d_score:'';
+  document.getElementById('pE').value=a.pillar_e_score!==null&&a.pillar_e_score!==undefined?a.pillar_e_score:'';
+  calcOverall();
+  document.getElementById('ncSum').innerHTML=[{l:'Critical',v:a.nc_critical||0,c:'rd'},{l:'Major',v:a.nc_major||0,c:'am'},{l:'Minor',v:a.nc_minor||0,c:'mu'},{l:'Observations',v:a.nc_observation||0,c:'bl'}].map(function(x){return'<div class="nc-item"><div class="nl" style="color:var(--'+x.c+')">'+x.l+'</div><div style="font-size:22px;font-weight:800;color:var(--'+x.c+')">'+x.v+'</div></div>';}).join('');
+  rFindings(findings);
+  document.getElementById('fdSum').value=a.findings_summary||'';
+  document.getElementById('qaRev').value=a.qa_reviewer||'';
+  document.getElementById('qaNts').value=a.qa_notes||'';
+  document.getElementById('capDue').value=a.cap_due_date?a.cap_due_date.slice(0,10):'';
+}
+function rFindings(findings){var t=document.getElementById('fdTbl');if(!findings||!findings.length){t.innerHTML='<tr><td colspan="7" style="text-align:center;padding:16px;color:var(--mu);font-size:12px">No findings yet. Click &quot;+ Add Finding&quot; to begin.</td></tr>';return;}var cst={open:'<span style="color:var(--rd)">Open</span>',in_progress:'<span style="color:var(--am)">In Progress</span>',closed:'<span style="color:var(--gn)">Closed</span>',verified:'<span style="color:var(--gn)">Verified</span>'};t.innerHTML=findings.map(function(f){return'<tr><td style="font-weight:700;color:var(--or)">'+f.pillar+'</td><td style="font-size:11px;color:var(--mu)">'+(f.rba_clause||'—')+'</td><td>'+sevbadge(f.severity)+'</td><td style="font-size:12px;max-width:250px">'+f.description+'</td><td>'+(cst[f.cap_status]||f.cap_status)+'</td><td style="color:var(--mu)">'+fmt(f.cap_due_date)+'</td><td><button class="btn btnsm btnd" onclick="delFd('+f.id+')">Del</button></td></tr>';}).join('');}
+function calcOverall(){var vals=['pA','pB','pC','pD','pE'].map(function(id){var v=parseFloat(document.getElementById(id).value);return isNaN(v)?null:v;}).filter(function(v){return v!==null;});var el=document.getElementById('ovScore');if(!vals.length){el.textContent='—';el.style.color='var(--mu)';return;}var avg=Math.round(vals.reduce(function(s,v){return s+v;},0)/vals.length*10)/10;el.textContent=avg+'%';el.style.color=scCol(avg);}
+function saveScores(){if(!CUR)return;var body={pillar_a_score:parseFloat(document.getElementById('pA').value)||null,pillar_b_score:parseFloat(document.getElementById('pB').value)||null,pillar_c_score:parseFloat(document.getElementById('pC').value)||null,pillar_d_score:parseFloat(document.getElementById('pD').value)||null,pillar_e_score:parseFloat(document.getElementById('pE').value)||null};var vs=Object.values(body).filter(function(v){return v!==null;});if(vs.length)body.overall_score=Math.round(vs.reduce(function(s,v){return s+v;},0)/vs.length*10)/10;api('/api/rba/audits/'+CUR.id,{method:'PUT',body:JSON.stringify(body)}).then(function(r){return r.json();}).then(function(d){if(d.error){toast(d.error,'err');return;}toast('Scores saved','ok');CUR=Object.assign(CUR,body);}).catch(function(e){toast(e.message,'err');});}
+function saveSummary(){if(!CUR)return;var body={findings_summary:document.getElementById('fdSum').value,qa_reviewer:document.getElementById('qaRev').value,qa_notes:document.getElementById('qaNts').value,cap_due_date:document.getElementById('capDue').value||null};api('/api/rba/audits/'+CUR.id,{method:'PUT',body:JSON.stringify(body)}).then(function(r){return r.json();}).then(function(d){if(d.error){toast(d.error,'err');return;}toast('Saved','ok');}).catch(function(e){toast(e.message,'err');});}
+function advance(){if(!CUR)return;var ci=STEPS.indexOf(CUR.status);if(ci>=STEPS.length-1){toast('Already closed','err');return;}var next=STEPS[ci+1];if(!confirm('Move to: '+SLABELS[next]+'?'))return;var body={status:next};if(next==='in_progress')body.start_date=new Date().toISOString().slice(0,10);if(next==='closed')body.end_date=new Date().toISOString().slice(0,10);api('/api/rba/audits/'+CUR.id,{method:'PUT',body:JSON.stringify(body)}).then(function(r){return r.json();}).then(function(d){if(d.error){toast(d.error,'err');return;}toast('Moved to '+SLABELS[next],'ok');openDet(CUR.id);}).catch(function(e){toast(e.message,'err');});}
+function openEditA(){if(!CUR)return;var a=CUR;document.getElementById('aEId').value=a.id;document.getElementById('aFac').value=a.facility_id;document.getElementById('aBod').value=a.audit_body_id;document.getElementById('aTyp').value=a.audit_type;document.getElementById('aDt').value=a.scheduled_date?a.scheduled_date.slice(0,10):'';document.getElementById('aScp').value=a.audit_scope||'';document.getElementById('aLA').value=a.lead_auditor||'';document.getElementById('aCA').value=a.co_auditor||'';document.getElementById('mAT').textContent='Edit Audit';om('mAudit');}
+function openFdM(){['fdCl','fdDs','fdEv','fdRq','fdCap','fdCR'].forEach(function(i){document.getElementById(i).value='';});document.getElementById('fdP').value='A';document.getElementById('fdSv').value='major';document.getElementById('fdCD').value='';om('mFd');}
+function saveFd(){if(!CUR)return;var body={pillar:document.getElementById('fdP').value,severity:document.getElementById('fdSv').value,rba_clause:document.getElementById('fdCl').value.trim(),description:document.getElementById('fdDs').value.trim(),evidence:document.getElementById('fdEv').value.trim(),requirement:document.getElementById('fdRq').value.trim(),cap_action:document.getElementById('fdCap').value.trim(),cap_responsible:document.getElementById('fdCR').value.trim(),cap_due_date:document.getElementById('fdCD').value||null};if(!body.pillar||!body.severity||!body.description){toast('Pillar, severity and description required','err');return;}api('/api/rba/audits/'+CUR.id+'/findings',{method:'POST',body:JSON.stringify(body)}).then(function(r){return r.json();}).then(function(d){if(d.error){toast(d.error,'err');return;}toast('Finding added','ok');cm('mFd');openDet(CUR.id);}).catch(function(e){toast(e.message,'err');});}
+function delFd(id){if(!confirm('Delete this finding?'))return;api('/api/rba/findings/'+id,{method:'DELETE'}).then(function(r){return r.json();}).then(function(d){if(d.error){toast(d.error,'err');return;}toast('Deleted','ok');openDet(CUR.id);}).catch(function(e){toast(e.message,'err');});}
+
+document.addEventListener('DOMContentLoaded',function(){
+  Promise.all([
+    api('/api/rba/bodies').then(function(r){return r.json();}).then(function(d){BODIES=d.bodies||[];}),
+    api('/api/rba/facilities').then(function(r){return r.json();}).then(function(d){FACS=d.facilities||[];})
+  ]).then(function(){sv('dash');}).catch(function(){sv('dash');});
+});
+</script>
+</body></html>

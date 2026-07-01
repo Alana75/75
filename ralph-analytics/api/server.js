@@ -1248,6 +1248,188 @@ app.post('/api/rba/training/kpis', requireAuth, (req, res) => {
 });
 // ── End RBA Training API ─────────────────────────────────────────
 
+// ═══════════════════════════════════════════════════════════════
+// ── RBA AUDIT MANAGEMENT ────────────────────────────────────────
+function auditNum() {
+  const d = new Date();
+  return 'AUD-' + d.getFullYear() + ('0'+(d.getMonth()+1)).slice(-2) + ('0'+d.getDate()).slice(-2) + '-' + Math.floor(Math.random()*9000+1000);
+}
+
+async function q(sql, params) {
+  const [rows] = await pool.execute(sql, params || []);
+  return rows;
+}
+
+// AUDIT BODIES
+app.get('/api/rba/bodies', requireAuth, async (req, res) => {
+  try { res.json({ bodies: await q('SELECT * FROM audit_bodies ORDER BY name ASC'), total: 0 }); }
+  catch(e) { res.status(500).json({ error: e.message }); }
+});
+app.post('/api/rba/bodies', requireAuth, async (req, res) => {
+  try {
+    const { name, code, contact_name, contact_email, contact_phone, accreditation_body, accreditation_number, accreditation_expiry, country, notes } = req.body;
+    if (!name || !code) return res.status(400).json({ error: 'name and code required' });
+    const [r] = await pool.execute('INSERT INTO audit_bodies (name,code,contact_name,contact_email,contact_phone,accreditation_body,accreditation_number,accreditation_expiry,country,notes) VALUES (?,?,?,?,?,?,?,?,?,?)',
+      [name, code.toUpperCase(), contact_name||null, contact_email||null, contact_phone||null, accreditation_body||null, accreditation_number||null, accreditation_expiry||null, country||null, notes||null]);
+    res.json({ success: true, id: r.insertId });
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+app.put('/api/rba/bodies/:id', requireAuth, async (req, res) => {
+  try {
+    const fields = ['name','code','contact_name','contact_email','contact_phone','accreditation_body','accreditation_number','accreditation_expiry','country','status','notes'];
+    const updates = [], vals = [];
+    fields.forEach(f => { if (req.body[f] !== undefined) { updates.push(f+'=?'); vals.push(req.body[f]); } });
+    if (!updates.length) return res.status(400).json({ error: 'No fields' });
+    vals.push(req.params.id);
+    await pool.execute('UPDATE audit_bodies SET '+updates.join(', ')+' WHERE id=?', vals);
+    res.json({ success: true });
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+app.delete('/api/rba/bodies/:id', requireAdmin, async (req, res) => {
+  try { await pool.execute('DELETE FROM audit_bodies WHERE id=?', [req.params.id]); res.json({ success: true }); }
+  catch(e) { res.status(500).json({ error: e.message }); }
+});
+
+// FACILITIES
+app.get('/api/rba/facilities', requireAuth, async (req, res) => {
+  try {
+    const rows = await q('SELECT f.*, ab.name AS body_name, ab.code AS body_code FROM facilities f LEFT JOIN audit_bodies ab ON f.audit_body_id=ab.id ORDER BY f.name ASC');
+    res.json({ facilities: rows, total: rows.length });
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+app.get('/api/rba/facilities/:id', requireAuth, async (req, res) => {
+  try {
+    const rows = await q('SELECT f.*, ab.name AS body_name FROM facilities f LEFT JOIN audit_bodies ab ON f.audit_body_id=ab.id WHERE f.id=?', [req.params.id]);
+    if (!rows.length) return res.status(404).json({ error: 'Not found' });
+    const audits = await q('SELECT * FROM audits WHERE facility_id=? ORDER BY scheduled_date DESC', [req.params.id]);
+    res.json({ facility: rows[0], audits });
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+app.post('/api/rba/facilities', requireAuth, async (req, res) => {
+  try {
+    const { name, code, audit_body_id, industry, country, city, address, contact_name, contact_email, contact_phone, worker_count, rba_member_id, risk_level, notes, next_audit_due } = req.body;
+    if (!name || !code || !audit_body_id) return res.status(400).json({ error: 'name, code and audit_body_id required' });
+    const [r] = await pool.execute('INSERT INTO facilities (name,code,audit_body_id,industry,country,city,address,contact_name,contact_email,contact_phone,worker_count,rba_member_id,risk_level,notes,next_audit_due) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
+      [name, code.toUpperCase(), audit_body_id, industry||null, country||null, city||null, address||null, contact_name||null, contact_email||null, contact_phone||null, worker_count||0, rba_member_id||null, risk_level||'medium', notes||null, next_audit_due||null]);
+    res.json({ success: true, id: r.insertId });
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+app.put('/api/rba/facilities/:id', requireAuth, async (req, res) => {
+  try {
+    const fields = ['name','code','audit_body_id','industry','country','city','address','contact_name','contact_email','contact_phone','worker_count','rba_member_id','risk_level','status','notes','next_audit_due'];
+    const updates = [], vals = [];
+    fields.forEach(f => { if (req.body[f] !== undefined) { updates.push(f+'=?'); vals.push(req.body[f]); } });
+    if (!updates.length) return res.status(400).json({ error: 'No fields' });
+    vals.push(req.params.id);
+    await pool.execute('UPDATE facilities SET '+updates.join(', ')+' WHERE id=?', vals);
+    res.json({ success: true });
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
+// AUDITS
+app.get('/api/rba/audits', requireAuth, async (req, res) => {
+  try {
+    const rows = await q('SELECT a.*, f.name AS facility_name, f.code AS facility_code, f.country AS facility_country, f.risk_level, ab.name AS body_name FROM audits a LEFT JOIN facilities f ON a.facility_id=f.id LEFT JOIN audit_bodies ab ON a.audit_body_id=ab.id ORDER BY a.created_at DESC');
+    res.json({ audits: rows, total: rows.length });
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+app.get('/api/rba/audits/:id', requireAuth, async (req, res) => {
+  try {
+    const rows = await q('SELECT a.*, f.name AS facility_name, f.code AS facility_code, f.country AS facility_country, ab.name AS body_name FROM audits a LEFT JOIN facilities f ON a.facility_id=f.id LEFT JOIN audit_bodies ab ON a.audit_body_id=ab.id WHERE a.id=?', [req.params.id]);
+    if (!rows.length) return res.status(404).json({ error: 'Not found' });
+    const findings = await q('SELECT * FROM audit_findings WHERE audit_id=? ORDER BY FIELD(severity,"critical","major","minor","observation"), pillar ASC', [req.params.id]);
+    res.json({ audit: rows[0], findings });
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+app.post('/api/rba/audits', requireAuth, async (req, res) => {
+  try {
+    const { facility_id, audit_body_id, audit_type, audit_scope, scheduled_date, lead_auditor, co_auditor } = req.body;
+    if (!facility_id || !audit_body_id || !audit_type || !scheduled_date) return res.status(400).json({ error: 'facility_id, audit_body_id, audit_type, scheduled_date required' });
+    const num = auditNum();
+    const [r] = await pool.execute('INSERT INTO audits (audit_number,facility_id,audit_body_id,audit_type,audit_scope,scheduled_date,lead_auditor,co_auditor,status,created_by) VALUES (?,?,?,?,?,?,?,?,?,?)',
+      [num, facility_id, audit_body_id, audit_type, audit_scope||'RBA Code v8.0 - Full Audit', scheduled_date, lead_auditor||null, co_auditor||null, 'scheduled', req.user.email]);
+    res.json({ success: true, id: r.insertId, audit_number: num });
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+app.put('/api/rba/audits/:id', requireAuth, async (req, res) => {
+  try {
+    const fields = ['audit_type','audit_scope','scheduled_date','start_date','end_date','lead_auditor','co_auditor','status','overall_score','pillar_a_score','pillar_b_score','pillar_c_score','pillar_d_score','pillar_e_score','nc_critical','nc_major','nc_minor','nc_observation','findings_summary','qa_reviewer','qa_notes','cap_due_date'];
+    const updates = [], vals = [];
+    fields.forEach(f => { if (req.body[f] !== undefined) { updates.push(f+'=?'); vals.push(req.body[f]); } });
+    if (req.body.status === 'closed') { updates.push('closed_at=NOW()'); }
+    if (!updates.length) return res.status(400).json({ error: 'No fields' });
+    vals.push(req.params.id);
+    await pool.execute('UPDATE audits SET '+updates.join(', ')+' WHERE id=?', vals);
+    if (req.body.status === 'closed') {
+      const rows = await q('SELECT facility_id, end_date FROM audits WHERE id=?', [req.params.id]);
+      if (rows.length) await pool.execute('UPDATE facilities SET last_audit_date=? WHERE id=?', [rows[0].end_date || new Date().toISOString().slice(0,10), rows[0].facility_id]);
+    }
+    res.json({ success: true });
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
+// FINDINGS
+app.post('/api/rba/audits/:id/findings', requireAuth, async (req, res) => {
+  try {
+    const { pillar, rba_clause, severity, description, evidence, requirement, cap_action, cap_responsible, cap_due_date } = req.body;
+    if (!pillar || !severity || !description) return res.status(400).json({ error: 'pillar, severity, description required' });
+    const [r] = await pool.execute('INSERT INTO audit_findings (audit_id,pillar,rba_clause,severity,description,evidence,requirement,cap_action,cap_responsible,cap_due_date) VALUES (?,?,?,?,?,?,?,?,?,?)',
+      [req.params.id, pillar, rba_clause||null, severity, description, evidence||null, requirement||null, cap_action||null, cap_responsible||null, cap_due_date||null]);
+    await pool.execute("UPDATE audits SET nc_critical=(SELECT COUNT(*) FROM audit_findings WHERE audit_id=? AND severity='critical'), nc_major=(SELECT COUNT(*) FROM audit_findings WHERE audit_id=? AND severity='major'), nc_minor=(SELECT COUNT(*) FROM audit_findings WHERE audit_id=? AND severity='minor'), nc_observation=(SELECT COUNT(*) FROM audit_findings WHERE audit_id=? AND severity='observation') WHERE id=?",
+      [req.params.id,req.params.id,req.params.id,req.params.id,req.params.id]);
+    res.json({ success: true, id: r.insertId });
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+app.put('/api/rba/findings/:id', requireAuth, async (req, res) => {
+  try {
+    const fields = ['pillar','rba_clause','severity','description','evidence','requirement','cap_action','cap_responsible','cap_due_date','cap_status'];
+    const updates = [], vals = [];
+    fields.forEach(f => { if (req.body[f] !== undefined) { updates.push(f+'=?'); vals.push(req.body[f]); } });
+    if (req.body.cap_status === 'closed') updates.push('cap_closed_at=NOW()');
+    if (!updates.length) return res.status(400).json({ error: 'No fields' });
+    vals.push(req.params.id);
+    await pool.execute('UPDATE audit_findings SET '+updates.join(', ')+' WHERE id=?', vals);
+    res.json({ success: true });
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+app.delete('/api/rba/findings/:id', requireAuth, async (req, res) => {
+  try {
+    const rows = await q('SELECT audit_id FROM audit_findings WHERE id=?', [req.params.id]);
+    await pool.execute('DELETE FROM audit_findings WHERE id=?', [req.params.id]);
+    if (rows.length) {
+      const aid = rows[0].audit_id;
+      await pool.execute("UPDATE audits SET nc_critical=(SELECT COUNT(*) FROM audit_findings WHERE audit_id=? AND severity='critical'), nc_major=(SELECT COUNT(*) FROM audit_findings WHERE audit_id=? AND severity='major'), nc_minor=(SELECT COUNT(*) FROM audit_findings WHERE audit_id=? AND severity='minor'), nc_observation=(SELECT COUNT(*) FROM audit_findings WHERE audit_id=? AND severity='observation') WHERE id=?",
+        [aid,aid,aid,aid,aid]);
+    }
+    res.json({ success: true });
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
+// DASHBOARD
+app.get('/api/rba/dashboard', requireAuth, async (req, res) => {
+  try {
+    const [[{n:bodies}]]    = [await pool.execute('SELECT COUNT(*) AS n FROM audit_bodies WHERE status="active"')];
+    const [[{n:facilities}]]= [await pool.execute('SELECT COUNT(*) AS n FROM facilities WHERE status="active"')];
+    const [[{n:total_audits}]]=[await pool.execute('SELECT COUNT(*) AS n FROM audits')];
+    const [[{n:open_audits}]]=[await pool.execute('SELECT COUNT(*) AS n FROM audits WHERE status NOT IN ("closed")')];
+    const [[{n:closed_audits}]]=[await pool.execute('SELECT COUNT(*) AS n FROM audits WHERE status="closed"')];
+    const [[{avg:avg_score}]]=[await pool.execute('SELECT ROUND(AVG(overall_score),1) AS avg FROM audits WHERE overall_score IS NOT NULL')];
+    const [[nc]] = [await pool.execute('SELECT SUM(nc_critical) AS crit, SUM(nc_major) AS maj, SUM(nc_minor) AS min FROM audits WHERE status NOT IN ("closed")')];
+    const [[{n:open_caps}]]=[await pool.execute('SELECT COUNT(*) AS n FROM audit_findings WHERE cap_status IN ("open","in_progress")')];
+    const [[{n:overdue_caps}]]=[await pool.execute('SELECT COUNT(*) AS n FROM audit_findings WHERE cap_status IN ("open","in_progress") AND cap_due_date < CURDATE()')];
+    const [[{n:overdue_audits}]]=[await pool.execute('SELECT COUNT(*) AS n FROM facilities WHERE next_audit_due < CURDATE() AND status="active"')];
+    const [recentAudits] = await pool.execute('SELECT a.id, a.audit_number, a.status, a.overall_score, a.scheduled_date, a.nc_critical, a.nc_major, a.nc_minor, f.name AS facility_name, ab.name AS body_name FROM audits a LEFT JOIN facilities f ON a.facility_id=f.id LEFT JOIN audit_bodies ab ON a.audit_body_id=ab.id ORDER BY a.created_at DESC LIMIT 8');
+    const [byStatus] = await pool.execute('SELECT status, COUNT(*) AS n FROM audits GROUP BY status');
+    const [byPillar] = await pool.execute('SELECT pillar, severity, COUNT(*) AS n FROM audit_findings GROUP BY pillar, severity ORDER BY pillar, severity');
+    res.json({ stats: { bodies, facilities, total_audits, open_audits, closed_audits, avg_score: avg_score||0, open_ncs: { critical: nc?.crit||0, major: nc?.maj||0, minor: nc?.min||0 }, open_caps, overdue_caps, overdue_audits }, recent_audits: recentAudits, by_status: byStatus, by_pillar: byPillar });
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
+// RBA AUDIT PORTAL HTML ROUTES
+app.get('/rba/audit', (_req, res) => { res.setHeader('Cache-Control','no-store'); res.sendFile(path.join(STATIC,'rba-air/audit-portal.html')); });
+app.get('/rba/audit/*', (_req, res) => { res.setHeader('Cache-Control','no-store'); res.sendFile(path.join(STATIC,'rba-air/audit-portal.html')); });
+
+
 app.use((req, res) => {
   // Redirect common typos gracefully
   if (req.path.startsWith('/client') && req.path !== '/client') return res.redirect('/client');
@@ -1257,10 +1439,5 @@ app.use((req, res) => {
 
 
 app.listen(PORT, () => {
-    log('info', '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-    log('info', ` @ralph/analytics-app`);
-    log('info', `  Port:  ${PORT}  |  DB: ${pool?'MySQL':'JSON-file'}`);
-    log('info', '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-  });
-
-
+  log("info", "Ralph Analytics API running on port " + PORT);
+});
