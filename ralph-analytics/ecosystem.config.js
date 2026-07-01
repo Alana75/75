@@ -29,13 +29,13 @@ module.exports = {
       name: 'ralph-orchestrator',
       script: './ralph-analytics/apps/ralph-orchestrator/src/index.js',
       cwd:    '/home/1638322.cloudwaysapps.com/amxhnzbwdx/public_html/monorepo',
-      env: { NODE_ENV: 'production', PORT: '4020' },
+      env: { NODE_ENV: 'production', PORT: '4020', ORCHESTRATOR_API_KEY: 'f3f687882c8808677973c47d621d0f4f90611f6c1f22631defc07ac3aa20fae4' },
     },
     {
       name: 'ralph-ai',
       script: './ralph-analytics/apps/ai-service/src/index.js',
       cwd:    '/home/1638322.cloudwaysapps.com/amxhnzbwdx/public_html/monorepo',
-      env: { NODE_ENV: 'production', PORT: '4001', OPENAI_API_KEY: process.env.OPENAI_API_KEY },
+      env: { NODE_ENV: 'production', PORT: '4001', ORCHESTRATOR_API_KEY: 'f3f687882c8808677973c47d621d0f4f90611f6c1f22631defc07ac3aa20fae4', ORCHESTRATOR_API_URL: 'http://localhost:4020', OPENAI_API_KEY: process.env.OPENAI_API_KEY || '' },
     },
     {
       name: 'ralph-messaging',
