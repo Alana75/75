@@ -102,6 +102,24 @@ tr:hover td{background:rgba(255,255,255,.02)}
 #toast.err{border-color:var(--rd);color:var(--rd)}
 </style></head>
 <body>
+
+<div id="loginOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;align-items:center;justify-content:center">
+  <div style="background:#1a1a1a;border:1px solid #333;border-radius:12px;padding:36px;width:360px;max-width:90vw">
+    <div style="font-size:18px;font-weight:700;margin-bottom:4px">RBA Audit Portal</div>
+    <div style="font-size:13px;color:#888;margin-bottom:24px">Sign in to access the audit management system</div>
+    <div style="margin-bottom:12px">
+      <label style="font-size:11px;color:#888;font-weight:600;display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">Email</label>
+      <input id="li_em" type="email" placeholder="admin@ralph-analytics.com" onkeydown="if(event.key==='Enter')document.getElementById('li_pw').focus()" style="width:100%;padding:10px 12px;background:#111;border:1px solid #333;border-radius:6px;color:#fff;font-size:13px;box-sizing:border-box">
+    </div>
+    <div style="margin-bottom:16px">
+      <label style="font-size:11px;color:#888;font-weight:600;display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">Password</label>
+      <input id="li_pw" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()" style="width:100%;padding:10px 12px;background:#111;border:1px solid #333;border-radius:6px;color:#fff;font-size:13px;box-sizing:border-box">
+    </div>
+    <div id="li_err" style="color:#ef4444;font-size:12px;min-height:16px;margin-bottom:12px"></div>
+    <button id="li_btn" onclick="doLogin()" style="width:100%;padding:11px;background:#e8510a;border:none;border-radius:6px;color:#fff;font-size:14px;font-weight:700;cursor:pointer">Sign In</button>
+  </div>
+</div>
+
 <div class="tb">
   <div class="lp">RA</div><span class="st">Ralph Analytics</span><span class="sp">&rsaquo;</span>
   <span class="br" id="ptitle">RBA Audit Management</span>
@@ -289,14 +307,46 @@ tr:hover td{background:rgba(255,255,255,.02)}
 </div>
 
 <script>
-var TOK=localStorage.getItem('ralph_client_token');
-if(!TOK)location.href='/client';
+var TOK=localStorage.getItem('ralph_admin_token')||localStorage.getItem('ralph_client_token')||'';
+
+function doLogin(){
+  var e=document.getElementById('li_em').value;
+  var p=document.getElementById('li_pw').value;
+  if(!e||!p){return;}
+  document.getElementById('li_btn').textContent='Signing in...';
+  fetch(window.location.origin+'/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:e,password:p})})
+    .then(function(r){return r.json();})
+    .then(function(d){
+      if(d.token){
+        TOK=d.token;
+        localStorage.setItem(d.user&&d.user.role==='admin'?'ralph_admin_token':'ralph_client_token',d.token);
+        document.getElementById('loginOverlay').style.display='none';
+        Promise.all([
+          api('/api/rba/bodies').then(function(r){return r.json();}).then(function(d2){BODIES=d2.bodies||[];}),
+          api('/api/rba/facilities').then(function(r){return r.json();}).then(function(d2){FACS=d2.facilities||[];})
+        ]).then(function(){sv('dash');}).catch(function(){sv('dash');});
+      } else {
+        document.getElementById('li_err').textContent=d.error||'Invalid credentials';
+        document.getElementById('li_btn').textContent='Sign In';
+      }
+    }).catch(function(){document.getElementById('li_err').textContent='Connection error';document.getElementById('li_btn').textContent='Sign In';});
+}
 var BODIES=[],FACS=[],AUDITS=[],CUR=null;
 var STEPS=['scheduled','in_progress','findings','qa','cap','closed'];
 var SLABELS={scheduled:'Scheduled',in_progress:'In Progress',findings:'Findings',qa:'QA Review',cap:'CAP',closed:'Closed'};
 var SCLS={scheduled:'sc',in_progress:'ip',findings:'fi',qa:'qa',cap:'cp',closed:'cl'};
 
-function api(u,o){o=o||{};o.headers=Object.assign({'Content-Type':'application/json','Authorization':'Bearer '+TOK},o.headers||{});return fetch(location.origin+u,o);}
+function api(u,o){
+  o=o||{};
+  o.headers=Object.assign({'Content-Type':'application/json','Authorization':'Bearer '+TOK},o.headers||{});
+  return fetch(window.location.origin+u,o).then(function(r){
+    if(r.status===401){
+      document.getElementById('loginOverlay').style.display='flex';
+      throw new Error('Unauthorized');
+    }
+    return r;
+  });
+}
 function toast(m,t){var e=document.getElementById('toast');e.textContent=m;e.className='show '+(t||'');setTimeout(function(){e.className='';},3000);}
 function cm(id){document.getElementById(id).classList.remove('open');}
 function om(id){document.getElementById(id).classList.add('open');}
@@ -425,10 +475,16 @@ function saveFd(){if(!CUR)return;var body={pillar:document.getElementById('fdP')
 function delFd(id){if(!confirm('Delete this finding?'))return;api('/api/rba/findings/'+id,{method:'DELETE'}).then(function(r){return r.json();}).then(function(d){if(d.error){toast(d.error,'err');return;}toast('Deleted','ok');openDet(CUR.id);}).catch(function(e){toast(e.message,'err');});}
 
 document.addEventListener('DOMContentLoaded',function(){
+  if(!TOK){
+    document.getElementById('loginOverlay').style.display='flex';
+    return;
+  }
   Promise.all([
     api('/api/rba/bodies').then(function(r){return r.json();}).then(function(d){BODIES=d.bodies||[];}),
     api('/api/rba/facilities').then(function(r){return r.json();}).then(function(d){FACS=d.facilities||[];})
-  ]).then(function(){sv('dash');}).catch(function(){sv('dash');});
+  ]).then(function(){sv('dash');}).catch(function(e){
+    if(e.message!=='Unauthorized')sv('dash');
+  });
 });
 </script>
 </body></html>
