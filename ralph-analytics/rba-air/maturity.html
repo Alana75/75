@@ -142,6 +142,8 @@ const TOK=localStorage.getItem('ralph_client_token');
 function api(u,o){o=o||{};o.headers=Object.assign({'Content-Type':'application/json','Authorization':'Bearer '+TOK},o.headers||{});return fetch(location.origin+u,o);}
 function toast(m,t){t=t||'gs';var el=document.getElementById('toast');el.textContent=m;el.className='show '+t;setTimeout(function(){el.className='';},3200);}
 function swTab(id,btn){document.querySelectorAll('.tp').forEach(function(t){t.classList.remove('ac');});document.querySelectorAll('.tab').forEach(function(b){b.classList.remove('ac');});document.getElementById(id).classList.add('ac');btn.classList.add('ac');if(id==='tD')renDiag();if(id==='tK')renKPI();if(id==='tR')renRoad();}
+function goKPI(){swTab('tK',document.querySelectorAll('.tab')[2]);}
+function goRoad(){swTab('tR',document.querySelectorAll('.tab')[3]);}
 
 var S={};
 try{S=JSON.parse(localStorage.getItem('ra_mat')||'{}');}catch(e){S={};}
@@ -245,8 +247,8 @@ function calcD(){
     +'<div style="font-size:18px;font-weight:700;margin-bottom:8px">'+l.name+'</div>'
     +'<div style="font-size:13px;color:var(--mu);margin-bottom:20px;line-height:1.6">'+l.desc+'<br><br>Based on your responses, your organisation scores <strong style="color:var(--tx)">'+avg.toFixed(1)+'/5.0</strong> across all governance dimensions.</div>'
     +'<div style="display:flex;gap:12px;justify-content:center">'
-    +'<button class="btns" onclick="swTab('tR',document.querySelectorAll('.tab')[3])">View My Roadmap</button>'
-    +'<button class="btnp" onclick="swTab('tK',document.querySelectorAll('.tab')[2])">Track My KPIs</button>'
+    +'<button class="btns" onclick="goRoad()">View My Roadmap</button>'
+    +'<button class="btnp" onclick="goKPI()">Track My KPIs</button>'
     +'</div></div>';
   toast('Assessment complete — Level '+lv+': '+l.name,'gs');
 }
@@ -283,12 +285,13 @@ function renKPI(){
       +'<div style="font-size:10px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px">Update value</div>'
       +'<div style="display:flex;gap:8px;align-items:center">'
       +'<input class="fi" type="number" id="kv_'+k.id+'" value="'+(val!==null?val:'')+'" placeholder="Enter '+k.unit+'" style="flex:1">'
-      +'<button class="btnp" style="padding:8px 14px;font-size:12px;white-space:nowrap" onclick="updKPI(''+k.id+'')">Save</button></div>'
+      +'<button class="btnp" style="padding:8px 14px;font-size:12px;white-space:nowrap" data-kid="'+k.id+'" onclick="updKPIbtn(this)">Save</button></div>'
       +'<div style="font-size:10px;color:var(--mu);margin-top:6px">Reporting frequency: '+k.freq+'</div>'
       +'</div>';
   }).join('');
 }
 
+function updKPIbtn(btn){var id=btn.getAttribute('data-kid');updKPI(id);}
 function updKPI(id){
   var val=document.getElementById('kv_'+id).value;
   if(val===''){delete S.kpis[id];}else{S.kpis[id]=parseFloat(val);}
