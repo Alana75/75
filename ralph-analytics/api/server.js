@@ -1408,20 +1408,32 @@ app.delete('/api/rba/findings/:id', requireAuth, async (req, res) => {
 // DASHBOARD
 app.get('/api/rba/dashboard', requireAuth, async (req, res) => {
   try {
-    const [[{n:bodies}]]    = [await pool.execute('SELECT COUNT(*) AS n FROM audit_bodies WHERE status="active"')];
-    const [[{n:facilities}]]= [await pool.execute('SELECT COUNT(*) AS n FROM facilities WHERE status="active"')];
-    const [[{n:total_audits}]]=[await pool.execute('SELECT COUNT(*) AS n FROM audits')];
-    const [[{n:open_audits}]]=[await pool.execute('SELECT COUNT(*) AS n FROM audits WHERE status NOT IN ("closed")')];
-    const [[{n:closed_audits}]]=[await pool.execute('SELECT COUNT(*) AS n FROM audits WHERE status="closed"')];
-    const [[{avg:avg_score}]]=[await pool.execute('SELECT ROUND(AVG(overall_score),1) AS avg FROM audits WHERE overall_score IS NOT NULL')];
-    const [[nc]] = [await pool.execute('SELECT SUM(nc_critical) AS crit, SUM(nc_major) AS maj, SUM(nc_minor) AS min FROM audits WHERE status NOT IN ("closed")')];
-    const [[{n:open_caps}]]=[await pool.execute('SELECT COUNT(*) AS n FROM audit_findings WHERE cap_status IN ("open","in_progress")')];
-    const [[{n:overdue_caps}]]=[await pool.execute('SELECT COUNT(*) AS n FROM audit_findings WHERE cap_status IN ("open","in_progress") AND cap_due_date < CURDATE()')];
-    const [[{n:overdue_audits}]]=[await pool.execute('SELECT COUNT(*) AS n FROM facilities WHERE next_audit_due < CURDATE() AND status="active"')];
+    const [r1] = await pool.execute('SELECT COUNT(*) AS n FROM audit_bodies WHERE status="active"');
+    const [r2] = await pool.execute('SELECT COUNT(*) AS n FROM facilities WHERE status="active"');
+    const [r3] = await pool.execute('SELECT COUNT(*) AS n FROM audits');
+    const [r4] = await pool.execute('SELECT COUNT(*) AS n FROM audits WHERE status NOT IN ("closed")');
+    const [r5] = await pool.execute('SELECT COUNT(*) AS n FROM audits WHERE status="closed"');
+    const [r6] = await pool.execute('SELECT ROUND(AVG(overall_score),1) AS avg FROM audits WHERE overall_score IS NOT NULL');
+    const [r7] = await pool.execute('SELECT SUM(nc_critical) AS crit, SUM(nc_major) AS maj, SUM(nc_minor) AS min FROM audits WHERE status NOT IN ("closed")');
+    const [r8] = await pool.execute('SELECT COUNT(*) AS n FROM audit_findings WHERE cap_status IN ("open","in_progress")');
+    const [r9] = await pool.execute('SELECT COUNT(*) AS n FROM audit_findings WHERE cap_status IN ("open","in_progress") AND cap_due_date < CURDATE()');
+    const [r10]= await pool.execute('SELECT COUNT(*) AS n FROM facilities WHERE next_audit_due < CURDATE() AND status="active"');
     const [recentAudits] = await pool.execute('SELECT a.id, a.audit_number, a.status, a.overall_score, a.scheduled_date, a.nc_critical, a.nc_major, a.nc_minor, f.name AS facility_name, ab.name AS body_name FROM audits a LEFT JOIN facilities f ON a.facility_id=f.id LEFT JOIN audit_bodies ab ON a.audit_body_id=ab.id ORDER BY a.created_at DESC LIMIT 8');
     const [byStatus] = await pool.execute('SELECT status, COUNT(*) AS n FROM audits GROUP BY status');
     const [byPillar] = await pool.execute('SELECT pillar, severity, COUNT(*) AS n FROM audit_findings GROUP BY pillar, severity ORDER BY pillar, severity');
-    res.json({ stats: { bodies, facilities, total_audits, open_audits, closed_audits, avg_score: avg_score||0, open_ncs: { critical: nc?.crit||0, major: nc?.maj||0, minor: nc?.min||0 }, open_caps, overdue_caps, overdue_audits }, recent_audits: recentAudits, by_status: byStatus, by_pillar: byPillar });
+    const nc = r7[0] || {};
+    res.json({
+      stats: {
+        bodies: r1[0].n, facilities: r2[0].n, total_audits: r3[0].n,
+        open_audits: r4[0].n, closed_audits: r5[0].n,
+        avg_score: r6[0].avg || 0,
+        open_ncs: { critical: nc.crit||0, major: nc.maj||0, minor: nc.min||0 },
+        open_caps: r8[0].n, overdue_caps: r9[0].n, overdue_audits: r10[0].n
+      },
+      recent_audits: recentAudits,
+      by_status: byStatus,
+      by_pillar: byPillar
+    });
   } catch(e) { res.status(500).json({ error: e.message }); }
 });
 
