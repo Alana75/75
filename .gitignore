@@ -38,3 +38,11 @@ Thumbs.db
 /tmp/
 *.bin
 package-lock.json
+
+# SQLite journal files (WAL mode)
+*.db-shm
+*.db-wal
+*.db-journal
+
+# Uploads (server-side evidence files)
+ralph-analytics/uploads/
