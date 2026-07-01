@@ -125,7 +125,7 @@ a{color:inherit;text-decoration:none}
   <div id="qB"></div>
 </div></div></div><div id="toast"></div><script>
 const TOK = localStorage.getItem('ralph_client_token');
-if (!TOK) location.href = '/client';
+// Soft guard — page works from localStorage without login
 
 function api(u, o) {
   o = o || {};
@@ -467,17 +467,20 @@ function subQ() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-  api('/api/rba/training/progress')
-    .then(function(r){ return r.json(); })
-    .then(function(d){
-      if (d && Object.keys(d).length) {
-        P = d;
-        localStorage.setItem('ra_tp', JSON.stringify(d));
-      }
-      renGrid(); renRec(); updSt();
-    })
-    .catch(function(){
-      renGrid(); renRec(); updSt();
-    });
+  // Render immediately from localStorage
+  renGrid(); renRec(); updSt();
+  // Non-blocking server sync if logged in
+  if (TOK) {
+    api('/api/rba/training/progress')
+      .then(function(r){ if (!r.ok) throw new Error('auth'); return r.json(); })
+      .then(function(d){
+        if (d && !d.error && Object.keys(d).length) {
+          P = d;
+          localStorage.setItem('ra_tp', JSON.stringify(d));
+          renGrid(); renRec(); updSt();
+        }
+      })
+      .catch(function(){});
+  }
 });
 </script></body></html>
