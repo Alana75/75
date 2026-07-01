@@ -78,7 +78,14 @@ a{color:inherit;text-decoration:none}
 .qa{display:flex;justify-content:space-between;align-items:center;margin-top:20px}
 .rc{background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:32px;text-align:center}
 .rsc{font-size:64px;font-weight:900;margin:16px 0 8px}
-.ct{background:rgba(46,160,67,.1);border:2px solid var(--gn);border-radius:12px;padding:16px 24px;display:inline-block;margin-bottom:20px}</style></head><body><div class="tb"><div class="lp">RA</div><span class="st">Ralph Analytics</span><span class="sp">&rsaquo;</span><a href="/rba/air" class="br">RBA AIR Portal</a><span class="sp">&rsaquo;</span><span class="br" style="color:var(--tx)">AI Training Centre</span><div class="rgt"><span class="brba">PILLAR E</span><button class="btn" onclick="location='/client'">&larr; Client Portal</button></div></div><div class="ly"><div class="sb"><div class="sbt"><div class="ml">RBA AIR Module</div><div class="ms">Pillar E &middot; AI Responsibility</div></div><a href="/rba/air" class="ni"><span class="nic">&#9647;</span>Overview</a><a href="/rba/air/field-audit" class="ni"><span class="nic">&#128203;</span>Field Audit</a><a href="/rba/air/risk" class="ni"><span class="nic">&#9888;</span>AI Risk Assessment</a><a href="/rba/air/inventory" class="ni"><span class="nic">&#128230;</span>AI Inventory</a><a href="/rba/air/suppliers" class="ni"><span class="nic">&#129309;</span>Supplier Declarations</a><a href="/rba/air/training" class="ni ac"><span class="nic">&#127891;</span>AI Training Centre</a><a href="/rba/air/maturity" class="ni"><span class="nic">&#128200;</span>Maturity &amp; KPIs</a><div class="nd"></div><a href="/client" class="ni"><span class="nic">&larr;</span>Client Portal</a></div><div class="mn" id="app"><div id="vD">
+.ct{background:rgba(46,160,67,.1);border:2px solid var(--gn);border-radius:12px;padding:16px 24px;display:inline-block;margin-bottom:20px}
+.lbo{background:var(--s2);border:1px solid var(--bd);border-radius:8px;padding:20px 24px;min-height:180px;line-height:1.75;font-size:14px}
+.lbo h2{font-size:16px;font-weight:700;margin-bottom:10px}
+.lbo h3{font-size:13px;font-weight:700;margin:12px 0 6px;color:var(--or)}
+.lbo p{margin-bottom:10px;color:var(--mu)}
+.lbo ul,.lbo ol{padding-left:18px;margin-bottom:10px;color:var(--mu)}
+.lbo li{margin-bottom:4px}
+.lbo .std{font-size:11px;color:var(--or);font-weight:700;margin-bottom:12px;padding:3px 8px;background:rgba(232,81,10,.1);border-radius:4px;display:inline-block}</style></head><body><div class="tb"><div class="lp">RA</div><span class="st">Ralph Analytics</span><span class="sp">&rsaquo;</span><a href="/rba/air" class="br">RBA AIR Portal</a><span class="sp">&rsaquo;</span><span class="br" style="color:var(--tx)">AI Training Centre</span><div class="rgt"><span class="brba">PILLAR E</span><button class="btn" onclick="location='/client'">&larr; Client Portal</button></div></div><div class="ly"><div class="sb"><div class="sbt"><div class="ml">RBA AIR Module</div><div class="ms">Pillar E &middot; AI Responsibility</div></div><a href="/rba/air" class="ni"><span class="nic">&#9647;</span>Overview</a><a href="/rba/air/field-audit" class="ni"><span class="nic">&#128203;</span>Field Audit</a><a href="/rba/air/risk" class="ni"><span class="nic">&#9888;</span>AI Risk Assessment</a><a href="/rba/air/inventory" class="ni"><span class="nic">&#128230;</span>AI Inventory</a><a href="/rba/air/suppliers" class="ni"><span class="nic">&#129309;</span>Supplier Declarations</a><a href="/rba/air/training" class="ni ac"><span class="nic">&#127891;</span>AI Training Centre</a><a href="/rba/air/maturity" class="ni"><span class="nic">&#128200;</span>Maturity &amp; KPIs</a><div class="nd"></div><a href="/client" class="ni"><span class="nic">&larr;</span>Client Portal</a></div><div class="mn" id="app"><div id="vD">
   <div style="margin-bottom:24px"><h1 style="font-size:21px;font-weight:700;margin-bottom:4px">AI Governance Training Centre</h1><p style="color:var(--mu);font-size:13px">Mandatory annual training &mdash; <span class="cl">AIR-1.2</span> &middot; <span class="cl">ISO 42001 Cl.7.2</span> &middot; <span class="cl">EU AI Act Art.4</span></p></div>
   <div class="sr">
     <div class="sc o"><div class="lb">Courses</div><div class="vl">4</div><div class="sb2">Mandatory annual</div></div>
@@ -111,12 +118,15 @@ a{color:inherit;text-decoration:none}
     <div style="margin-left:auto;text-align:right"><div style="font-size:11px;color:var(--mu)">Progress</div><div style="font-size:18px;font-weight:800;color:var(--or)" id="lP">0%</div></div>
   </div>
   <div class="lnv" id="lN"></div>
-  <div id="lB"></div>
+  <div id="lC" class="lbo"></div>
   <div style="display:flex;justify-content:space-between;margin-top:16px">
-    <button class="btn" id="bPr" onclick="navL(-1)">&larr; Previous</button>
-    <button class="btnp" id="bNx" onclick="navL(1)">Next &rarr;</button>
+    <button class="btn" id="lPB" onclick="navL(-1)">&larr; Previous</button>
+    <button class="btnp" id="lNB" onclick="navL(1)">Next &rarr;</button>
   </div>
 </div>
+  <div style="display:flex;justify-content:flex-end;margin-top:16px">
+    <button class="btnp" id="lQB" onclick="stQ()" style="display:none">&#9654; Take Assessment</button>
+  </div>
 <div id="vQ" style="display:none">
   <div class="lvh">
     <button class="btn" onclick="exitQ()">&larr; Back</button>
