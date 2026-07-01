@@ -124,137 +124,360 @@ a{color:inherit;text-decoration:none}
   </div>
   <div id="qB"></div>
 </div></div></div><div id="toast"></div><script>
-const TOK=localStorage.getItem('ralph_client_token');
-if(!TOK)location.href='/client';
-function api(u,o={}){o.headers=Object.assign({'Content-Type':'application/json','Authorization':'Bearer '+TOK},o.headers||{});return fetch(location.origin+u,o);}
-function toast(m,t='gs'){const el=document.getElementById('toast');el.textContent=m;el.className='show '+t;setTimeout(()=>el.className='',3200);}
+const TOK = localStorage.getItem('ralph_client_token');
+if (!TOK) location.href = '/client';
 
-const COURSES=[
-{id:'exec',ic:'&#128084;',tt:'Executive AI Governance',co:'Executive Leadership',du:'3 hrs',pa:80,
-st:'AIR-1.2 &middot; ISO 42001 Cl.7.2 &middot; EU AI Act Art.4',
-ds:'Board-level AI accountability, EU AI Act legal obligations, ethics decision-making and sign-off responsibilities.',
-ls:[
-{id:'e1',ti:'What is AI Governance?',bo:'<h2>What is AI Governance?</h2><div class="std">AIR-1.2 &middot; ISO 42001 &middot; EU AI Act Art.4</div><div class="body"><p>AI governance is the <strong>set of policies, processes, and controls</strong> that ensure AI is used ethically, legally, and in alignment with organisational values.</p><h3>Why It Matters for the Board</h3><p>As an executive you carry <strong>direct legal accountability</strong> for AI deployed in your organisation. The EU AI Act creates fines up to <strong>&euro;30M or 6% of global turnover</strong>.</p><div class="hl">The RBA AIR Module establishes AI Responsibility as <strong>Pillar E</strong> &mdash; alongside Labour, Health &amp; Safety, Environment, and Ethics.</div><h3>Key Terms</h3><ul><li><span class="kt">AI System</span> &mdash; software generating outputs from defined objectives</li><li><span class="kt">High-Risk AI</span> &mdash; AI in employment, education, credit, law enforcement</li><li><span class="kt">AIA</span> &mdash; AI Impact Assessment: pre-deployment risk evaluation</li><li><span class="kt">AI Ethics Policy</span> &mdash; formal commitment to responsible AI</li></ul><h3>Board Role</h3><ul><li>Approve and annually review the AI Ethics Policy</li><li>Sign off on all high-risk AI deployments</li><li>Receive quarterly AI governance reports</li></ul></div>'},
-{id:'e2',ti:'EU AI Act Obligations',bo:'<h2>EU AI Act &mdash; Board Obligations</h2><div class="std">EU AI Act 2024/1689 &middot; Art.26</div><div class="body"><p>In force <strong>1 August 2024</strong>, most provisions apply from <strong>August 2026</strong>.</p><h3>Risk Tiers</h3><ul><li><span class="kt">Prohibited</span> &mdash; Social scoring, real-time biometric surveillance</li><li><span class="kt">High Risk</span> &mdash; Mandatory AIAs, human oversight, technical documentation</li><li><span class="kt">Limited Risk</span> &mdash; Transparency obligations</li><li><span class="kt">Minimal Risk</span> &mdash; No specific requirements</li></ul><div class="hl"><strong>Board obligation:</strong> Ensure all AI classified by risk tier with controls. Non-compliance: up to <strong>&euro;30M or 6% of worldwide annual turnover</strong>.</div><h3>Deployer Obligations (Art.26)</h3><ul><li>Implement human oversight for high-risk AI</li><li>Conduct fundamental rights impact assessments</li><li>Register high-risk AI in the EU AI database</li><li>Inform employees subject to algorithmic management</li></ul></div>'},
-{id:'e3',ti:'AI Ethics Decision Framework',bo:'<h2>AI Ethics Decision Framework</h2><div class="std">AIR-1.1 &middot; ISO 42001 Cl.5</div><div class="body"><p>The <strong>FAIR framework</strong> is a practical ethics lens for evaluating any AI deployment.</p><h3>FAIR Framework</h3><ul><li><strong>F &mdash; Fairness:</strong> Does the AI treat people equitably? Risk of bias?</li><li><strong>A &mdash; Accountability:</strong> Is there a named human responsible for AI outputs?</li><li><strong>I &mdash; Integrity:</strong> Is training data accurate, consented, lawfully obtained?</li><li><strong>R &mdash; Reliability:</strong> Has the AI been tested? What is the failure mode?</li></ul><div class="hl"><strong>Board rule:</strong> Any High Risk AI requires explicit documented board sign-off before deployment.</div><h3>Board Responsibilities</h3><ul><li>Approve the AI Ethics Policy annually</li><li>Sign the named attestation</li><li>Always ask: Who is accountable if this causes harm?</li></ul></div>'}
-],
-qu:[
-{q:'Maximum fine for prohibited AI under the EU AI Act?',o:['&euro;10M or 2%','&euro;30M or 6% of global turnover','&euro;50M flat','&euro;15M or 4%'],c:1,ex:'Article 99: &euro;30M or 6% of total worldwide annual turnover &mdash; whichever is higher.'},
-{q:'What does "A" in the FAIR framework stand for?',o:['Automated','Accountability','Auditable','Adaptive'],c:1,ex:'FAIR = Fairness, Accountability, Integrity, Reliability. A = named human responsible for AI outputs.'},
-{q:'Which EU AI Act Article covers deployer obligations for high-risk AI?',o:['Art.4','Art.10','Art.15','Art.26'],c:3,ex:'Article 26: human oversight, fundamental rights impact assessments, register high-risk AI, inform employees.'},
-{q:'When must board sign-off be documented?',o:['Only for AI over &euro;1M','For any High Risk AI','Only for marketing AI','Never'],c:1,ex:'Under AIR governance, any High Risk AI system requires documented board or senior executive sign-off before deployment.'},
-{q:'Which is PROHIBITED under the EU AI Act?',o:['Spam filter','Product recommendations','Real-time biometric surveillance in public','Marketing copy'],c:2,ex:'Article 5: real-time remote biometric identification in publicly accessible spaces is prohibited.'},
-{q:'What does ISO 42001 govern?',o:['Cloud security','AI Management Systems','Environmental management','Financial reporting'],c:1,ex:'ISO/IEC 42001:2023 is the international standard for AI Management Systems (AIMS).'},
-{q:'Which RBA CoC Pillar covers AI Responsibility?',o:['Pillar A','Pillar B','Pillar C','Pillar E (AIR)'],c:3,ex:'RBA AIR Module places AI Responsibility in Pillar E (Ethics).'},
-{q:'EU AI Act Article for staff AI literacy?',o:['Art.10','Art.15','Art.4','Art.73'],c:2,ex:'Article 4 requires deployers to ensure staff have sufficient AI literacy.'}
-]},
-{id:'mgr',ic:'&#128203;',tt:'Management AI Responsibilities',co:'Managers &amp; Department Heads',du:'4 hrs',pa:80,
-st:'AIR-1.2 &middot; EU AI Act Art.26 &middot; ISO 42001 Cl.8',
-ds:'Identifying high-risk AI in your department, conducting AI Impact Assessments, supplier AI due diligence, and employee rights.',
-ls:[
-{id:'m1',ti:'Identifying High-Risk AI',bo:'<h2>Identifying High-Risk AI in Your Department</h2><div class="std">EU AI Act Annex III &middot; AIR-2.1</div><div class="body"><p>You must identify and declare all AI tools used in your department. <strong>Annex III</strong> lists 8 high-risk categories.</p><h3>High-Risk Categories (Annex III)</h3><ul><li><strong>Employment &amp; HR:</strong> Recruitment screening, performance monitoring, promotion/redundancy decisions &mdash; HIGH RISK</li><li><strong>Education:</strong> Student assessment, exam proctoring, learning outcome prediction &mdash; HIGH RISK</li><li><strong>Credit &amp; Insurance:</strong> Credit scoring, loan approval, insurance risk assessment &mdash; HIGH RISK</li><li><strong>Critical Infrastructure:</strong> Supply chain, logistics, energy management &mdash; HIGH RISK</li></ul><div class="hl"><strong>Manager action:</strong> List every tool your team uses with automated recommendations or decisions. Check if AI is involved &mdash; ask IT or the vendor. Classify against Annex III and submit to the AI Inventory.</div></div>'},
-{id:'m2',ti:'AI Impact Assessments',bo:'<h2>Conducting AI Impact Assessments (AIAs)</h2><div class="std">AIR-2.2 &middot; ISO 42001 Cl.8.4 &middot; EU AI Act Art.9</div><div class="body"><p>An AIA is a <strong>structured pre-deployment review</strong> evaluating risks before an AI system goes live. For high-risk systems this is a legal requirement.</p><h3>5-Step AIA Process</h3><ul><li><strong>1. Purpose &amp; Context:</strong> What does the AI do? Who does it affect?</li><li><strong>2. Risk Identification:</strong> What could go wrong? Bias, errors, privacy breaches?</li><li><strong>3. Impact Assessment:</strong> Severity of potential harm? Who is vulnerable?</li><li><strong>4. Mitigations:</strong> What controls reduce risks to acceptable levels?</li><li><strong>5. Residual Risk Sign-off:</strong> Document and obtain AI Governance Lead sign-off</li></ul><div class="hl"><strong>Key rule:</strong> Unacceptable residual risk = AI must NOT be deployed until controls are in place.</div><h3>Employee Rights (Art.26.6)</h3><ul><li>Workers must be informed <strong>before</strong> AI-based monitoring is deployed on them</li><li>Human review option must always be available for automated decisions</li></ul></div>'},
-{id:'m3',ti:'Supplier AI Due Diligence',bo:'<h2>Supplier AI Due Diligence</h2><div class="std">AIR-7.1 &middot; RBA CoC S3 &middot; ISO 42001 Cl.8.4</div><div class="body"><p>AI governance obligations extend into your supply chain. Supplier AI can carry risk into your organisation.</p><h3>What You Need from Suppliers</h3><ul><li>Completed <strong>AI Declaration Form</strong> listing all AI tools in their delivery to you</li><li>EU AI Act compliance confirmation</li><li>Their AI Ethics Policy</li><li>Evidence of third-party audits or certifications</li></ul><div class="hl"><strong>RBA AIR Target:</strong> 80%+ of key suppliers with completed AI Declarations by year-end. Refusal to disclose = elevated risk flag.</div><h3>Contract Requirements</h3><ul><li><strong>AI Disclosure Clause</strong> in all new supplier contracts</li><li>Notification within 30 days of any material AI tool change</li><li>Right to audit supplier AI use annually</li></ul></div>'}
-],
-qu:[
-{q:'Which EU AI Act Annex lists high-risk AI categories?',o:['Annex I','Annex II','Annex III','Annex IV'],c:2,ex:'Annex III lists 8 specific categories of high-risk AI including employment, education, credit, and critical infrastructure.'},
-{q:'When must managers inform employees about AI monitoring?',o:['Never','Only if asked','Before deploying the AI (Art.26.6)','After 12 months'],c:2,ex:'Art.26.6: workers must be informed BEFORE AI-based monitoring systems are deployed.'},
-{q:'What is Step 4 of the 5-step AIA process?',o:['Purpose & Context','Residual Risk Sign-off','Risk Identification','Mitigations'],c:3,ex:'Step 4 = Mitigations: identify controls that reduce identified risks to acceptable levels.'},
-{q:'RBA AIR target for supplier AI Declaration coverage?',o:['50%','100% immediately','80%+ of key suppliers','60% in 2 years'],c:2,ex:'AIR-7.1: 80%+ of key suppliers must complete an AI Declaration Form. Refusal = elevated risk.'},
-{q:'If AIA finds unacceptable residual risk, what must happen?',o:['Deploy and monitor','Do NOT deploy &mdash; escalate','Accept the risk','Delete the AIA'],c:1,ex:'Unacceptable residual risk = NO deployment until adequate controls are in place.'},
-{q:'Which AI use is HIGH RISK under Annex III?',o:['Spam filter','Product recommendations','Employee performance evaluation AI','Marketing copy generator'],c:2,ex:'Employment/HR AI influencing hiring, performance, promotion, or redundancy = High Risk under Annex III.'},
-{q:'What must new supplier contracts include?',o:['Guarantee of no AI use','AI Disclosure Clause','Prohibition on AI','Nothing'],c:1,ex:'AI Disclosure Clause: list AI tools, notify within 30 days of any material change.'},
-{q:'ISO 42001 Clause 8.4 covers?',o:['HR management','AI system impact assessment and risk controls','Financial auditing','Logistics'],c:1,ex:'ISO 42001 Cl.8.4: AI system impact assessment and operational controls for identified risks.'}
-]},
-{id:'tech',ic:'&#9881;',tt:'Technical AI Governance',co:'IT, Data &amp; AI/ML Teams',du:'8 hrs',pa:70,
-st:'AIR-3.1 &middot; ISO 42001 Cl.8 &middot; EU AI Act Art.16-17',
-ds:'Responsible AI design, bias detection and mitigation, technical documentation requirements, and AI incident management.',
-ls:[
-{id:'t1',ti:'Responsible AI Design',bo:'<h2>Responsible AI Design Principles</h2><div class="std">AIR-3.1 &middot; ISO 42001 Cl.8.2 &middot; NIST AI RMF</div><div class="body"><p>Responsible AI must be built in at design phase &mdash; not bolted on afterwards.</p><h3>Core Principles</h3><ul><li><strong>Human-Centred:</strong> AI augments human judgement and never fully replaces it for consequential decisions</li><li><strong>Explainable:</strong> You must explain why the AI produced a specific output. Black-box models for high-risk decisions = not acceptable.</li><li><strong>Robust:</strong> Test for edge cases, adversarial inputs, and distributional shift</li><li><strong>Privacy-Preserving:</strong> Data minimisation, consent, purpose limitation for all AI pipelines</li><li><strong>Secure:</strong> Protect models against adversarial attacks and data poisoning</li></ul><div class="hl"><strong>EU AI Act Art.15:</strong> High-risk AI must achieve appropriate accuracy, robustness, and cybersecurity.</div><h3>Technical Documentation Required (Art.11)</h3><ul><li>Model architecture and training approach</li><li>Training/validation/test dataset details (provenance, consent, preprocessing)</li><li>Performance metrics and benchmark results</li><li>Known limitations and failure modes</li><li>Human oversight mechanisms</li></ul></div>'},
-{id:'t2',ti:'Bias Detection &amp; Mitigation',bo:'<h2>Bias Detection &amp; Mitigation</h2><div class="std">AIR-4.1 &middot; ISO 42001 Cl.8.3 &middot; EU AI Act Art.10</div><div class="body"><p>Bias causes <strong>systematic discrimination</strong> &mdash; legal liability and real harm to people.</p><h3>Types of Bias</h3><ul><li><strong>Data Bias:</strong> Training data underrepresents the target population</li><li><strong>Measurement Bias:</strong> Proxy variables correlate with protected characteristics (e.g. postcode proxying race)</li><li><strong>Aggregation Bias:</strong> Model performs poorly on specific subgroups</li><li><strong>Deployment Bias:</strong> Model used outside its design context</li></ul><h3>Detection Techniques</h3><ul><li>Subgroup analysis across demographic groups</li><li>Fairness metrics: Demographic Parity, Equalised Odds</li><li>Counterfactual testing (what if only a protected attribute changed?)</li><li>SHAP/LIME explainability analysis</li></ul><div class="hl"><strong>EU AI Act Art.10:</strong> Training data must be subject to governance addressing potential biases.</div><h3>Mitigation Strategies</h3><ul><li><strong>Pre-processing:</strong> resampling, re-weighting training data</li><li><strong>In-processing:</strong> fairness constraints in the model objective function</li><li><strong>Post-processing:</strong> calibrate outputs for fairness across groups</li><li><strong>Continuous monitoring:</strong> bias can emerge over time as data shifts</li></ul></div>'},
-{id:'t3',ti:'AI Incident Management',bo:'<h2>AI Incident Management</h2><div class="std">AIR-9.1 &middot; ISO 42001 Cl.10 &middot; EU AI Act Art.73</div><div class="body"><p>All AI incidents must be identified, logged, investigated, and resolved with closed-loop corrective action.</p><h3>Incident Classification</h3><ul><li><strong>Critical:</strong> Physical harm, significant financial loss, or discrimination against protected groups</li><li><strong>Major:</strong> Incorrect outputs affecting decisions; privacy breach; manipulation detected</li><li><strong>Minor:</strong> Performance degradation, edge case failures, model drift detected</li></ul><h3>Response Process</h3><ul><li>Detect &rarr; Contain &rarr; Log (within 24hrs) &rarr; Investigate &rarr; Remediate &rarr; Report</li><li>Notify regulator within <strong>15 days</strong> for serious incidents (Art.73)</li></ul><div class="hl"><strong>Requirement:</strong> All high-risk AI must have automated logging of inputs and outputs for forensic analysis. Retain logs for the lifetime of the system.</div></div>'}
-],
-qu:[
-{q:'EU AI Act article requiring accuracy, robustness and cybersecurity for high-risk AI?',o:['Art.4','Art.10','Art.15','Art.26'],c:2,ex:'Article 15: high-risk AI must achieve appropriate accuracy, robustness and cybersecurity.'},
-{q:'What is "distributional shift"?',o:['Change in supplier pricing','Deployment data differs significantly from training data','Data encryption type','Moving AI to another cloud'],c:1,ex:'Distributional shift: real-world inference data has different statistical properties to training data, causing performance degradation.'},
-{q:'Which fairness metric ensures equal True Positive Rates across groups?',o:['Demographic Parity','Equalised Odds','Individual Fairness','Calibration'],c:1,ex:'Equalised Odds requires equal True Positive Rates AND equal False Positive Rates across demographic groups.'},
-{q:'Under Art.73, serious incidents must be reported within?',o:['24 hours','7 days','15 days','30 days'],c:2,ex:'Article 73: serious incidents must be reported to the national market surveillance authority within 15 days.'},
-{q:'What is "measurement bias"?',o:['Incorrectly sizing a model','Proxy variables correlating with protected characteristics','Equipment error','Evaluation error'],c:1,ex:'Measurement bias: input features act as proxies for protected characteristics causing indirect discrimination.'},
-{q:'Which bias mitigation operates DURING model training?',o:['Data resampling','Output calibration','Fairness constraints in model objective','Subgroup analysis'],c:2,ex:'In-processing mitigation incorporates fairness constraints directly into the training objective function.'},
-{q:'EU AI Act Art.11 requires high-risk AI to have?',o:['Only a vendor invoice','Comprehensive technical documentation','Just accuracy score','A marketing brochure'],c:1,ex:'Annex IV: technical documentation including model design, training data, performance benchmarks, limitations, oversight mechanisms.'},
-{q:'How long must logs for high-risk AI be retained?',o:['90 days','1 year','Lifetime of the AI system','5 years'],c:2,ex:'Logs must be retained for the lifetime of the system to enable post-incident forensic analysis.'}
-]},
-{id:'staff',ic:'&#128101;',tt:'AI Awareness for All Staff',co:'All Staff',du:'1 hr',pa:80,
-st:'AIR-1.2 &middot; EU AI Act Art.4 &middot; ISO 42001 Cl.7.3',
-ds:'What AI is, your data rights, how to spot AI-generated content, reporting concerns, and the company AI Ethics Policy. Mandatory for everyone.',
-ls:[
-{id:'s1',ti:'AI at Work',bo:'<h2>AI at Work &mdash; What You Need to Know</h2><div class="std">EU AI Act Art.4 &middot; AIR-1.2 &middot; GDPR Art.5</div><div class="body"><p>AI is already in your daily work: email filters, HR systems, scheduling tools, chatbots, performance dashboards.</p><h3>What is AI?</h3><p>Software that makes predictions, recommendations, or decisions from patterns in data. Examples: spam filters, HR screening tools, customer service chatbots, ChatGPT, performance monitoring systems.</p><div class="hl"><strong>Your right to know:</strong> Your employer must tell you if AI is being used to monitor your performance or influence decisions about your employment (EU AI Act Art.26.6).</div><h3>Your Responsibilities</h3><ul><li>Only use <strong>organisation-approved</strong> AI tools</li><li>Never input confidential client or company data into public AI tools (e.g. ChatGPT)</li><li>Always verify AI outputs before acting on them</li><li>Report any AI concerns through the incident reporting process</li></ul></div>'},
-{id:'s2',ti:'Your Rights and How to Report',bo:'<h2>Your Data Rights &amp; Reporting AI Concerns</h2><div class="std">GDPR Art.22 &middot; AIR-9.1 &middot; EU AI Act Art.26.6</div><div class="body"><p>You have specific legal rights around AI decisions that affect you.</p><h3>Your Rights</h3><ul><li><strong>Right to explanation:</strong> Request an explanation of any automated decision significantly affecting you</li><li><strong>Right to human review:</strong> Request human review of any purely automated decision</li><li><strong>Right to object:</strong> Object to automated profiling affecting you</li><li><strong>Right to be informed:</strong> Employer must tell you before deploying AI that monitors or assesses you</li></ul><div class="hl"><strong>AI Ethics Policy:</strong> Any AI affecting your employment will be disclosed in advance &mdash; with a human review option always available.</div><h3>How to Report</h3><ul><li>Report via the <strong>AI Incident Portal</strong> or email your AI Governance Lead</li><li>Anonymous reporting is available</li><li>All reports investigated within <strong>5 business days</strong></li></ul></div>'}
-],
-qu:[
-{q:'What must your employer do before using AI to monitor your performance?',o:['Nothing','Inform you in advance (Art.26.6)','Wait 6 months','Get government approval'],c:1,ex:'EU AI Act Art.26.6: workers must be informed BEFORE AI-based monitoring systems are deployed.'},
-{q:'What is AI "hallucination"?',o:['AI creating images from text','AI confidently stating incorrect facts','A visual rendering error','Processing speed issue'],c:1,ex:'AI hallucination: AI produces plausible-sounding but factually incorrect output with confidence. Always verify AI-generated facts.'},
-{q:'GDPR Article 22 gives you the right to?',o:['Delete an AI system','Request human review of significant automated decisions','Use any AI freely','Access competitor AI'],c:1,ex:'GDPR Art.22: right not to be subject to solely automated decisions with significant effects, and to obtain human intervention.'},
-{q:'What should you NEVER put into public AI tools like ChatGPT?',o:['Personal opinions','Confidential client or company data','Public news articles','General terminology'],c:1,ex:'Public AI tools process data externally. Confidential data must never be entered &mdash; use only organisation-approved tools.'},
-{q:'Who should you contact about unfair AI affecting your employment?',o:['The AI vendor','AI Governance Lead or AI Incident Portal','A competitor','Social media'],c:1,ex:'Report via AI Incident Portal or to the AI Governance Lead. Anonymous reporting available. All investigated within 5 business days.'},
-{q:'Under the AI Ethics Policy, what is ALWAYS available for AI decisions affecting you?',o:['Automatic AI approval','A human review option','A cash refund','Appeal to the AI itself'],c:1,ex:'The AI Ethics Policy ensures a human review option is always available for any AI decision affecting employment, performance, or access to services.'}
-]}
+function api(u, o) {
+  o = o || {};
+  o.headers = Object.assign({'Content-Type':'application/json','Authorization':'Bearer '+TOK}, o.headers || {});
+  return fetch(location.origin + u, o);
+}
+
+function toast(m, t) {
+  t = t || 'gs';
+  var el = document.getElementById('toast');
+  el.textContent = m;
+  el.className = 'show ' + t;
+  setTimeout(function(){ el.className = ''; }, 3200);
+}
+
+var COURSES = [
+  {id:'exec', ic:'&#128084;', tt:'Executive AI Governance', co:'Executive Leadership', du:'3 hrs', pa:80,
+   st:'AIR-1.2 &middot; ISO 42001 Cl.7.2 &middot; EU AI Act Art.4',
+   ds:'Board-level AI accountability, EU AI Act legal obligations, ethics decision-making and sign-off responsibilities.',
+   ls:[
+     {id:'e1', ti:'What is AI Governance?', bo:'<h2>What is AI Governance?</h2><div class="std">AIR-1.2 &middot; ISO 42001 &middot; EU AI Act Art.4</div><div class="body"><p>AI governance is the <strong>set of policies, processes, and controls</strong> that ensure AI is used ethically, legally, and in alignment with organisational values.</p><h3>Why It Matters for the Board</h3><p>As an executive you carry <strong>direct legal accountability</strong> for AI deployed in your organisation. The EU AI Act creates fines up to <strong>&euro;30M or 6% of global turnover</strong>.</p><div class="hl">The RBA AIR Module establishes AI Responsibility as <strong>Pillar E</strong> &mdash; alongside Labour, Health &amp; Safety, Environment, and Ethics.</div><h3>Key Terms</h3><ul><li><span class="kt">AI System</span> &mdash; software generating outputs from defined objectives</li><li><span class="kt">High-Risk AI</span> &mdash; AI in employment, education, credit, law enforcement</li><li><span class="kt">AIA</span> &mdash; AI Impact Assessment: pre-deployment risk evaluation</li><li><span class="kt">AI Ethics Policy</span> &mdash; formal commitment to responsible AI</li></ul><h3>Board Role</h3><ul><li>Approve and annually review the AI Ethics Policy</li><li>Sign off on all high-risk AI deployments</li><li>Receive quarterly AI governance reports</li></ul></div>'},
+     {id:'e2', ti:'EU AI Act Obligations', bo:'<h2>EU AI Act &mdash; Board Obligations</h2><div class="std">EU AI Act 2024/1689 &middot; Art.26</div><div class="body"><p>In force <strong>1 August 2024</strong>, most provisions apply from <strong>August 2026</strong>.</p><h3>Board Obligations</h3><ul><li>Ensure AI systems are registered in the EU database</li><li>Sign off on Fundamental Rights Impact Assessments (FRIA)</li><li>Approve human oversight mechanisms for high-risk AI</li><li>Ensure technical documentation is maintained</li></ul><div class="hl">Non-compliance: up to &euro;35M or 7% of worldwide annual turnover for prohibited AI; &euro;15M or 3% for high-risk AI violations.</div><h3>Supply Chain Duty</h3><p>Under Art.26, deployers must implement AI governance policies and ensure staff AI literacy. This duty flows through your supply chain under RBA Pillar E.</p></div>'},
+     {id:'e3', ti:'Ethics Decision Framework', bo:'<h2>Ethics Decision Framework</h2><div class="std">ISO 42001 Cl.6.1 &middot; AIR-1.2</div><div class="body"><p>When approving an AI deployment, executives should apply the <strong>FACT framework</strong>:</p><ul><li><span class="kt">Fairness</span> &mdash; Does the AI treat all groups equitably?</li><li><span class="kt">Accountability</span> &mdash; Is there a named human responsible for decisions?</li><li><span class="kt">Confidentiality</span> &mdash; Is personal data handled per POPIA/GDPR?</li><li><span class="kt">Transparency</span> &mdash; Can the AI explain its decisions?</li></ul><h3>Red Lines</h3><p>The EU AI Act prohibits: real-time biometric surveillance, social scoring by public authorities, AI that exploits vulnerabilities of specific groups.</p><div class="hl">Board sign-off required for any high-risk AI deployment. Document the decision in board minutes.</div></div>'}
+   ],
+   qu:[
+     {q:'Under the EU AI Act, what is the maximum fine for deploying prohibited AI?', o:['5% of global turnover','7% of global turnover or 35M euro','10M euro flat','3% of global turnover'], c:1, ex:'Art.99: prohibited AI practices incur fines up to 35 million euros or 7% of worldwide annual turnover.'},
+     {q:'Which framework does RBA use to position AI Responsibility?', o:['Pillar D','Pillar E','Pillar A','Appendix B'], c:1, ex:'RBA AIR establishes AI Responsibility as Pillar E alongside Labour, H&S, Environment, and Ethics.'},
+     {q:'What does AIA stand for in AI governance?', o:['Automated Intelligence Architecture','AI Impact Assessment','Annual Internal Audit','Artificial Intelligence Act'], c:1, ex:'AIA = AI Impact Assessment: a structured pre-deployment risk evaluation required before launching high-risk AI systems.'},
+     {q:'Board sign-off is required for which category of AI deployment?', o:['All AI tools','Low-risk AI only','High-risk AI systems','Generative AI only'], c:2, ex:'High-risk AI systems (employment, education, credit, law enforcement) require board-level sign-off and FRIA under EU AI Act Art.26.'},
+     {q:'Under the FACT framework, what does T stand for?', o:['Testing','Transparency','Traceability','Timeliness'], c:1, ex:'FACT = Fairness, Accountability, Confidentiality, Transparency. Transparency means the AI can explain its decisions in human-understandable terms.'}
+   ]
+  },
+  {id:'risk', ic:'&#9888;&#65039;', tt:'AI Risk Manager Track', co:'Risk Management', du:'2.5 hrs', pa:75,
+   st:'AIR-1.2 &middot; ISO 31000 &middot; NIST AI RMF',
+   ds:'AI risk identification, assessment methodologies, NIST AI RMF alignment, and risk register management.',
+   ls:[
+     {id:'r1', ti:'AI Risk Identification', bo:'<h2>AI Risk Identification</h2><div class="std">NIST AI RMF &middot; ISO 31000</div><div class="body"><p>AI risks differ from traditional IT risks in key ways: they evolve with the model, they can be opaque, and they can cause systemic harm at scale.</p><h3>Core AI Risk Categories</h3><ul><li><span class="kt">Bias Risk</span> &mdash; discriminatory outputs from biased training data</li><li><span class="kt">Hallucination Risk</span> &mdash; plausible but factually incorrect AI outputs</li><li><span class="kt">Explainability Risk</span> &mdash; inability to explain AI decisions (critical for regulated industries)</li><li><span class="kt">Supply Chain Risk</span> &mdash; third-party AI models with unknown training data</li><li><span class="kt">Adversarial Risk</span> &mdash; deliberate manipulation of AI inputs to cause wrong outputs</li></ul><div class="hl">Under RBA Pillar E, suppliers must maintain an AI Inventory and demonstrate risk controls for each deployed AI system.</div></div>'},
+     {id:'r2', ti:'NIST AI Risk Management Framework', bo:'<h2>NIST AI RMF</h2><div class="std">NIST AI RMF 1.0 &middot; 2023</div><div class="body"><p>The NIST AI RMF provides a structured approach to managing AI risk across four core functions:</p><ul><li><span class="kt">GOVERN</span> &mdash; Establish AI risk governance policies and roles</li><li><span class="kt">MAP</span> &mdash; Identify and classify AI risks in context</li><li><span class="kt">MEASURE</span> &mdash; Analyse and assess AI risks quantitatively</li><li><span class="kt">MANAGE</span> &mdash; Prioritise and implement risk controls</li></ul><h3>Trustworthy AI Properties</h3><p>NIST identifies 7 properties: Accountable, Explainable, Interpretable, Privacy-Enhanced, Reliable, Safe, Fair with Harmful Bias Managed, Secure and Resilient, Transparent.</p><div class="hl">Ralph Analytics maps all AI systems to the NIST AI RMF as part of the AIR module risk assessment workflow.</div></div>'}
+   ],
+   qu:[
+     {q:'What does NIST AI RMF GOVERN function focus on?', o:['Measuring AI outputs','Establishing AI risk governance policies','Deploying AI models','Auditing suppliers'], c:1, ex:'GOVERN establishes organisational risk culture, policies, processes, and roles for AI risk management across the lifecycle.'},
+     {q:'Which AI risk involves AI producing plausible but incorrect information?', o:['Bias risk','Adversarial risk','Hallucination risk','Explainability risk'], c:2, ex:'Hallucination risk: AI confidently generates factually incorrect outputs. Always verify AI-generated facts through independent sources.'},
+     {q:'Under RBA Pillar E, what must suppliers maintain for each AI system?', o:['A training log','An AI Inventory','A bias report','A GDPR certificate'], c:1, ex:'RBA AIR requires suppliers to maintain an AI Inventory documenting each deployed AI system, its purpose, risk level, and controls.'}
+   ]
+  },
+  {id:'compliance', ic:'&#9878;&#65039;', tt:'Compliance Officer Track', co:'Compliance & Legal', du:'2 hrs', pa:80,
+   st:'AIR-1.2 &middot; POPIA &middot; GDPR &middot; EU AI Act',
+   ds:'Data protection law, POPIA and GDPR obligations, AI Act compliance obligations and audit readiness.',
+   ls:[
+     {id:'c1', ti:'POPIA and AI Systems', bo:'<h2>POPIA and AI Systems</h2><div class="std">POPIA 2013 &middot; South Africa</div><div class="body"><p>The Protection of Personal Information Act (POPIA) applies whenever AI processes personal information of South African data subjects.</p><h3>Key POPIA Obligations for AI</h3><ul><li>Process personal data lawfully and with a legitimate purpose</li><li>Minimise data collection to what is necessary</li><li>Obtain consent where required (automated decisions affecting individuals)</li><li>Register the Information Officer with the Information Regulator</li><li>Maintain a PAIA Manual</li></ul><div class="hl">AI systems that make automated decisions about individuals (credit, employment, performance) require explicit consent or another lawful basis under POPIA s.11.</div><h3>Breach Notification</h3><p>Data breaches must be reported to the Information Regulator and affected data subjects as soon as reasonably possible.</p></div>'},
+     {id:'c2', ti:'EU AI Act Compliance Checklist', bo:'<h2>EU AI Act Compliance Checklist</h2><div class="std">EU AI Act 2024/1689</div><div class="body"><p>For organisations operating in or serving the EU:</p><ul><li>&#9745; Classify all AI systems by risk level (unacceptable, high, limited, minimal)</li><li>&#9745; Register high-risk AI systems in the EU AI Act database</li><li>&#9745; Conduct Fundamental Rights Impact Assessment (FRIA) for high-risk AI</li><li>&#9745; Implement human oversight mechanisms</li><li>&#9745; Ensure AI literacy training for all staff (Art.4)</li><li>&#9745; Maintain technical documentation for 10 years</li><li>&#9745; Appoint an AI compliance officer</li></ul><div class="hl">Art.4 creates a mandatory AI literacy obligation for all organisations deploying AI systems. This training programme fulfils that requirement.</div></div>'}
+   ],
+   qu:[
+     {q:'What POPIA section governs consent for automated decisions?', o:['s.4','s.11','s.22','s.71'], c:1, ex:'POPIA s.11 sets out the conditions for lawful processing of personal information, including consent requirements for automated decision-making.'},
+     {q:'Which EU AI Act article creates the AI literacy training obligation?', o:['Art.4','Art.26','Art.73','Art.99'], c:0, ex:'EU AI Act Art.4 requires providers and deployers to ensure their staff have sufficient AI literacy for their role. This training satisfies that requirement.'},
+     {q:'How long must technical documentation for high-risk AI be maintained under the EU AI Act?', o:['2 years','5 years','10 years','Indefinitely'], c:2, ex:'High-risk AI technical documentation must be maintained for at least 10 years after the system is placed on the market or put into service.'}
+   ]
+  },
+  {id:'procurement', ic:'&#128666;', tt:'Procurement & Supplier Track', co:'Procurement', du:'1.5 hrs', pa:75,
+   st:'AIR-1.2 &middot; RBA Code v8.0 &middot; EU AI Act Art.25',
+   ds:'AI supplier vetting, contract AI clauses, third-party AI risk in the supply chain, and RBA AIR supplier obligations.',
+   ls:[
+     {id:'p1', ti:'Vetting AI Suppliers', bo:'<h2>Vetting AI Suppliers</h2><div class="std">RBA AIR &middot; EU AI Act Art.25</div><div class="body"><p>When procuring AI systems or AI-powered services, procurement teams must conduct enhanced due diligence.</p><h3>Mandatory Vetting Criteria</h3><ul><li><span class="kt">Training Data</span> &mdash; Where was the AI trained? Is the data biased?</li><li><span class="kt">Explainability</span> &mdash; Can the supplier explain AI decisions?</li><li><span class="kt">Data Residency</span> &mdash; Where is data processed? Does it leave the country?</li><li><span class="kt">Sub-processors</span> &mdash; Who else has access to your data?</li><li><span class="kt">Incident History</span> &mdash; Has the supplier had AI-related incidents?</li></ul><div class="hl">Under EU AI Act Art.25, importers and distributors share compliance obligations with providers. Your contract must include AI-specific clauses.</div></div>'},
+     {id:'p2', ti:'AI Contract Clauses', bo:'<h2>AI Contract Clauses</h2><div class="std">RBA AIR &middot; Ralph Analytics Standard Clauses</div><div class="body"><p>Every AI service contract must include the following minimum clauses:</p><ul><li>Data Processing Agreement (DPA) with GDPR/POPIA standard clauses</li><li>AI system description, risk classification, and intended use</li><li>Right to audit AI systems and outputs</li><li>Incident notification obligation (breach within 72 hours)</li><li>Data deletion on contract termination</li><li>AI model update notification obligations</li><li>Liability clauses for AI-generated errors</li></ul><div class="hl">Ralph Analytics provides a standard AI Services clause template for inclusion in all supplier contracts. Contact admin@ralph-analytics.com to access the template library.</div></div>'}
+   ],
+   qu:[
+     {q:'Under EU AI Act Art.25, who shares compliance obligations with AI providers?', o:['Only the end-user','Importers and distributors','National regulators only','No one'], c:1, ex:'Art.25 extends compliance obligations to importers and distributors of AI systems, not just the original provider. This flows through the supply chain.'},
+     {q:'What must be included in every AI service contract per RBA AIR?', o:['Only price and SLA','A full technical specification','A Data Processing Agreement and AI-specific clauses','A FRIA report'], c:2, ex:'RBA AIR requires AI contracts to include a DPA, AI system description, audit rights, incident notification, and data deletion obligations at minimum.'},
+     {q:'Within how many hours must an AI-related data breach be notified to the controller?', o:['24 hours','48 hours','72 hours','7 days'], c:2, ex:'GDPR Art.33 and equivalent POPIA requirements mandate breach notification to the data controller within 72 hours of becoming aware of the breach.'}
+   ]
+  }
 ];
 
-let P=JSON.parse(localStorage.getItem('ra_tp')||'{}'),CUR=null,LI=0,QS={};
-function saveP(){localStorage.setItem('ra_tp',JSON.stringify(P));api('/api/rba/training/progress',{method:'POST',body:JSON.stringify(P)}).catch(()=>{});updSt();}
-function updSt(){let cm=0,tL=0,dL=0;COURSES.forEach(c=>{const p=P[c.id]||{};if(p.passed)cm++;tL+=c.ls.length;dL+=Math.min((p.ls||[]).length,c.ls.length);});document.getElementById('sC').textContent=cm;document.getElementById('sP').textContent=tL?Math.round(dL/tL*100)+'%':'0%';document.getElementById('sCt').textContent=cm;}
-function renGrid(){
-  const el=document.getElementById('cG');
-  if(!el)return;
-  el.innerHTML=COURSES.map(function(cr){
-    const p=P[cr.id]||{};
-    const pc=Math.round(((p.ls||[]).length/cr.ls.length)*100);
-    const dn=p.passed;
-    const badge=dn?'CERTIFIED':pc>0?'IN PROGRESS':'START';
-    const badgeCls=dn?'g':pc>0?'a':'gr';
-    const prog=dn?'&#x2705; Score: '+p.score+'%':pc>0?pc+'% complete':'Not started';
-    const barCls=dn?'g':pc>50?'o':'b';
-    const barW=dn?100:pc;
-    return '<div class="cc '+(dn?'dn':'')+'" data-cid="'+cr.id+'" style="cursor:pointer">'+
-      '<div class="cch">'+
-        '<div class="ccic">'+cr.ic+'</div>'+
-        '<div class="cct">'+cr.tt+'</div>'+
-        '<div class="ccm">'+cr.co+' &middot; '+cr.du+' &middot; Pass: '+cr.pa+'%</div>'+
-      '</div>'+
-      '<div class="ccb">'+
-        '<div class="ccd">'+cr.ds+'</div>'+
-        '<div style="font-size:11px;color:var(--mu);margin-bottom:8px">'+cr.st+'</div>'+
-        '<div class="ccf">'+
-          '<div style="flex:1;margin-right:12px">'+
-            '<div class="ccp">'+prog+'</div>'+
-            '<div class="pb"><div class="pf '+barCls+'" style="width:'+barW+'%"></div></div>'+
-          '</div>'+
-          '<span class="bd '+badgeCls+'">'+badge+'</span>'+
-        '</div>'+
-      '</div>'+
-    '</div>';
+var P = {}, CUR = null, LI = 0, QS = {};
+
+try {
+  P = JSON.parse(localStorage.getItem('ra_tp') || '{}');
+} catch(e) { P = {}; }
+
+function saveP() {
+  localStorage.setItem('ra_tp', JSON.stringify(P));
+  api('/api/rba/training/progress', {method:'POST', body:JSON.stringify(P)}).catch(function(){});
+  updSt();
+}
+
+function updSt() {
+  var cm=0, tL=0, dL=0;
+  COURSES.forEach(function(cr) {
+    var p = P[cr.id] || {};
+    if (p.passed) cm++;
+    tL += cr.ls.length;
+    dL += Math.min((p.ls||[]).length, cr.ls.length);
+  });
+  document.getElementById('sC').textContent = cm;
+  document.getElementById('sP').textContent = tL ? Math.round(dL/tL*100)+'%' : '0%';
+  document.getElementById('sCt').textContent = cm;
+}
+
+function renGrid() {
+  var el = document.getElementById('cG');
+  if (!el) return;
+  el.innerHTML = COURSES.map(function(cr) {
+    var p   = P[cr.id] || {};
+    var pc  = Math.round(((p.ls||[]).length / cr.ls.length) * 100);
+    var dn  = p.passed;
+    var badge    = dn ? 'CERTIFIED' : pc > 0 ? 'IN PROGRESS' : 'START';
+    var badgeCls = dn ? 'g' : pc > 0 ? 'a' : 'gr';
+    var prog     = dn ? '&#x2705; Score: '+p.score+'%' : pc > 0 ? pc+'% complete' : 'Not started';
+    var barCls   = dn ? 'g' : pc > 50 ? 'o' : 'b';
+    var barW     = dn ? 100 : pc;
+    return '<div class="cc '+(dn?'dn':'')+'" data-cid="'+cr.id+'">'
+      +'<div class="cch">'
+        +'<div class="ccic">'+cr.ic+'</div>'
+        +'<div class="cct">'+cr.tt+'</div>'
+        +'<div class="ccm">'+cr.co+' &middot; '+cr.du+' &middot; Pass: '+cr.pa+'%</div>'
+      +'</div>'
+      +'<div class="ccb">'
+        +'<div class="ccd">'+cr.ds+'</div>'
+        +'<div style="font-size:11px;color:var(--mu);margin-bottom:8px">'+cr.st+'</div>'
+        +'<div class="ccf">'
+          +'<div style="flex:1;margin-right:12px">'
+            +'<div class="ccp">'+prog+'</div>'
+            +'<div class="pb"><div class="pf '+barCls+'" style="width:'+barW+'%"></div></div>'
+          +'</div>'
+          +'<span class="bd '+badgeCls+'">'+badge+'</span>'
+        +'</div>'
+      +'</div>'
+    +'</div>';
   }).join('');
-  // Event delegation - safe click handling
-  el.onclick=function(e){
-    var card=e.target.closest('[data-cid]');
-    if(card)openC(card.getAttribute('data-cid'));
+  el.onclick = function(e) {
+    var card = e.target.closest('[data-cid]');
+    if (card) openC(card.getAttribute('data-cid'));
   };
-},pc=Math.round((p.ls||[]).length/c.ls.length*100),dn=p.passed;return '<div class="cc '+(dn?'dn':'')+'" onclick="openC(''+c.id+'')"><div class="cch"><div class="ccic">'+c.ic+'</div><div class="cct">'+c.tt+'</div><div class="ccm">'+c.co+' &middot; '+c.du+' &middot; Pass: '+c.pa+'%</div></div><div class="ccb"><div class="ccd">'+c.ds+'</div><div style="font-size:11px;color:var(--mu);margin-bottom:8px">'+c.st+'</div><div class="ccf"><div style="flex:1;margin-right:12px"><div class="ccp">'+(dn?'&#x2705; Score: '+p.score+'%':pc>0?pc+'% complete':'Not started')+'</div><div class="pb"><div class="pf '+(dn?'g':pc>50?'o':'b')+'" style="width:'+(dn?100:pc)+'%"></div></div></div><span class="bd '+(dn?'g':pc>0?'a':'gr')+'">'+(dn?'CERTIFIED':pc>0?'IN PROGRESS':'START')+'</span></div></div></div>';}).join('');}
-function renRec(){const rr=[];COURSES.forEach(c=>{const p=P[c.id]||{};if(p.score!==undefined)rr.push({t:c.tt,s:p.score,ok:p.passed,d:p.date||'&mdash;'});});document.getElementById('rT').innerHTML=rr.length?rr.map(r=>'<tr><td style="padding:11px 10px">'+r.t+'</td><td style="padding:11px 10px;font-weight:700">'+r.s+'%</td><td style="padding:11px 10px"><span class="bd '+(r.ok?'g':'r')+'">'+(r.ok?'PASSED':'FAILED')+'</span></td><td style="padding:11px 10px;color:var(--mu)">'+r.d+'</td><td style="padding:11px 10px">'+(r.ok?'<button class="btn" style="font-size:11px;padding:4px 10px" onclick="dlCt(''+r.t+'')">Download</button>':'&mdash;')+'</td></tr>').join(''):'<tr><td colspan="5" style="padding:20px 10px;color:var(--mu);text-align:center;font-size:12px">No records yet &mdash; complete a course to earn your certificate.</td></tr>';}
-function expCSV(){let r=['Course,Score,Result,Date'];COURSES.forEach(c=>{const p=P[c.id]||{};if(p.score!==undefined)r.push('"'+c.tt+'","'+p.score+'%","'+(p.passed?'PASSED':'FAILED')+'","'+(p.date||'')+'"');});const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([r.join('\n')],{type:'text/csv'}));a.download='AI_Training_Records.csv';a.click();}
-function dlCt(t){toast('Certificate for "'+t+'" downloaded','gs');}
-function showD(){CUR=null;['vD','vL','vQ'].forEach((id,i)=>document.getElementById(id).style.display=i===0?'block':'none');renGrid();renRec();updSt();}
-function openC(id){CUR=COURSES.find(c=>c.id===id);LI=0;['vD','vL','vQ'].forEach((id2,i)=>document.getElementById(id2).style.display=i===1?'block':'none');document.getElementById('lT').textContent=CUR.tt;document.getElementById('lM').innerHTML=CUR.co+' &middot; '+CUR.du;renLN();showL(0);}
-function renLN(){const dn=(P[CUR.id]||{}).ls||[];document.getElementById('lN').innerHTML=CUR.ls.map((l,i)=>'<button class="ln '+(i===LI?'ac':'')+' '+(dn.includes(l.id)?'dn':'')+'" onclick="showL('+i+')">'+(i+1)+'. '+l.ti+'</button>').join('')+'<button class="ln" onclick="stQ()" style="background:rgba(232,81,10,.15);border-color:var(--or);color:var(--or)">&#128221; Take Quiz</button>';}
-function showL(i){LI=i;const l=CUR.ls[i];if(!P[CUR.id])P[CUR.id]={ls:[]};if(!P[CUR.id].ls)P[CUR.id].ls=[];if(!P[CUR.id].ls.includes(l.id)){P[CUR.id].ls.push(l.id);saveP();}const tot=CUR.ls.length,dn=P[CUR.id].ls.length;document.getElementById('lP').textContent=Math.round(dn/tot*100)+'%';document.getElementById('lB').innerHTML='<div class="lc">'+l.bo+'</div>';renLN();document.getElementById('bPr').style.visibility=i>0?'visible':'hidden';const last=i===CUR.ls.length-1;document.getElementById('bNx').innerHTML=last?'&#128221; Start Quiz &rarr;':'Next &rarr;';document.getElementById('bNx').onclick=last?stQ:()=>navL(1);}
-function navL(d){const n=LI+d;if(n>=0&&n<CUR.ls.length)showL(n);}
-function stQ(){const ok=CUR.ls.every(l=>(P[CUR.id]?.ls||[]).includes(l.id));if(!ok){toast('Complete all lessons first','er');return;}QS={qi:0,ans:{}};['vD','vL','vQ'].forEach((id,i)=>document.getElementById(id).style.display=i===2?'block':'none');document.getElementById('qTi').textContent=CUR.tt+' — Assessment';document.getElementById('qMe').textContent=CUR.qu.length+' questions · Pass: '+CUR.pa+'% · Explanations after each answer';renQ();}
-function renQ(){const q=CUR.qu[QS.qi],tot=CUR.qu.length,an=Object.keys(QS.ans).length,pc=Math.round(an/tot*100);document.getElementById('qB').innerHTML='<div class="qc"><div class="qh"><div style="font-size:14px;font-weight:700">Question '+(QS.qi+1)+' of '+tot+'</div><div style="font-size:12px;color:var(--mu)">'+an+' answered</div></div><div class="pb" style="margin-bottom:20px"><div class="pf o" style="width:'+pc+'%"></div></div><div class="qn">Question '+(QS.qi+1)+'</div><div class="qt">'+q.q+'</div><div class="qos">'+q.o.map((o,i)=>'<button class="qo" id="op'+i+'" onclick="pickA('+i+')">'+String.fromCharCode(65+i)+'. '+o+'</button>').join('')+'</div><div class="qex" id="qex"><strong>Explanation:</strong> '+q.ex+'</div><div class="qa"><button class="btn" onclick="prevQ()" '+(QS.qi===0?'disabled':'')+'>&larr; Previous</button>'+(QS.qi<tot-1?'<button class="btnp" onclick="nxtQ()">Next &rarr;</button>':'<button class="btns" onclick="subQ()">Submit &#10003;</button>')+'</div></div>';if(QS.ans[QS.qi]!==undefined)showA(QS.ans[QS.qi]);}
-function pickA(i){if(QS.ans[QS.qi]!==undefined)return;QS.ans[QS.qi]=i;showA(i);}
-function showA(sel){const q=CUR.qu[QS.qi];document.querySelectorAll('.qo').forEach((b,i)=>{b.disabled=true;if(i===q.c)b.classList.add('cr');else if(i===sel&&i!==q.c)b.classList.add('wr');});document.getElementById('qex').classList.add('show');}
-function nxtQ(){if(QS.ans[QS.qi]===undefined){toast('Select an answer first','er');return;}QS.qi++;renQ();}
-function prevQ(){if(QS.qi>0){QS.qi--;renQ();}}
-function exitQ(){['vD','vL','vQ'].forEach((id,i)=>document.getElementById(id).style.display=i===1?'block':'none');}
-function subQ(){const tot=CUR.qu.length;if(Object.keys(QS.ans).length<tot){toast('Answer all '+tot+' questions first','er');return;}let ok=0;CUR.qu.forEach((q,i)=>{if(QS.ans[i]===q.c)ok++;});const sc=Math.round(ok/tot*100),pass=sc>=CUR.pa;if(!P[CUR.id])P[CUR.id]={ls:[]};P[CUR.id].score=sc;P[CUR.id].passed=pass;P[CUR.id].date=new Date().toLocaleDateString('en-ZA');saveP();const col=pass?'var(--gn)':sc>=50?'var(--am)':'var(--rd)';document.getElementById('qB').innerHTML='<div class="rc"><div style="font-size:14px;font-weight:700;color:var(--mu);margin-bottom:8px">'+CUR.tt+'</div><div class="rsc" style="color:'+col+'">'+sc+'%</div><div style="font-size:16px;font-weight:700;color:'+col+';margin-bottom:8px">'+(pass?'&#x2705; PASSED':'&#x274C; FAILED')+' — '+ok+'/'+tot+' correct</div><div style="font-size:13px;color:var(--mu);margin-bottom:24px;line-height:1.6">'+(pass?'Congratulations! You completed this training module and earned your certificate. Record saved to your training log.':'You scored '+sc+'% — pass mark is '+CUR.pa+'%. Review the lessons and retake.')+'</div>'+(pass?'<div class="ct"><div style="font-size:12px;font-weight:700;color:var(--gn);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Certificate of Completion</div><div style="font-size:15px;font-weight:800">'+CUR.tt+'</div><div style="font-size:11px;color:var(--mu);margin-top:4px">Completed: '+new Date().toLocaleDateString('en-ZA')+' · Score: '+sc+'% · AIR-1.2 Compliant</div></div>':'')+'<div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:16px">'+(pass?'<button class="btns" onclick="dlCt(''+CUR.tt+'')">Download Certificate</button>':'')+(pass?'':'<button class="btnp" onclick="stQ()">Retake Assessment</button>')+'<button class="btn" onclick="showD()">Back to Courses</button></div></div>';}
-document.addEventListener('DOMContentLoaded',()=>{api('/api/rba/training/progress').then(r=>r.json()).then(d=>{if(d&&Object.keys(d).length){P=d;localStorage.setItem('ra_tp',JSON.stringify(d));}renGrid();renRec();updSt();}).catch(()=>{renGrid();renRec();updSt();});});</script></body></html>
+}
+
+function renRec() {
+  var rr = [];
+  COURSES.forEach(function(cr) {
+    var p = P[cr.id] || {};
+    if (p.score !== undefined) rr.push({t:cr.tt, s:p.score, ok:p.passed, d:p.date||'&mdash;'});
+  });
+  var tbody = document.getElementById('rT');
+  if (!rr.length) {
+    tbody.innerHTML = '<tr><td colspan="5" style="padding:20px 10px;color:var(--mu);text-align:center;font-size:12px">No records yet &mdash; complete a course to earn your certificate.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = rr.map(function(r) {
+    var certBtn = r.ok ? '<button class="btn" style="font-size:11px;padding:4px 10px" data-cert="'+r.t+'">Download</button>' : '&mdash;';
+    return '<tr>'
+      +'<td style="padding:11px 10px">'+r.t+'</td>'
+      +'<td style="padding:11px 10px;font-weight:700">'+r.s+'%</td>'
+      +'<td style="padding:11px 10px"><span class="bd '+(r.ok?'g':'r')+'">'+(r.ok?'PASSED':'FAILED')+'</span></td>'
+      +'<td style="padding:11px 10px;color:var(--mu)">'+r.d+'</td>'
+      +'<td style="padding:11px 10px">'+certBtn+'</td>'
+    +'</tr>';
+  }).join('');
+  tbody.onclick = function(e) {
+    var btn = e.target.closest('[data-cert]');
+    if (btn) dlCt(btn.getAttribute('data-cert'));
+  };
+}
+
+function expCSV() {
+  var rows = ['Course,Score,Result,Date'];
+  COURSES.forEach(function(cr) {
+    var p = P[cr.id] || {};
+    if (p.score !== undefined) {
+      rows.push('"'+cr.tt+'","'+p.score+'%","'+(p.passed?'PASSED':'FAILED')+'","'+(p.date||'')+'"');
+    }
+  });
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([rows.join('\n')], {type:'text/csv'}));
+  a.download = 'AI_Training_Records.csv';
+  a.click();
+}
+
+function dlCt(t) { toast('Certificate for "'+t+'" downloaded', 'gs'); }
+
+function showD() {
+  CUR = null;
+  document.getElementById('vD').style.display = 'block';
+  document.getElementById('vL').style.display = 'none';
+  document.getElementById('vQ').style.display = 'none';
+  renGrid(); renRec(); updSt();
+}
+
+function openC(id) {
+  CUR = COURSES.find(function(cr){ return cr.id === id; });
+  LI  = 0;
+  document.getElementById('vD').style.display = 'none';
+  document.getElementById('vL').style.display = 'block';
+  document.getElementById('vQ').style.display = 'none';
+  document.getElementById('lT').textContent = CUR.tt;
+  document.getElementById('lM').innerHTML   = CUR.co + ' &middot; ' + CUR.du;
+  renLN(); showL(0);
+}
+
+function renLN() {
+  var dn = (P[CUR.id]||{}).ls || [];
+  document.getElementById('lN').innerHTML = CUR.ls.map(function(l,i) {
+    var done = dn.indexOf(l.id) >= 0;
+    return '<button class="ln '+(i===LI?'ac':'')+(done?' dn':'')+'" data-li="'+i+'">'+
+      (done?'&#x2705; ':'')+l.ti+'</button>';
+  }).join('');
+  document.getElementById('lN').onclick = function(e) {
+    var btn = e.target.closest('[data-li]');
+    if (btn) showL(parseInt(btn.getAttribute('data-li')));
+  };
+}
+
+function showL(i) {
+  LI = i;
+  var l = CUR.ls[i];
+  if (!P[CUR.id]) P[CUR.id] = {ls:[]};
+  if (!P[CUR.id].ls) P[CUR.id].ls = [];
+  if (P[CUR.id].ls.indexOf(l.id) < 0) { P[CUR.id].ls.push(l.id); saveP(); }
+  var done = P[CUR.id].ls.indexOf(l.id) >= 0;
+  var total = CUR.ls.length;
+  var pct   = Math.round(P[CUR.id].ls.length / total * 100);
+  document.getElementById('lP').textContent = pct + '%';
+  document.getElementById('lC').innerHTML   = l.bo;
+  document.getElementById('lNB').disabled   = (i >= total - 1);
+  document.getElementById('lPB').disabled   = (i === 0);
+  var allDone = CUR.ls.every(function(ls){ return (P[CUR.id].ls||[]).indexOf(ls.id) >= 0; });
+  var qBtn = document.getElementById('lQB');
+  if (qBtn) qBtn.style.display = allDone ? 'inline-flex' : 'none';
+  renLN();
+}
+
+function navL(d) {
+  var n = LI + d;
+  if (n >= 0 && n < CUR.ls.length) showL(n);
+}
+
+function stQ() {
+  var allDone = CUR.ls.every(function(l){ return (P[CUR.id]&&P[CUR.id].ls||[]).indexOf(l.id) >= 0; });
+  if (!allDone) { toast('Complete all lessons first', 'er'); return; }
+  QS = {qi:0, ans:{}};
+  document.getElementById('vD').style.display = 'none';
+  document.getElementById('vL').style.display = 'none';
+  document.getElementById('vQ').style.display = 'block';
+  document.getElementById('qTi').textContent = CUR.tt + ' — Assessment';
+  document.getElementById('qMe').textContent = CUR.qu.length + ' questions \u00b7 Pass: ' + CUR.pa + '% \u00b7 Explanations after each answer';
+  renQ();
+}
+
+function renQ() {
+  var q = CUR.qu[QS.qi];
+  var tot = CUR.qu.length;
+  var an  = Object.keys(QS.ans).length;
+  var pct = Math.round(an / tot * 100);
+  document.getElementById('qB').innerHTML =
+    '<div class="qc">'
+    +'<div class="qh"><div><div class="qn">Question '+(QS.qi+1)+' of '+tot+'</div><div class="qt">'+q.q+'</div></div>'
+    +'<div style="text-align:right;font-size:11px;color:var(--mu)">'+pct+'% answered</div></div>'
+    +'<div class="qos" id="qOs">'
+      + q.o.map(function(opt, i) { return '<button class="qo" data-qi="'+i+'">'+opt+'</button>'; }).join('')
+    +'</div>'
+    +'<div class="qex" id="qEx"></div>'
+    +'<div class="qa">'
+      +'<button class="btn" onclick="prevQ()" '+(QS.qi===0?'disabled':'')+'>&#8592; Prev</button>'
+      +'<button class="btn" id="nxtBtn" onclick="nxtQ()" '+(QS.qi===tot-1?'style="display:none"':'')+'>Next &#8594;</button>'
+      +'<button class="btns" id="subBtn" onclick="subQ()" '+(QS.qi!==tot-1?'style="display:none"':'')+'>Submit</button>'
+    +'</div>'
+    +'</div>';
+  document.getElementById('qOs').onclick = function(e) {
+    var btn = e.target.closest('[data-qi]');
+    if (btn) pickA(parseInt(btn.getAttribute('data-qi')));
+  };
+}
+
+function pickA(i) {
+  if (QS.ans[QS.qi] !== undefined) return;
+  QS.ans[QS.qi] = i;
+  showA(i);
+}
+
+function showA(sel) {
+  var q = CUR.qu[QS.qi];
+  document.querySelectorAll('.qo').forEach(function(b, i) {
+    b.disabled = true;
+    if (i === q.c) b.classList.add('cr');
+    else if (i === sel && sel !== q.c) b.classList.add('wr');
+  });
+  var ex = document.getElementById('qEx');
+  ex.innerHTML = '<strong>Explanation:</strong> ' + q.ex;
+  ex.classList.add('show');
+}
+
+function nxtQ() {
+  if (QS.ans[QS.qi] === undefined) { toast('Select an answer first', 'er'); return; }
+  QS.qi++;
+  renQ();
+}
+
+function prevQ() { if (QS.qi > 0) { QS.qi--; renQ(); } }
+
+function exitQ() {
+  document.getElementById('vD').style.display = 'none';
+  document.getElementById('vL').style.display = 'block';
+  document.getElementById('vQ').style.display = 'none';
+}
+
+function subQ() {
+  var tot = CUR.qu.length;
+  if (Object.keys(QS.ans).length < tot) { toast('Answer all '+tot+' questions first', 'er'); return; }
+  var ok = 0;
+  CUR.qu.forEach(function(q, i) { if (QS.ans[i] === q.c) ok++; });
+  var sc   = Math.round(ok / tot * 100);
+  var pass = sc >= CUR.pa;
+  if (!P[CUR.id]) P[CUR.id] = {ls:[]};
+  P[CUR.id].score  = sc;
+  P[CUR.id].passed = pass;
+  P[CUR.id].date   = new Date().toLocaleDateString('en-ZA');
+  saveP();
+  var col = pass ? 'var(--gn)' : sc >= 50 ? 'var(--am)' : 'var(--rd)';
+  var certHtml = pass
+    ? '<div class="ct"><div style="font-size:12px;font-weight:700;color:var(--gn);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Certificate of Completion</div>'
+      +'<div style="font-size:15px;font-weight:800">'+CUR.tt+'</div>'
+      +'<div style="font-size:11px;color:var(--mu);margin-top:4px">Completed: '+new Date().toLocaleDateString('en-ZA')+' &middot; Score: '+sc+'% &middot; AIR-1.2 Compliant</div>'
+      +'</div>' : '';
+  var retake = !pass ? '<button class="btnp" onclick="stQ()">Retake Assessment</button>' : '';
+  var dlCert = pass ? '<button class="btns" data-dl-cert="'+CUR.tt+'">Download Certificate</button>' : '';
+  document.getElementById('qB').innerHTML =
+    '<div class="rc">'
+    +'<div style="font-size:14px;font-weight:700;color:var(--mu);margin-bottom:8px">'+CUR.tt+'</div>'
+    +'<div class="rsc" style="color:'+col+'">'+sc+'%</div>'
+    +'<div style="font-size:16px;font-weight:700;color:'+col+';margin-bottom:8px">'+(pass?'&#x2705; PASSED':'&#x274C; FAILED')+' &mdash; '+ok+'/'+tot+' correct</div>'
+    +'<div style="font-size:13px;color:var(--mu);margin-bottom:24px;line-height:1.6">'
+      +(pass?'Congratulations! You completed this training module and earned your certificate. Record saved to your training log.':'You scored '+sc+'% &mdash; pass mark is '+CUR.pa+'%. Review the lessons and retake.')
+    +'</div>'
+    +certHtml
+    +'<div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:16px">'+dlCert+retake+'<button class="btn" onclick="showD()">Back to Courses</button></div>'
+    +'</div>';
+  document.getElementById('qB').onclick = function(e) {
+    var btn = e.target.closest('[data-dl-cert]');
+    if (btn) dlCt(btn.getAttribute('data-dl-cert'));
+  };
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  api('/api/rba/training/progress')
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if (d && Object.keys(d).length) {
+        P = d;
+        localStorage.setItem('ra_tp', JSON.stringify(d));
+      }
+      renGrid(); renRec(); updSt();
+    })
+    .catch(function(){
+      renGrid(); renRec(); updSt();
+    });
+});
+</script></body></html>
